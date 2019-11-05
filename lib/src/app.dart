@@ -9,6 +9,7 @@ void app() {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Roboto'),
       initialRoute: '/',
       routes: {
         '/': (context) => LoginScreen(),

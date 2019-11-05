@@ -7,10 +7,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  
 //  Varible boolean
   bool obsecurePassword = true;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Colors.green[600],
                 ],
               ),
+//              image: DecorationImage(
+//                image: AssetImage('assets/logo/leaf-background.jpg'),
+//                fit: BoxFit.cover
+//              ),
             ),
             height: screenHeight(context),
           ),
@@ -106,7 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
           prefixIcon: Icon(Icons.lock, color: Colors.white),
           suffixIcon: InkWell(
             onTap: toggleObscure,
-            child: Icon(obsecurePassword ? Icons.visibility : Icons.visibility_off, color: Colors.white),
+            child: Icon(
+                obsecurePassword ? Icons.visibility : Icons.visibility_off,
+                color: Colors.white),
           ),
           hasFloatingPlaceholder: true,
           labelText: 'Password',
@@ -193,10 +198,10 @@ class _LoginScreenState extends State<LoginScreen> {
   void navHome() {
     Navigator.of(context).pushReplacementNamed('/home');
   }
-  
+
   void toggleObscure() {
     setState(() {
-      obsecurePassword = ! obsecurePassword;
+      obsecurePassword = !obsecurePassword;
     });
   }
 }

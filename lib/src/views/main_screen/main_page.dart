@@ -21,23 +21,9 @@ class _MainScreenState extends State<MainScreen> {
             'KOPBI Solution',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.notifications_none),
-              color: Colors.grey[300],
-              iconSize: 25,
-            ),
-            IconButton(
-              onPressed: navSetting,
-              icon: Icon(Icons.settings),
-              color: Colors.grey[300],
-              iconSize: 25,
-            ),
-          ],
           bottom: TabBar(
             isScrollable: false,
-            labelStyle: TextStyle(fontSize: 13),
+            labelStyle: TextStyle(fontSize: 12),
             indicatorColor: Colors.transparent,
             tabs: <Widget>[
               Tab(
@@ -45,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
                 icon: Icon(FontAwesomeIcons.home),
               ),
               Tab(
-                text: 'Promo',
+                text: 'Info',
                 icon: Icon(FontAwesomeIcons.addressCard),
               ),
               Tab(
@@ -63,7 +49,6 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
         ),
-
         body: TabBarView(children: [
           HomeScreen(),
           Center(child: Text('ANOTHER PAGE')),

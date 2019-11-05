@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -9,21 +10,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        balanceField(),
-        Flexible(
-          child: ListView(
-            shrinkWrap: true,
-            physics: ScrollPhysics(),
-            children: <Widget>[
-              menuRow1(),
-              menuRow2(),
-              iklanField(),
-            ],
+    return Scaffold(
+      body: Column(
+        children: <Widget>[
+          balanceField(),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              children: <Widget>[
+                menuRow1(),
+                menuRow2(),
+//              iklanField(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      bottomSheet: Container(
+        color: Colors.green,
+        height: 100,
+        child: bottomMenu(),
+      ),
     );
   }
 
@@ -56,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(
                               text: ' 134 ',
                               style: TextStyle(
-                                  color: Colors.blueAccent, fontSize: 20)),
+                                  color: Colors.black, fontSize: 20)),
                         ]),
                       ),
                     ),
@@ -70,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(
                               text: ' 2.040 ',
                               style: TextStyle(
-                                  color: Colors.blueAccent, fontSize: 13)),
+                                  color: Colors.black, fontSize: 13)),
                         ]),
                       ),
                     ),
@@ -383,6 +391,50 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget bottomMenu() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          child: IconButton(
+              icon: Icon(FontAwesomeIcons.globe),
+              color: Colors.lightGreen,
+              onPressed: () {},
+              iconSize: 35),
+          radius: 30,
+        ),
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          child: IconButton(
+              icon: Icon(FontAwesomeIcons.instagram),
+              color: Colors.redAccent,
+              onPressed: () {},
+              iconSize: 35),
+          radius: 30,
+        ),
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          child: IconButton(
+              icon: Icon(FontAwesomeIcons.twitter),
+              color: Colors.blue,
+              onPressed: () {},
+              iconSize: 35),
+          radius: 30,
+        ),
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          child: IconButton(
+              icon: Icon(FontAwesomeIcons.youtube),
+              color: Colors.red,
+              onPressed: () {},
+              iconSize: 35),
+          radius: 30,
+        ),
+      ],
     );
   }
 

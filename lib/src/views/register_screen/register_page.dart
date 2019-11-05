@@ -16,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Text(
-          'JOIN KOPBI',
+          'Aktivasi Anggota KOPBI',
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -28,9 +28,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: <Widget>[
                 informasiRegister(),
                 namaLengkapField(),
+                nomorKtpField(),
                 nomorPonselField(),
                 emailField(),
-                kodePromoField(),
                 acceptPrivacyPoliceField(),
               ],
             ),
@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
       child: Text(
-        'Terima kasih telah bergabung! Kami akan mengirimkan kode melalui SMS dan email untuk verifikasi proses registrasi',
+        'Terima kasih telah bergabung sebagai anggota KOPBI Indonesia. Lengkapi data probadi andadibawah ini. Kami akan mengirimkan verifikasi data anda melalui SMS / WA / Email yang anda cantumkan dibawah ini.',
         style: TextStyle(fontSize: 15),
       ),
     );
@@ -114,13 +114,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget kodePromoField() {
+  Widget nomorKtpField() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
       child: TextFormField(
+        keyboardType: TextInputType.number,
         decoration: InputDecoration(
           hasFloatingPlaceholder: true,
-          labelText: 'Kode Promo/Referensi: (opsional)',
+          labelText: 'Nomor KTP',
           labelStyle: TextStyle(color: Colors.black54, fontSize: 14),
           contentPadding: EdgeInsets.all(0),
           focusedBorder: UnderlineInputBorder(
@@ -183,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: RaisedButton(
           onPressed: () {},
           child: Text(
-            'BERIKUTNYA',
+            'SUBMIT',
             style: TextStyle(color: Colors.white),
           ),
           color: Colors.cyan,
