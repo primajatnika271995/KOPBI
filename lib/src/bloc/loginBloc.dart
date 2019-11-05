@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/models/loginResponseModel.dart';
 import 'package:kopbi/src/models/usersDetailsModel.dart';
 import 'package:kopbi/src/repository/loginRepository.dart';
@@ -22,16 +25,28 @@ class LoginBloc {
       flushBar(context, "User ID tidak terdaftar", 3);
     } else {
       UsersDetailsModel value = await _repository.loginAnggota(userId, password);
-      setPreferences(value);
-
-      Navigator.of(context).pushReplacementNamed('/home');
+      getImageProfile(context, value.nomorAnggota, value);
     }
   }
 
-  setPreferences(UsersDetailsModel value) async {
+  getImageProfile(BuildContext context, String nomorAnggota, UsersDetailsModel value) {
+    _repository.getImageProfile(nomorAnggota).then((response) {
+      if (response.statusCode == 200) {
+        String urlImage = '${APIUrl.img_profile}$nomorAnggota.jpg';
+        setPreferences(value, urlImage);
+        Navigator.of(context).pushReplacementNamed('/home');
+      } else {
+        setPreferences(value, null);
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    });
+  }
+
+  setPreferences(UsersDetailsModel value, String urlImg) async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _pref.setString(NOMOR_ANGGOTA, value.nomorAnggota);
     _pref.setString(NAMA_ANGGOTA, value.nama);
+    _pref.setString(IMG_PROFILE, urlImg);
   }
 
   dispose() async {

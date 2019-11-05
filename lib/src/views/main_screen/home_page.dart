@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String _namaAnggota;
   String _IDAnggota;
+  String _imgProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(30),
                   onTap: navSetting,
                   child: CircleAvatar(
-                    backgroundImage:
-                        AssetImage('assets/icons/profile-icon.png'),
+                    backgroundImage: _imgProfile == null
+                        ? AssetImage('assets/icons/no_user.jpg')
+                        : NetworkImage(_imgProfile),
                     backgroundColor: Colors.green,
                     radius: 30,
                   ),
@@ -149,7 +152,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        _namaAnggota == null ? "ADMIN" : '${_namaAnggota.toUpperCase()}',
+                        _namaAnggota == null
+                            ? "ADMIN"
+                            : '${_namaAnggota.toUpperCase()}',
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
@@ -404,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: <Widget>[
         InkWell(
           borderRadius: BorderRadius.circular(55),
-          onTap: () {},
+          onTap: () => navMedia('http://kopbi.or.id'),
           child: Container(
             height: 55,
             width: 55,
@@ -417,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         InkWell(
           borderRadius: BorderRadius.circular(55),
-          onTap: () {},
+          onTap: () => navMedia('https://www.instagram.com/kopbi.id/'),
           child: Container(
             height: 55,
             width: 55,
@@ -430,7 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         InkWell(
           borderRadius: BorderRadius.circular(55),
-          onTap: () {},
+          onTap: () => navMedia('https://twitter.com/kopbi1'),
           child: Container(
             height: 55,
             width: 55,
@@ -443,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         InkWell(
           borderRadius: BorderRadius.circular(55),
-          onTap: () {},
+          onTap: () => navMedia('https://www.youtube.com/channel/UCRRkWX-rXZDbH0gzxrpSWew'),
           child: Container(
             height: 55,
             width: 55,
@@ -516,11 +521,23 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _namaAnggota = _pref.getString(NAMA_ANGGOTA);
     _IDAnggota = _pref.getString(NOMOR_ANGGOTA);
+    _imgProfile = _pref.getString(IMG_PROFILE);
     setState(() {});
+
+    print(_imgProfile);
   }
 
   void navSetting() {
     Navigator.of(context).pushNamed('/settings');
+  }
+
+  void navMedia(String url) async {
+    var _url = url;
+    if (await canLaunch(_url)) {
+      await launch(_url);
+    } else {
+      throw 'Could not launch $_url';
+    }
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' show Client;
+import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/models/loginResponseModel.dart';
 import 'package:kopbi/src/models/usersDetailsModel.dart';
@@ -27,5 +28,14 @@ class LoginProvider {
       return compute(usersDetailsModelFromJson, response.body);
     }
     return null;
+  }
+  
+  Future<http.Response> getImageProfile(String nomorAnggota) async {
+    final response = await _client.get(APIUrl.img_profile + '$nomorAnggota.jpg');
+    if (response.statusCode == 200) {
+      return response;
+    } else if (response.statusCode == 406) {
+      print("No Acceptable");
+    } return null;
   }
 }
