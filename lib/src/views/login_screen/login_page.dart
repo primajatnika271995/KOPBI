@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/bloc/loginBloc.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,36 +11,41 @@ class _LoginScreenState extends State<LoginScreen> {
 //  Varible boolean
   bool obsecurePassword = true;
 
+//  Text Controller
+  final _userCtrl = new TextEditingController();
+  final _passCtrl = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.1, 0.5, 0.7, 0.9],
-                colors: [
-                  Colors.green[200],
-                  Colors.green[300],
-                  Colors.green[500],
-                  Colors.green[600],
-                ],
-              ),
-//              image: DecorationImage(
-//                image: AssetImage('assets/logo/leaf-background.jpg'),
-//                fit: BoxFit.cover
+            color: Colors.pink,
+//            decoration: BoxDecoration(
+//              gradient: LinearGradient(
+//                begin: Alignment.topCenter,
+//                end: Alignment.bottomCenter,
+//                stops: [0.1, 0.5, 0.7, 0.9],
+//                colors: [
+//                  Colors.green[200],
+//                  Colors.green[300],
+//                  Colors.green[500],
+//                  Colors.green[600],
+//                ],
 //              ),
-            ),
+////              image: DecorationImage(
+////                image: AssetImage('assets/logo/leaf-background.jpg'),
+////                fit: BoxFit.cover
+////              ),
+//            ),
             height: screenHeight(context),
           ),
           SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                appLogo(),
+//                appLogo(),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -73,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: TextFormField(
+        controller: _userCtrl,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.person, color: Colors.white),
@@ -103,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: TextFormField(
+        controller: _passCtrl,
         style: TextStyle(color: Colors.white),
         obscureText: obsecurePassword,
         decoration: InputDecoration(
@@ -142,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         width: screenWidth(context),
         child: OutlineButton(
-          onPressed: navHome,
+          onPressed: loginService,
           child: Text(
             'LOGIN',
             style: TextStyle(color: Colors.white),
@@ -203,5 +211,12 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       obsecurePassword = !obsecurePassword;
     });
+  }
+
+  void loginService() async {
+    print('Value userID : ${_userCtrl.text}');
+    print('Value Pasword : ${_passCtrl.text}');
+    await loginBloc.login(_userCtrl.text, _passCtrl.text);
+    print('Done');
   }
 }

@@ -230,6 +230,6 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void navLogout() {
-    Navigator.of(context).pushReplacementNamed('/');
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 }
