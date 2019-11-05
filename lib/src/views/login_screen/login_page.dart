@@ -10,10 +10,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 //  Varible boolean
   bool obsecurePassword = true;
+  bool _isLoading = false;
 
 //  Text Controller
   final _userCtrl = new TextEditingController();
   final _passCtrl = new TextEditingController();
+
+//  FormKey
+  final _formKey = new GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,40 +25,42 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: <Widget>[
           Container(
-            color: Colors.pink,
-//            decoration: BoxDecoration(
-//              gradient: LinearGradient(
-//                begin: Alignment.topCenter,
-//                end: Alignment.bottomCenter,
-//                stops: [0.1, 0.5, 0.7, 0.9],
-//                colors: [
-//                  Colors.green[200],
-//                  Colors.green[300],
-//                  Colors.green[500],
-//                  Colors.green[600],
-//                ],
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.1, 0.5, 0.7, 0.9],
+                colors: [
+                  Colors.green[200],
+                  Colors.green[300],
+                  Colors.green[500],
+                  Colors.green[600],
+                ],
+              ),
+//              image: DecorationImage(
+//                image: AssetImage('assets/logo/leaf-background.jpg'),
+//                fit: BoxFit.cover
 //              ),
-////              image: DecorationImage(
-////                image: AssetImage('assets/logo/leaf-background.jpg'),
-////                fit: BoxFit.cover
-////              ),
-//            ),
+            ),
             height: screenHeight(context),
           ),
           SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-//                appLogo(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    usernameField(),
-                    passwordField(),
-                    signInButton(),
-                    registerButton(),
-                    bantuanButton(),
-                  ],
+                appLogo(),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      usernameField(),
+                      passwordField(),
+                      signInButton(),
+                      registerButton(),
+                      bantuanButton(),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -81,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextFormField(
         controller: _userCtrl,
         style: TextStyle(color: Colors.white),
+        keyboardType: TextInputType.number,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.person, color: Colors.white),
           hasFloatingPlaceholder: true,
@@ -102,6 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'User ID tidak boleh kosong';
+          } return null;
+        },
       ),
     );
   }
@@ -140,6 +152,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Password tidak boleh kosong';
+          } return null;
+        },
       ),
     );
   }
@@ -150,9 +167,9 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         width: screenWidth(context),
         child: OutlineButton(
-          onPressed: loginService,
+          onPressed: _isLoading ? null : loginService,
           child: Text(
-            'LOGIN',
+            _isLoading ? 'Loading ...' : 'LOGIN',
             style: TextStyle(color: Colors.white),
           ),
           borderSide: BorderSide(color: Colors.white),
@@ -214,9 +231,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginService() async {
-    print('Value userID : ${_userCtrl.text}');
-    print('Value Pasword : ${_passCtrl.text}');
-    await loginBloc.login(_userCtrl.text, _passCtrl.text);
-    print('Done');
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      print('Value userID : ${_userCtrl.text}');
+      print('Value Pasword : ${_passCtrl.text}');
+      await loginBloc.login(context, _userCtrl.text, _passCtrl.text);
+      print('Done');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

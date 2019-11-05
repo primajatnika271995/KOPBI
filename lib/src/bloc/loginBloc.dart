@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/models/loginResponseModel.dart';
 import 'package:kopbi/src/models/usersDetailsModel.dart';
 import 'package:kopbi/src/repository/loginRepository.dart';
+import 'package:kopbi/src/views/component/flushbar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,16 +14,17 @@ class LoginBloc {
   Observable<UsersDetailsModel> get streamUserDetails =>
       _userDetailsFetcher.stream;
 
-  login(String userId, String password) async {
-    UsersDetailsModel value = await _repository.login(userId, password);
+  login(BuildContext context, String userId, String password) async {
+    LoginResponseModel msg = await _repository.loginResponse(userId, password);
 
-    if (value != null) {
-      print(value.nomorAnggota);
-      print(value.nama);
-
+    if (msg.message != null) {
+      print(msg.message);
+      flushBar(context, "User ID tidak terdaftar", 3);
+    } else {
+      UsersDetailsModel value = await _repository.loginAnggota(userId, password);
       setPreferences(value);
-    } else  {
-      print('Data tidak terdaftar');
+
+      Navigator.of(context).pushReplacementNamed('/home');
     }
   }
 
@@ -37,4 +41,3 @@ class LoginBloc {
 }
 
 final loginBloc = LoginBloc();
-

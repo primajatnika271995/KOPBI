@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset('assets/logo/kopbi-logo.png', scale: 3.0),
+        child: Image.asset('assets/logo/kopbi-logo.png', scale: 4.0),
       ),
     );
   }
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
       var nomorAnggota = _pref.getString(NOMOR_ANGGOTA);
 
       if (nomorAnggota == null) {
-        Navigator.of(context).pushReplacementNamed('/');
+        Navigator.of(context).pushReplacementNamed('/login');
       } else {
         Navigator.of(context).pushReplacementNamed('/home');
       }

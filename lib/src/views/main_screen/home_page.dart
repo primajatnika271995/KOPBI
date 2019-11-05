@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kopbi/src/config/preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,6 +9,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _namaAnggota;
+  String _IDAnggota;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
                               text: ' 134 ',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 20)),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 20)),
                         ]),
                       ),
                     ),
@@ -77,8 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: TextStyle(fontSize: 13)),
                           TextSpan(
                               text: ' 2.040 ',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 13)),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 13)),
                         ]),
                       ),
                     ),
@@ -129,10 +133,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/icons/profile-icon.png'),
-                  backgroundColor: Colors.green,
-                  radius: 30,
+                InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: navSetting,
+                  child: CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/icons/profile-icon.png'),
+                    backgroundColor: Colors.green,
+                    radius: 30,
+                  ),
                 ),
                 Container(
                   child: Column(
@@ -140,12 +149,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'GAYUH PRIANJI',
+                        _namaAnggota == null ? "ADMIN" : '${_namaAnggota.toUpperCase()}',
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '000-000-001',
+                        _IDAnggota == null ? "001" : '$_IDAnggota',
                         style: TextStyle(fontSize: 17, color: Colors.grey),
                       )
                     ],
@@ -247,8 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               Material(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(
-                      1000),
+                  borderRadius: BorderRadius.circular(1000),
                   onTap: () {},
                   child: Container(
                     height: 55,
@@ -285,8 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               Material(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(
-                      1000),
+                  borderRadius: BorderRadius.circular(1000),
                   onTap: () {},
                   child: Container(
                     height: 55,
@@ -312,8 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               Material(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(
-                      1000),
+                  borderRadius: BorderRadius.circular(1000),
                   onTap: () {},
                   child: Container(
                     height: 55,
@@ -339,8 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               Material(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(
-                      1000),
+                  borderRadius: BorderRadius.circular(1000),
                   onTap: () {},
                   child: Container(
                     height: 55,
@@ -366,8 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: <Widget>[
               Material(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(
-                      1000),
+                  borderRadius: BorderRadius.circular(1000),
                   onTap: () {},
                   child: Container(
                     height: 55,
@@ -398,41 +402,57 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: IconButton(
-              icon: Icon(FontAwesomeIcons.globe),
-              color: Colors.lightGreen,
-              onPressed: () {},
-              iconSize: 35),
-          radius: 30,
+        InkWell(
+          borderRadius: BorderRadius.circular(55),
+          onTap: () {},
+          child: Container(
+            height: 55,
+            width: 55,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/icons/website.png'),
+              ),
+            ),
+          ),
         ),
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: IconButton(
-              icon: Icon(FontAwesomeIcons.instagram),
-              color: Colors.redAccent,
-              onPressed: () {},
-              iconSize: 35),
-          radius: 30,
+        InkWell(
+          borderRadius: BorderRadius.circular(55),
+          onTap: () {},
+          child: Container(
+            height: 55,
+            width: 55,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/icons/IG.png'),
+              ),
+            ),
+          ),
         ),
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: IconButton(
-              icon: Icon(FontAwesomeIcons.twitter),
-              color: Colors.blue,
-              onPressed: () {},
-              iconSize: 35),
-          radius: 30,
+        InkWell(
+          borderRadius: BorderRadius.circular(55),
+          onTap: () {},
+          child: Container(
+            height: 55,
+            width: 55,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/icons/twitter.png'),
+              ),
+            ),
+          ),
         ),
-        CircleAvatar(
-          backgroundColor: Colors.white,
-          child: IconButton(
-              icon: Icon(FontAwesomeIcons.youtube),
-              color: Colors.red,
-              onPressed: () {},
-              iconSize: 35),
-          radius: 30,
+        InkWell(
+          borderRadius: BorderRadius.circular(55),
+          onTap: () {},
+          child: Container(
+            height: 55,
+            width: 55,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/icons/youtube.png'),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -490,5 +510,22 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void getUserDetails() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    _namaAnggota = _pref.getString(NAMA_ANGGOTA);
+    _IDAnggota = _pref.getString(NOMOR_ANGGOTA);
+    setState(() {});
+  }
+
+  void navSetting() {
+    Navigator.of(context).pushNamed('/settings');
+  }
+
+  @override
+  void initState() {
+    getUserDetails();
+    super.initState();
   }
 }

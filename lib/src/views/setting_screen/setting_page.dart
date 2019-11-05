@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -229,7 +230,9 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  void navLogout() {
+  void navLogout() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    _pref.clear();
     Navigator.of(context).pushReplacementNamed('/login');
   }
 }
