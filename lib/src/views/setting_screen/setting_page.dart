@@ -118,6 +118,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             onTap: () {
               print('Pusat Bantuan');
+              Navigator.of(context).pushNamed('/settings-pusat-bantuan');
             },
           ),
         ),

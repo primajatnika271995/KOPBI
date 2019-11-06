@@ -46,6 +46,7 @@ class LoginBloc {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _pref.setString(NOMOR_ANGGOTA, value.nomorAnggota);
     _pref.setString(NAMA_ANGGOTA, value.nama);
+    _pref.setString(CONTACT_ANGGOTA, value.nomorHp);
     _pref.setString(IMG_PROFILE, urlImg);
   }
 

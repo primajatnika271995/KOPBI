@@ -34,7 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomSheet: Container(
-        color: Colors.green,
+        decoration: BoxDecoration(
+          color: Colors.green,
+          boxShadow: [
+            BoxShadow(color: Colors.grey, blurRadius: 7.0),
+          ],
+        ),
         height: 100,
         child: bottomMenu(),
       ),
@@ -68,9 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         text: TextSpan(children: <TextSpan>[
                           TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 134 ',
+                              text: ' 0, - ',
                               style:
-                                  TextStyle(color: Colors.black, fontSize: 20)),
+                                  TextStyle(color: Colors.red, fontSize: 20)),
                         ]),
                       ),
                     ),
@@ -82,9 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               text: 'SHU KOPBI',
                               style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 2.040 ',
+                              text: ' 100, - ',
                               style:
-                                  TextStyle(color: Colors.black, fontSize: 13)),
+                                  TextStyle(color: Colors.red, fontSize: 13)),
                         ]),
                       ),
                     ),
@@ -106,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         text: TextSpan(children: <TextSpan>[
                           TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 120.000 ',
-                              style: TextStyle(
-                                  color: Colors.redAccent, fontSize: 20)),
+                              text: ' 120.000, - ',
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 20)),
                         ]),
                       ),
                     ),
@@ -126,10 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Padding(
           padding:
-              const EdgeInsets.only(left: 20, right: 20, top: 90, bottom: 20),
+              const EdgeInsets.only(left: 30, right: 30, top: 90, bottom: 20),
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
                 boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5.0)]),
             height: 80,
             child: Row(
@@ -147,20 +153,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Container(
+                  height: 60,
+                  width: 1,
+                  color: Colors.grey,
+                ),
+                Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         _namaAnggota == null
-                            ? "ADMIN"
+                            ? "NO DATA"
                             : '${_namaAnggota.toUpperCase()}',
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        _IDAnggota == null ? "001" : '$_IDAnggota',
-                        style: TextStyle(fontSize: 17, color: Colors.grey),
+                        _IDAnggota == null ? "000" : '$_IDAnggota',
+                        style: TextStyle(fontSize: 17, color: Colors.grey[600]),
                       )
                     ],
                   ),
@@ -448,7 +459,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         InkWell(
           borderRadius: BorderRadius.circular(55),
-          onTap: () => navMedia('https://www.youtube.com/channel/UCRRkWX-rXZDbH0gzxrpSWew'),
+          onTap: () => navMedia(
+              'https://www.youtube.com/channel/UCRRkWX-rXZDbH0gzxrpSWew'),
           child: Container(
             height: 55,
             width: 55,

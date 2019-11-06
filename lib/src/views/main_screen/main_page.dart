@@ -49,13 +49,16 @@ class _MainScreenState extends State<MainScreen> {
             ],
           ),
         ),
-        body: TabBarView(children: [
-          HomeScreen(),
-          Center(child: Text('ANOTHER PAGE')),
-          Center(child: Text('ANOTHER PAGE')),
-          Center(child: Text('ANOTHER PAGE')),
-          Center(child: Text('ANOTHER PAGE')),
-        ]),
+        body: TabBarView(
+          children: [
+            HomeScreen(),
+            Center(child: Text('ANOTHER PAGE')),
+            Center(child: Text('ANOTHER PAGE')),
+            Center(child: Text('ANOTHER PAGE')),
+            Center(child: Text('ANOTHER PAGE')),
+          ],
+          physics: NeverScrollableScrollPhysics(),
+        ),
       ),
     );
   }

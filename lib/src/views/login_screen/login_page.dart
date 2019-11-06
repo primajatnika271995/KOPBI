@@ -166,13 +166,13 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 5),
       child: Container(
         width: screenWidth(context),
-        child: OutlineButton(
+        child: RaisedButton(
           onPressed: _isLoading ? null : loginService,
           child: Text(
             _isLoading ? 'Loading ...' : 'LOGIN',
             style: TextStyle(color: Colors.white),
           ),
-          borderSide: BorderSide(color: Colors.white),
+          color: Colors.cyan,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
             'REGISTRASI',
             style: TextStyle(color: Colors.white),
           ),
-          color: Colors.cyan,
+          color: Colors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
