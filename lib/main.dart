@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset('assets/logo/kopbi-logo.png', scale: 4.0),
+        child: Image.asset('assets/icons/Logo KOPBI.png', scale: 4.0),
       ),
     );
   }

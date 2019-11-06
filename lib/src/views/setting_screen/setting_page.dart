@@ -26,8 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               settingAkunField(),
-              keamananField(),
-              tentangField(),
               versionApp(),
               logoutButton(),
             ],
@@ -52,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
             readOnly: true,
             decoration: InputDecoration(
               hasFloatingPlaceholder: false,
-              hintText: 'Edit Profile',
+              hintText: 'Ubah Foto Profile',
               hintStyle: TextStyle(color: Colors.black),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
@@ -61,7 +59,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             onTap: () {
-              print('EDIT PROFILE');
+              print('UBAH FOTO PROFILE');
             },
           ),
         ),
@@ -71,7 +69,7 @@ class _SettingScreenState extends State<SettingScreen> {
             readOnly: true,
             decoration: InputDecoration(
               hasFloatingPlaceholder: false,
-              hintText: 'Kode Promo',
+              hintText: 'Ubah Password',
               hintStyle: TextStyle(color: Colors.black),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
@@ -80,7 +78,46 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             onTap: () {
-              print('Kode Promo');
+              print('Ubah Password');
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hasFloatingPlaceholder: false,
+              hintText: 'Tentang KOPBI Indonesia',
+              hintStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            onTap: () {
+              print('Tentang KOPBI');
+              Navigator.of(context).pushNamed('/settings-informasi');
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hasFloatingPlaceholder: false,
+              hintText: 'Pusat Bantuan',
+              hintStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            onTap: () {
+              print('Pusat Bantuan');
             },
           ),
         ),
