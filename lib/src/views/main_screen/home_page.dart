@@ -195,7 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/list-simpanan');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,

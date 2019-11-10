@@ -48,6 +48,7 @@ class LoginBloc {
     _pref.setString(NAMA_ANGGOTA, value.nama);
     _pref.setString(CONTACT_ANGGOTA, value.nomorHp);
     _pref.setString(IMG_PROFILE, urlImg);
+    _pref.setString(NIK, value.nomorNik);
   }
 
   dispose() async {

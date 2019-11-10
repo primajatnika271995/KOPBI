@@ -32,6 +32,10 @@ dependencies:
   rxdart: ^0.22.5
   shared_preferences: ^0.5.4+3
   flushbar: ^1.8.2
+  intl: ^0.16.0
+  gradient_app_bar: ^0.0.1
+  flutter_screenutil: ^0.6.0
+  division: ^0.8.2
 
 dev_dependencies:
   flutter_test:
