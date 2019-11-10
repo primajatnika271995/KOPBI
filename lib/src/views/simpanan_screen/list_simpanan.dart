@@ -411,18 +411,17 @@ class _SimpananListPageState extends State<SimpananListPage>
               IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
             ],
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(180),
-              child: Container(
-                height: 180,
-                color: Colors.green,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Parent(
-                    style: userCardStyle,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[_buildUserRow(), _buildUserStats()],
-                    ),
+              preferredSize: const Size.fromHeight(120),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Parent(
+                  style: userCardStyle,
+                  child: Column(
+                    children: <Widget>[
+                      _buildUserRow(),
+                      SizedBox(height: 10),
+                      _buildUserStats(),
+                    ],
                   ),
                 ),
               ),
@@ -524,7 +523,7 @@ class _SimpananListPageState extends State<SimpananListPage>
       children: <Widget>[
         Text(
           value.toString(),
-          style: TextStyle(color: Colors.white, fontSize: 20),
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
         SizedBox(
           height: 5,
@@ -540,7 +539,7 @@ class _SimpananListPageState extends State<SimpananListPage>
   //Styling
 
   final ParentStyle userCardStyle = ParentStyle()
-    ..height(175)
+    ..height(120)
     ..padding(horizontal: 5.0, vertical: 0)
     ..alignment.center()
     ..background.color(Colors.green);
@@ -557,7 +556,7 @@ class _SimpananListPageState extends State<SimpananListPage>
   final ParentStyle userStatsStyle = ParentStyle()..margin(vertical: 10.0);
 
   final TextStyle nameTextStyle = TextStyle(
-      color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.w600);
+      color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.w600);
 
   final TextStyle nameDescriptionTextStyle =
       TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12.0);

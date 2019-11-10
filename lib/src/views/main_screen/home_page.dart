@@ -223,7 +223,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/list-pinjaman');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -249,7 +251,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/konsumer');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -275,7 +279,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/perumahan');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -312,7 +318,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/isi-ulang');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -338,7 +346,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/tiket');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -364,7 +374,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/kredit');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
@@ -390,7 +402,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Material(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/lainnya');
+                  },
                   child: Container(
                     height: 55,
                     width: 55,
