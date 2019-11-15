@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kopbi/src/views/main_screen/event.dart';
 import 'package:kopbi/src/views/main_screen/home_page.dart';
+import 'package:kopbi/src/views/main_screen/info.dart';
+import 'package:kopbi/src/views/main_screen/kartu_anggota.dart';
+import 'package:kopbi/src/views/main_screen/profile.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -22,9 +26,9 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           bottom: TabBar(
-            isScrollable: false,
-            labelStyle: TextStyle(fontSize: 12),
+            labelStyle: TextStyle(fontSize: 13),
             indicatorColor: Colors.transparent,
+
             tabs: <Widget>[
               Tab(
                 text: 'Home',
@@ -32,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Tab(
                 text: 'Info',
-                icon: Icon(FontAwesomeIcons.addressCard),
+                icon: Icon(FontAwesomeIcons.info),
               ),
               Tab(
                 text: 'Event',
@@ -52,12 +56,12 @@ class _MainScreenState extends State<MainScreen> {
         body: TabBarView(
           children: [
             HomeScreen(),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
+            InfoTabs(),
+            EventTabs(),
+            KartuAnggota(),
+            ProfilePage(),
           ],
-          physics: NeverScrollableScrollPhysics(),
+//          physics: NeverScrollableScrollPhysics(),
         ),
       ),
     );
