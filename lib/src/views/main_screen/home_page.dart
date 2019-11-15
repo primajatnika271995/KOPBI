@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: <Widget>[
         Container(
           color: Colors.green,
-          height: 130,
+          height: 110,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
             child: Row(
@@ -79,20 +79,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: RichText(
-                        text: TextSpan(children: <TextSpan>[
-                          TextSpan(
-                              text: 'SHU KOPBI',
-                              style: TextStyle(fontSize: 13)),
-                          TextSpan(
-                              text: ' 100, - ',
-                              style:
-                                  TextStyle(color: Colors.red, fontSize: 13)),
-                        ]),
-                      ),
-                    ),
+//                    Padding(
+//                      padding: const EdgeInsets.only(bottom: 5),
+//                      child: RichText(
+//                        text: TextSpan(children: <TextSpan>[
+//                          TextSpan(
+//                              text: 'SHU KOPBI',
+//                              style: TextStyle(fontSize: 13)),
+//                          TextSpan(
+//                              text: ' 100, - ',
+//                              style:
+//                                  TextStyle(color: Colors.red, fontSize: 13)),
+//                        ]),
+//                      ),
+//                    ),
                   ],
                 ),
                 Column(
@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Padding(
           padding:
-              const EdgeInsets.only(left: 30, right: 30, top: 90, bottom: 20),
+              const EdgeInsets.only(left: 30, right: 30, top: 70, bottom: 20),
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,

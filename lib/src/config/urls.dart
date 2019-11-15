@@ -11,4 +11,7 @@ class APIUrl {
 
   // API End Point Pinjaman
   static const String pinjaman = "$_baseURL/kopbi-pinjaman";
+
+  // API End Point Pengajuan
+  static const String pengajuan = "$_baseURL/kopbi-pengajuan";
 }

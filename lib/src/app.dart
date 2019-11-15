@@ -40,7 +40,7 @@ void app() {
         '/settings-informasi': (context) => InformasiScreen(),
         '/settings-pusat-bantuan': (context) => PusatBantuanScreen(),
         '/list-simpanan': (context) => SimpananListPage(),
-        '/list-pinjaman': (context) => PinjamanScreen(),
+        '/list-pinjaman': (context) => PengajuanListPage(),
       },
     ),
   );

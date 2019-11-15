@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           bottom: TabBar(
             isScrollable: false,
-            labelStyle: TextStyle(fontSize: 12),
+            labelStyle: TextStyle(fontSize: 11),
             indicatorColor: Colors.transparent,
             tabs: <Widget>[
               Tab(
@@ -52,10 +52,86 @@ class _MainScreenState extends State<MainScreen> {
         body: TabBarView(
           children: [
             HomeScreen(),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
-            Center(child: Text('ANOTHER PAGE')),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
+//            Text(
+//              'Tidak Ada Riwayat',
+//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.symmetric(horizontal: 40),
+//              child: Text(
+//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
+//                style: TextStyle(fontSize: 13),
+//                textAlign: TextAlign.center,
+//              ),
+//            ),
+                ],
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
+//            Text(
+//              'Tidak Ada Riwayat',
+//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.symmetric(horizontal: 40),
+//              child: Text(
+//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
+//                style: TextStyle(fontSize: 13),
+//                textAlign: TextAlign.center,
+//              ),
+//            ),
+                ],
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
+//            Text(
+//              'Tidak Ada Riwayat',
+//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.symmetric(horizontal: 40),
+//              child: Text(
+//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
+//                style: TextStyle(fontSize: 13),
+//                textAlign: TextAlign.center,
+//              ),
+//            ),
+                ],
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
+//            Text(
+//              'Tidak Ada Riwayat',
+//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//            ),
+//            Padding(
+//              padding: EdgeInsets.symmetric(horizontal: 40),
+//              child: Text(
+//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
+//                style: TextStyle(fontSize: 13),
+//                textAlign: TextAlign.center,
+//              ),
+//            ),
+                ],
+              ),
+            ),
           ],
           physics: NeverScrollableScrollPhysics(),
         ),

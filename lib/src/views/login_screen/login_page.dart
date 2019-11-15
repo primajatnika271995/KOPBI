@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: RaisedButton(
           onPressed: navRegister,
           child: Text(
-            'REGISTRASI',
+            'AKTIVASI',
             style: TextStyle(color: Colors.white),
           ),
           color: Colors.grey,
