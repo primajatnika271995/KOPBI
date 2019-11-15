@@ -49,6 +49,16 @@ class LoginBloc {
     _pref.setString(CONTACT_ANGGOTA, value.nomorHp);
     _pref.setString(IMG_PROFILE, urlImg);
     _pref.setString(NIK, value.nomorNik);
+    _pref.setString(TGL_REGISTRASI, value.tanggalRegistrasi.toString());
+    _pref.setString(PEKERJAAN, value.pekerjaan);
+    _pref.setString(TEMPAT_LAHIR, value.tempatLahir);
+    _pref.setString(TANGGAL_LAHIR, value.tanggalLahir);
+    _pref.setString(ALAMAT, value.alamat);
+    _pref.setString(NAMA_PERUSAHAAN, value.namaPerusahaan);
+    _pref.setString(ALAMAT_PERUSAHAAN, value.alamatPerusahaan);
+    _pref.setString(LOKASI_PENEMPATAN, value.lokasiPenempatan);
+    _pref.setString(NAMA_KONFEDERENSI, value.namaKonfederasi);
+
   }
 
   dispose() async {

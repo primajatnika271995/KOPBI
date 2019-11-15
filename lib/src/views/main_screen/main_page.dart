@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kopbi/src/views/main_screen/event.dart';
 import 'package:kopbi/src/views/main_screen/home_page.dart';
+import 'package:kopbi/src/views/main_screen/info.dart';
+import 'package:kopbi/src/views/main_screen/kartu_anggota.dart';
+import 'package:kopbi/src/views/main_screen/profile.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -22,9 +26,9 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           bottom: TabBar(
-            isScrollable: false,
-            labelStyle: TextStyle(fontSize: 11),
+            labelStyle: TextStyle(fontSize: 13),
             indicatorColor: Colors.transparent,
+
             tabs: <Widget>[
               Tab(
                 text: 'Home',
@@ -32,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Tab(
                 text: 'Info',
-                icon: Icon(FontAwesomeIcons.addressCard),
+                icon: Icon(FontAwesomeIcons.info),
               ),
               Tab(
                 text: 'Event',
@@ -52,88 +56,12 @@ class _MainScreenState extends State<MainScreen> {
         body: TabBarView(
           children: [
             HomeScreen(),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.symmetric(horizontal: 40),
-//              child: Text(
-//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
-//                style: TextStyle(fontSize: 13),
-//                textAlign: TextAlign.center,
-//              ),
-//            ),
-                ],
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.symmetric(horizontal: 40),
-//              child: Text(
-//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
-//                style: TextStyle(fontSize: 13),
-//                textAlign: TextAlign.center,
-//              ),
-//            ),
-                ],
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.symmetric(horizontal: 40),
-//              child: Text(
-//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
-//                style: TextStyle(fontSize: 13),
-//                textAlign: TextAlign.center,
-//              ),
-//            ),
-                ],
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.symmetric(horizontal: 40),
-//              child: Text(
-//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
-//                style: TextStyle(fontSize: 13),
-//                textAlign: TextAlign.center,
-//              ),
-//            ),
-                ],
-              ),
-            ),
+            InfoTabs(),
+            EventTabs(),
+            KartuAnggota(),
+            ProfilePage(),
           ],
-          physics: NeverScrollableScrollPhysics(),
+//          physics: NeverScrollableScrollPhysics(),
         ),
       ),
     );
