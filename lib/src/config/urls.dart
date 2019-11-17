@@ -14,4 +14,7 @@ class APIUrl {
 
   // API End Point Pengajuan
   static const String pengajuan = "$_baseURL/kopbi-pengajuan";
+
+  // API End Point Barang
+  static const String barang = "$_baseURL/kopbi-master";
 }

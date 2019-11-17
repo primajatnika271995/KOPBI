@@ -58,7 +58,9 @@ class LoginBloc {
     _pref.setString(ALAMAT_PERUSAHAAN, value.alamatPerusahaan);
     _pref.setString(LOKASI_PENEMPATAN, value.lokasiPenempatan);
     _pref.setString(NAMA_KONFEDERENSI, value.namaKonfederasi);
-
+    _pref.setString(KODE_PERUSAHAAN, value.kodePerusahaan);
+    _pref.setString(EMAIL_PERUSAHAAN, value.emailPerusahaan);
+    _pref.setString(KODE_USER, value.kodeAnggota);
   }
 
   dispose() async {

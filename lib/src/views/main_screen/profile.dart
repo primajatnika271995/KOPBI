@@ -141,13 +141,13 @@ class MapScreenState extends State<ProfilePage>
                                   ),
                                 ],
                               ),
-                              new Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  _status ? _getEditIcon() : new Container(),
-                                ],
-                              )
+//                              new Column(
+//                                mainAxisAlignment: MainAxisAlignment.end,
+//                                mainAxisSize: MainAxisSize.min,
+//                                children: <Widget>[
+//                                  _status ? _getEditIcon() : new Container(),
+//                                ],
+//                              )
                             ],
                           )),
                       Padding(
@@ -392,13 +392,13 @@ class MapScreenState extends State<ProfilePage>
                                   ),
                                 ],
                               ),
-                              new Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  _status ? _getEditIcon() : new Container(),
-                                ],
-                              )
+//                              new Column(
+//                                mainAxisAlignment: MainAxisAlignment.end,
+//                                mainAxisSize: MainAxisSize.min,
+//                                children: <Widget>[
+//                                  _status ? _getEditIcon() : new Container(),
+//                                ],
+//                              )
                             ],
                           )),
                       Padding(

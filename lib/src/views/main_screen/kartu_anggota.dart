@@ -37,16 +37,16 @@ class _KartuAnggotaState extends State<KartuAnggota> {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Center(
             child: Container(
-              width: 340.0,
-              height: 175.0,
+              width: 300.0,
+              height: 155.0,
               decoration: BoxDecoration(
-                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 7)],
+                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0)),
+                  borderRadius: BorderRadius.circular(7.0)),
               child: Stack(
                 children: <Widget>[
                   Positioned(
-                    width: 430.0,
+                    width: 350.0,
                     top: -62.0,
                     right: -210.0,
                     child: RotatedBox(
@@ -80,12 +80,12 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Text("KARTU ANGGOTA",
-                                          style: TextStyle(fontSize: 25.0)),
+                                          style: TextStyle(fontSize: 18.0)),
                                       Text("Bersama, Maju, Sejahtera",
                                           style: TextStyle(
                                               color: Color.fromARGB(
                                                   255, 14, 65, 38),
-                                              fontSize: 17.0,
+                                              fontSize: 15.0,
                                               fontStyle: FontStyle.italic)),
                                     ],
                                   ),
@@ -94,14 +94,14 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 15.0),
                         Container(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text('$nama',
                                   style: TextStyle(
-                                      fontSize: 20.0,
+                                      fontSize: 16.0,
                                       fontWeight: FontWeight.bold)),
                               Text('$idNumber'),
                             ],
@@ -109,7 +109,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                         ),
                         SizedBox(height: 20.0),
                         Text("Terdaftar sejak $tglRegister",
-                            style: TextStyle(fontSize: 14.0))
+                            style: TextStyle(fontSize: 13.0))
                       ],
                     ),
                   )

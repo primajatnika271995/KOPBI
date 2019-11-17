@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 13),
+            labelStyle: TextStyle(fontSize: 11),
             indicatorColor: Colors.transparent,
 
             tabs: <Widget>[

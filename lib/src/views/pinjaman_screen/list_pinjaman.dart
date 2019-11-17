@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/services/pinjamanApi.dart';
+import 'package:kopbi/src/views/pinjaman_screen/tambah_pengajuan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengajuanListPage extends StatefulWidget {
@@ -426,195 +427,18 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                           : [],
                     ),
                   );
-
-                  return ListTile(
-                    onTap: () {
-                      if (data['typeof'] == 'pengajuan') {
-                        if (!data['status']
-                            .toLowerCase()
-                            .toString()
-                            .contains('can')) {
-                          setState(() {
-                            _listDataActive.forEach((k, v) {
-                              if (k != data['kode']) _listDataActive[k] = false;
-                            });
-                            _listDataActive[data['kode']] =
-                                !_listDataActive[data['kode']];
-                          });
-                        }
-                      }
-                    },
-                    //contentPadding: _listPengajuanActive[pinjaman.kodePengajuan] == true ?
-                    contentPadding: _listDataActive[data['kode']] == true
-                        ? EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0)
-                        : EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                    title: Container(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                              padding: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        blurRadius: 3.0, spreadRadius: -1.0),
-                                  ]),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: 50.0,
-                                          child: jenisIcon,
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 10.0),
-                                            //child: Text(pinjaman.tipePengajuan, style: TextStyle(fontSize: 20.0)),
-                                            child: Text(data['tipe'],
-                                                style:
-                                                    TextStyle(fontSize: 20.0)),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 150.0,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          decoration: BoxDecoration(
-                                              color: statusColor,
-                                              border: Border.all(
-                                                  color: Colors.black38)),
-                                          //child: Text(_prosesPengajuan[pinjaman.statusPengajuan.toLowerCase()] != null ? _prosesPengajuan[pinjaman.statusPengajuan.toLowerCase()] : pinjaman.statusPengajuan, textAlign: TextAlign.center, style: TextStyle(fontSize: 14.0, color: Colors.white)),
-                                          child: Text(
-                                              _prosesPengajuan[
-                                                          data['status']
-                                                              .toLowerCase()] !=
-                                                      null
-                                                  ? _prosesPengajuan[
-                                                      data['status']
-                                                          .toLowerCase()]
-                                                  : data['status'],
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  color: Colors.white)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Center(
-                                      child: Text("Jumlah Pinjaman",
-                                          style: TextStyle(fontSize: 14.0)),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Center(
-                                      //child: Text(pinjaman.formattedNominalPengajuan, style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
-                                      child: Text(data['formattedNominal'],
-                                          style: TextStyle(
-                                              fontSize: 24.0,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(top: 10.0),
-                                    child: Center(
-                                      child: Text("Tanggal Pengajuan",
-                                          style: TextStyle(fontSize: 14.0)),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(bottom: 10.0),
-                                    child: Center(
-                                      //child: Text(dateFormat(pinjaman.tanggalPengajuan), style: TextStyle(fontSize: 20.0)),
-                                      child: Text(dateFormat(data['tanggal']),
-                                          style: TextStyle(fontSize: 20.0)),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                          //_listPengajuanActive[pinjaman.kodePengajuan] == true ?
-                          _listDataActive[data['kode']] == true
-                              ? Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        child: FlatButton(
-                                          onPressed: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (_) => new AlertDialog(
-                                                      title: Text('Konfirmasi'),
-                                                      content: Text(
-                                                          'Anda yakin ingin membatalkan pengajuan?'),
-                                                      actions: <Widget>[
-                                                        FlatButton(
-                                                          onPressed: () {
-                                                            //batalkan(pinjaman);
-
-                                                            Pengajuan
-                                                                pengajuan =
-                                                                _listPengajuan
-                                                                    .firstWhere((_) =>
-                                                                        _.kodePengajuan ==
-                                                                        data[
-                                                                            'kode']);
-                                                            batalkan(pengajuan);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text('Ya'),
-                                                        ),
-                                                        FlatButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child: Text('Tidak'),
-                                                        ),
-                                                      ],
-                                                    ));
-                                          },
-                                          color: Color.fromARGB(255, 194, 9, 9),
-                                          textColor: Colors.white,
-                                          child: isLoading == true
-                                              ? Container(
-                                                  height: 20.0,
-                                                  width: 20.0,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation(
-                                                            Colors.white),
-                                                  ))
-                                              : Text("Batalkan",
-                                                  style: TextStyle(
-                                                      fontSize: 18.0)),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )
-                              : Container()
-                        ],
-                      ),
-                    ),
-                  );
                 },
               ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _scaffoldKey.currentState.showSnackBar(
-            SnackBar(
-              content: Text("Dalam Perbaikan!"),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => PengajuanTambahPage(),
             ),
-          );
+          ).then((_) {
+            returnBackData();
+          });
         },
         backgroundColor: Colors.green,
         child: Icon(Icons.add),
@@ -622,4 +446,11 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
       ),
     );
   }
+
+  void returnBackData() {
+    getListData();
+  }
 }
+
+
+
