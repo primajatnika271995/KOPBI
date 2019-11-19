@@ -481,29 +481,18 @@ class MapScreenState extends State<ProfilePage>
                               left: 25.0, right: 25.0, top: 25.0),
                           child: new Row(
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: new Text(
+                              new Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  new Text(
                                     'Lokasi Penempatan',
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                ),
-                                flex: 2,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  child: new Text(
-                                    'Nama Konfederasi',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                flex: 2,
+                                ],
                               ),
                             ],
                           )),
@@ -512,28 +501,52 @@ class MapScreenState extends State<ProfilePage>
                               left: 25.0, right: 25.0, top: 2.0),
                           child: new Row(
                             mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              Flexible(
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  child: new TextField(
-                                    decoration: const InputDecoration(
-                                        hintText: "Masukan lokasi penempatan"),
-                                    controller: lokasiPenempatan,
-                                    enabled: !_status,
-                                  ),
-                                ),
-                                flex: 2,
-                              ),
-                              Flexible(
+                              new Flexible(
                                 child: new TextField(
                                   decoration: const InputDecoration(
-                                      hintText: "Masukan nama Konfederasi"),
-                                  controller: namaKonfederasi,
+                                      hintText: "Masukan Lokasi Penempatan"),
+                                  controller: lokasiPenempatan,
+                                  maxLines: null,
                                   enabled: !_status,
                                 ),
-                                flex: 2,
+                              ),
+                            ],
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 25.0, right: 25.0, top: 25.0),
+                          child: new Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              new Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  new Text(
+                                    'Nama Konfederasi',
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              left: 25.0, right: 25.0, top: 2.0),
+                          child: new Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              new Flexible(
+                                child: new TextField(
+                                  decoration: const InputDecoration(
+                                      hintText: "Masukan Nama Konfederasi"),
+                                  controller: namaKonfederasi,
+                                  maxLines: null,
+                                  enabled: !_status,
+                                ),
                               ),
                             ],
                           )),

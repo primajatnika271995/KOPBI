@@ -33,6 +33,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Center(
@@ -40,7 +41,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
               width: 300.0,
               height: 155.0,
               decoration: BoxDecoration(
-                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+                  boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 15)],
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(7.0)),
               child: Stack(
@@ -72,25 +73,25 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                                 child:
                                     Image.asset('assets/icons/Logo KOPBI.png'),
                               ),
-                              Expanded(
-                                child: Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text("KARTU ANGGOTA",
-                                          style: TextStyle(fontSize: 18.0)),
-                                      Text("Bersama, Maju, Sejahtera",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 14, 65, 38),
-                                              fontSize: 15.0,
-                                              fontStyle: FontStyle.italic)),
-                                    ],
-                                  ),
-                                ),
-                              )
+//                              Expanded(
+//                                child: Container(
+//                                  child: Column(
+//                                    mainAxisAlignment: MainAxisAlignment.center,
+//                                    crossAxisAlignment:
+//                                        CrossAxisAlignment.center,
+//                                    children: <Widget>[
+//                                      Text("KARTU ANGGOTA",
+//                                          style: TextStyle(fontSize: 18.0)),
+//                                      Text("Bersama, Maju, Sejahtera",
+//                                          style: TextStyle(
+//                                              color: Color.fromARGB(
+//                                                  255, 14, 65, 38),
+//                                              fontSize: 15.0,
+//                                              fontStyle: FontStyle.italic)),
+//                                    ],
+//                                  ),
+//                                ),
+//                              )
                             ],
                           ),
                         ),
@@ -107,9 +108,9 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 20.0),
-                        Text("Terdaftar sejak $tglRegister",
-                            style: TextStyle(fontSize: 13.0))
+//                        SizedBox(height: 30.0),
+//                        Text("Terdaftar sejak $tglRegister",
+//                            style: TextStyle(fontSize: 13.0))
                       ],
                     ),
                   )

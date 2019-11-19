@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 11),
+            labelStyle: TextStyle(fontSize: 12),
             indicatorColor: Colors.transparent,
 
             tabs: <Widget>[
@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
                 icon: Icon(FontAwesomeIcons.stickyNote),
               ),
               Tab(
-                text: 'Member',
+                text: 'Card',
                 icon: Icon(FontAwesomeIcons.idCard),
               ),
               Tab(

@@ -7,7 +7,7 @@ class EventTabs extends StatefulWidget {
 }
 
 class _EventTabsState extends State<EventTabs> {
-  List<String> _alpahbet = ['a', 'b', 'c', 'd'];
+  List<String> _alpahbet = ['a', 'b'];
 
   @override
   Widget build(BuildContext context) {

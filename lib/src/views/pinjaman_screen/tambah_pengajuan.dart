@@ -767,7 +767,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                               Text("Pokok",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14.0)),
-                              Text("Bunga",
+                              Text("Bagi Hasil",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14.0)),
                               Text("Administrasi",
