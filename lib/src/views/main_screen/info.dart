@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/services/banner.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 
 class InfoTabs extends StatefulWidget {
@@ -7,33 +8,19 @@ class InfoTabs extends StatefulWidget {
 }
 
 class _InfoTabsState extends State<InfoTabs> {
+
+  MyBanner _bannerInformasi;
+
+  @override
+  void initState() {
+    _bannerInformasi = MyBanner(title: 'informasi');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: 4,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            child: Card(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
-              child: Container(
-                height: 170,
-                width: screenWidth(context),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          'http://solusi.kopbi.or.id:8888/kobi-images/informasi/${index + 1}.jpg'),
-                      fit: BoxFit.cover),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+      child: _bannerInformasi
     );
   }
 }

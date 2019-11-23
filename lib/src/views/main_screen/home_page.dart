@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,6 +14,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String _namaAnggota;
   String _IDAnggota;
   String _imgProfile;
+  String _nik;
+
+  ListSimpanan _listSimpanan;
+
+  int _totalAngsuran;
+
+  String formattedTotalSimpanan;
+  String formattedTotalPinjaman;
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(bottom: 7),
                       child: RichText(
                         text: TextSpan(children: <TextSpan>[
-                          TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 0, - ',
+                              text: '$formattedTotalSimpanan, - ',
                               style:
-                                  TextStyle(color: Colors.red, fontSize: 20)),
+                                  TextStyle(color: Colors.white, fontSize: 18)),
                         ]),
                       ),
                     ),
@@ -113,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(
                               text: ' 120.000, - ',
                               style:
-                                  TextStyle(color: Colors.red, fontSize: 20)),
+                                  TextStyle(color: Colors.white, fontSize: 18)),
                         ]),
                       ),
                     ),
@@ -568,9 +576,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void getDataSimpanan() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    _nik = _pref.getString(NIK);
+    _listSimpanan = ListSimpanan();
+    _totalAngsuran = 0;
+
+    formattedTotalSimpanan = _listSimpanan.formattedTotalSum;
+
+    print(_nik);
+
+    _listSimpanan.getList(nik: _nik).then((_) {
+      setState(() {
+        formattedTotalSimpanan = _listSimpanan.formattedTotalSum;
+        print(_listSimpanan.formattedTotalSum);
+      });
+    });
+  }
+
   @override
   void initState() {
     getUserDetails();
+    getDataSimpanan();
     super.initState();
   }
 }

@@ -22,10 +22,10 @@ class _MoreScreenState extends State<MoreScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
+            Text(
+              'Maaf, menu belum bisa anda gunakan untuk saat ini.',
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            ),
 //            Padding(
 //              padding: EdgeInsets.symmetric(horizontal: 40),
 //              child: Text(

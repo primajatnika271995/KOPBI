@@ -114,16 +114,17 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
     _quickNominalSelected = 500000;
 
+    _dLamaAngsuran = 1;
+
     _kodeTipePengajuan = 'UANG';
     _tipePengajuan = 'Uang';
     _nominalPengajuan = 500000;
     _lamaAngsuran = 1;
-    _persenBunga = (8 / 12);
+//    _persenBunga = (2 / _dLamaAngsuran);
+    _persenBunga = 2;
     _nominalBunga = 0;
     _totalBunga = 0;
     _biayaAdmin = 5000;
-
-    _dLamaAngsuran = 1;
 
     _listPerumahan = [
       {
