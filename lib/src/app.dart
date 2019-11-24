@@ -11,6 +11,7 @@ import 'package:kopbi/src/views/main_screen/main_page.dart';
 import 'package:kopbi/src/views/more_screen/more.dart';
 import 'package:kopbi/src/views/perumahan_screen/perumahan.dart';
 import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
+import 'package:kopbi/src/views/register_screen/bantuan.dart';
 import 'package:kopbi/src/views/register_screen/register_page.dart';
 import 'package:kopbi/src/views/setting_screen/informasi.dart';
 import 'package:kopbi/src/views/setting_screen/pusat_bantuan.dart';
@@ -29,6 +30,7 @@ void app() {
         '/login': (context) => LoginScreen(),
         '/re-login': (context) => ReLoginScreen(),
         '/register': (context) => RegisterScreen(),
+        '/bantuan': (context) => BantuanPage(),
         '/home': (context) => MainScreen(),
         '/konsumer': (context) => KonsumerScreen(),
         '/perumahan': (context) => PerumahanScreen(),

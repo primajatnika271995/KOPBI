@@ -26,21 +26,21 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.1, 0.5, 0.7, 0.9],
-                colors: [
-                  Colors.green[200],
-                  Colors.green[300],
-                  Colors.green[500],
-                  Colors.green[600],
-                ],
-              ),
-//              image: DecorationImage(
-//                image: AssetImage('assets/logo/leaf-background.jpg'),
-//                fit: BoxFit.cover
+//              gradient: LinearGradient(
+//                begin: Alignment.topCenter,
+//                end: Alignment.bottomCenter,
+//                stops: [0.1, 0.5, 0.7, 0.9],
+//                colors: [
+//                  Colors.green[200],
+//                  Colors.green[300],
+//                  Colors.green[500],
+//                  Colors.green[600],
+//                ],
 //              ),
+              image: DecorationImage(
+                image: AssetImage('assets/logo/leaf-background.jpg'),
+                fit: BoxFit.cover
+              ),
             ),
             height: screenHeight(context),
           ),
@@ -55,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       usernameField(),
+                      SizedBox(height: 15),
                       passwordField(),
                       signInButton(),
                       registerButton(),
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget appLogo() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         height: screenHeight(context, dividedBy: 2.1),
         child:
@@ -84,36 +85,45 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget usernameField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: TextFormField(
-        controller: _userCtrl,
-        style: TextStyle(color: Colors.white),
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.person, color: Colors.white),
-          hasFloatingPlaceholder: true,
-          labelText: 'User ID',
-          labelStyle: TextStyle(color: Colors.white),
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.0),
+          boxShadow: [
+            BoxShadow(color: Color.fromARGB(130, 0, 0, 0), offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -1.0)
+          ],
         ),
-        validator: (value) {
-          if (value.isEmpty) {
-            return 'User ID tidak boleh kosong';
-          } return null;
-        },
+        child: TextFormField(
+          controller: _userCtrl,
+          style: TextStyle(color: Colors.black),
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.person, color: Colors.black),
+            hasFloatingPlaceholder: true,
+            labelText: 'User ID',
+            labelStyle: TextStyle(color: Colors.black),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white,
+              ),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'User ID tidak boleh kosong';
+            } return null;
+          },
+        ),
       ),
     );
   }
@@ -121,42 +131,51 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget passwordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: TextFormField(
-        controller: _passCtrl,
-        style: TextStyle(color: Colors.white),
-        obscureText: obsecurePassword,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.lock, color: Colors.white),
-          suffixIcon: InkWell(
-            onTap: toggleObscure,
-            child: Icon(
-                obsecurePassword ? Icons.visibility : Icons.visibility_off,
-                color: Colors.white),
-          ),
-          hasFloatingPlaceholder: true,
-          labelText: 'Password',
-          labelStyle: TextStyle(color: Colors.white),
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white,
-            ),
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5.0),
+          boxShadow: [
+            BoxShadow(color: Color.fromARGB(130, 0, 0, 0), offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -1.0)
+          ],
         ),
-        validator: (value) {
-          if (value.isEmpty) {
-            return 'Password tidak boleh kosong';
-          } return null;
-        },
+        child: TextFormField(
+          controller: _passCtrl,
+          style: TextStyle(color: Colors.black),
+          obscureText: obsecurePassword,
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.lock, color: Colors.black),
+            suffixIcon: InkWell(
+              onTap: toggleObscure,
+              child: Icon(
+                  obsecurePassword ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.black),
+            ),
+            hasFloatingPlaceholder: true,
+            labelText: 'Password',
+            labelStyle: TextStyle(color: Colors.black),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white,
+              ),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Password tidak boleh kosong';
+            } return null;
+          },
+        ),
       ),
     );
   }
@@ -205,11 +224,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: OutlineButton.icon(
-        onPressed: () {},
-        icon: Icon(Icons.info, color: Colors.white),
+        onPressed: () {
+          Navigator.of(context).pushNamed('/bantuan');
+        },
+        icon: Icon(Icons.info, color: Colors.black),
         label: Text(
           'Butuh Bantuan?',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
         borderSide: BorderSide.none,
       ),

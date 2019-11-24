@@ -11,6 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  GlobalKey<ScaffoldState> _scaffoldKey;
+
   String _namaAnggota;
   String _IDAnggota;
   String _imgProfile;
@@ -25,32 +27,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          balanceField(),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              children: <Widget>[
-                menuRow1(),
-                menuRow2(),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: Column(
+          children: <Widget>[
+            balanceField(),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                children: <Widget>[
+                  menuRow1(),
+                  menuRow2(),
 //              iklanField(),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-      bottomSheet: Container(
-        decoration: BoxDecoration(
-          color: Colors.green,
-          boxShadow: [
-            BoxShadow(color: Colors.grey, blurRadius: 7.0),
           ],
         ),
-        height: 100,
-        child: bottomMenu(),
+        bottomSheet: Container(
+          decoration: BoxDecoration(
+            color: Colors.green,
+            boxShadow: [
+              BoxShadow(color: Colors.grey, blurRadius: 7.0),
+            ],
+          ),
+          height: 100,
+          child: bottomMenu(),
+        ),
       ),
     );
   }
@@ -593,6 +599,26 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Apakah Anda yakin ingin keluar?'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
+          ),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yakin'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
 
   @override
   void initState() {

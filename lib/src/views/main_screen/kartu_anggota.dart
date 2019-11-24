@@ -13,11 +13,6 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   String idNumber = 'admin';
   String tglRegister = 'admin';
 
-  DateFormat f = new DateFormat("yyyy-MM-dd");
-  DateTime tgl;
-
-  static var formatter = new DateFormat('yyyy-MM-dd');
-
   @override
   void initState() {
     // TODO: implement initState
@@ -28,13 +23,11 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   void getDetails() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
-    nama = _pref.getString(NAMA_ANGGOTA);
-    idNumber = _pref.getString(NOMOR_ANGGOTA);
-    tglRegister = _pref.getString(TGL_REGISTRASI);
-
-    tgl = f.parse(tglRegister);
-
-    setState(() {});
+    setState(() {
+      nama = _pref.getString(NAMA_ANGGOTA);
+      idNumber = _pref.getString(NOMOR_ANGGOTA);
+      tglRegister = _pref.getString(TGL_REGISTRASI);
+    });
   }
 
   @override
@@ -112,12 +105,13 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                                   style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold)),
+                              SizedBox(height: 2),
                               Text('$idNumber'),
                             ],
                           ),
                         ),
                         SizedBox(height: 10.0),
-                        Text("Terdaftar sejak $tglRegister",
+                        Text(tglRegister.length < 1 ? '-' : "Terdaftar sejak ${tglRegister.substring(0, tglRegister.length - 13)}",
                             style: TextStyle(fontSize: 13.0))
                       ],
                     ),
