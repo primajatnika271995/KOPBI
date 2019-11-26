@@ -29,8 +29,31 @@ class _EventTabsState extends State<EventTabs> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: _bannerEvent
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Container(
+        child: _bannerEvent
+      ),
     );
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Apakah Anda yakin ingin keluar?'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('Tidak'),
+          ),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yakin'),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

@@ -242,7 +242,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Text(
-        'Version 1.1.0',
+        'Version 2.0.2',
         style: TextStyle(color: Colors.grey),
       ),
     );

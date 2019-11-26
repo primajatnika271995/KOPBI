@@ -8,7 +8,6 @@ class InfoTabs extends StatefulWidget {
 }
 
 class _InfoTabsState extends State<InfoTabs> {
-
   MyBanner _bannerInformasi;
 
   @override
@@ -19,8 +18,29 @@ class _InfoTabsState extends State<InfoTabs> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: _bannerInformasi
+    return WillPopScope(
+      child: Container(child: _bannerInformasi),
+      onWillPop: _onWillPop,
     );
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Apakah Anda yakin ingin keluar?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yakin'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }
