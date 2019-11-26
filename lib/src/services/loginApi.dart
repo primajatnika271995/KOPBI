@@ -36,6 +36,6 @@ class LoginProvider {
       return response;
     } else if (response.statusCode == 406) {
       print("No Acceptable");
-    } return null;
+    } return response;
   }
 }

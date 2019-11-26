@@ -77,9 +77,8 @@ class MapScreenState extends State<ProfilePage> {
                           decoration: new BoxDecoration(
                             shape: BoxShape.circle,
                             image: new DecorationImage(
-                              image: imgProfile.text == null
-                                  ? new ExactAssetImage(
-                                  'assets/icons/no_user.jpg')
+                              image: imgProfile.text.length < 5
+                                  ? AssetImage('assets/icons/no_user.jpg')
                                   : NetworkImage(imgProfile.text),
                               fit: BoxFit.cover,
                             ),
@@ -175,6 +174,7 @@ class MapScreenState extends State<ProfilePage> {
                               hintText: "Enter Your Name",
                             ),
                             controller: namaAnggota,
+                            enabled: !_status,
                           ),
                         ),
                       ],

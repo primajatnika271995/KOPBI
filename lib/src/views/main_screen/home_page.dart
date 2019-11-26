@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         text: TextSpan(children: <TextSpan>[
                           TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 120.000, - ',
+                              text: ' 0, - ',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18)),
                         ]),

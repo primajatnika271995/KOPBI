@@ -1,4 +1,4 @@
-package project.tripartit.kopbi
+package id.or.kopbi.solusi.mobile
 
 import android.os.Bundle
 
