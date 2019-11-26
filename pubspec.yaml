@@ -39,6 +39,8 @@ dependencies:
   flutter_slidable: ^0.5.4
   flutter_masked_text: ^0.8.0
   path_provider: ^1.4.4
+  cached_network_image: ^1.1.3
+  flutter_email_sender: ^2.2.0
 
 dev_dependencies:
   flutter_test:

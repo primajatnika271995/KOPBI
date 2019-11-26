@@ -17,4 +17,11 @@ class APIUrl {
 
   // API End Point Barang
   static const String barang = "$_baseURL/kopbi-master";
+
+  //API End Point Anggota
+  static const String anggota = "$_baseURL/kopbi-agt";
+
+  //PI End Point Images
+  static const String images = "$_baseURL/kobi-images";
+
 }
