@@ -10,7 +10,7 @@ class Angsuran {
   String _kodeAngsuran;
   String _nomorPinjaman;
   String _status;
-  DateTime _tanggalJatuhTempo;
+  String _tanggalJatuhTempo;
   int _angsuranKe;
   int _nominalAngsuran;
   int _persenBunga;
@@ -22,7 +22,7 @@ class Angsuran {
   String get kodeAngsuran => _kodeAngsuran;
   String get nomorPinjaman => _nomorPinjaman;
   String get status => _status;
-  DateTime get tanggalJatuhTempo => _tanggalJatuhTempo;
+  String get tanggalJatuhTempo => _tanggalJatuhTempo;
   int get angsuranKe => _angsuranKe;
   int get nominalAngsuran => _nominalAngsuran;
   int get biayaAdmin => _biayaAdmin;
@@ -68,7 +68,7 @@ class Angsuran {
     _nomorPinjaman = m['nomorPinjaman'] == null ? '' : m['nomorPinjaman'];
     _status = m['status'] == null ? '' : m['status'];
 
-    _tanggalJatuhTempo = parseDate(explodeDate(m['tanggalJatuhTempo']));
+    _tanggalJatuhTempo = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
 
     _angsuranKe = m['angsuranKe'] == null ? 0 : tryParseInt(m['angsuranKe']);
     _nominalAngsuran = m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);

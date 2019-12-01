@@ -36,27 +36,78 @@ class MapScreenState extends State<ProfilePage> {
 
   void getDetails() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
+    String formatter = _pref.getString(TANGGAL_LAHIR);
 
-    namaAnggota.text = _pref.getString(NAMA_ANGGOTA);
-    noAnggota.text = _pref.getString(NOMOR_ANGGOTA);
-    tanggalRegistrasi.text = _pref.getString(TGL_REGISTRASI);
-    imgProfile.text = _pref.getString(IMG_PROFILE);
-    tanggalLahir.text = _pref.getString(TANGGAL_LAHIR);
-    tempatLahir.text = _pref.getString(TEMPAT_LAHIR);
-    alamat.text = _pref.getString(ALAMAT);
-    nik.text = _pref.getString(NIK);
-    pekerjaan.text = _pref.getString(PEKERJAAN);
+    if (formatter != null) {
+      String date = formatter.substring(formatter.length - 2);
+      String month = formatter.substring(5, 7);
+      String year = formatter.substring(0, 4);
 
-    namaPerusahaan.text = _pref.getString(NAMA_PERUSAHAAN);
-    alamatPerusahaan.text = _pref.getString(ALAMAT_PERUSAHAAN);
-    lokasiPenempatan.text = _pref.getString(LOKASI_PENEMPATAN);
-    namaKonfederasi.text = _pref.getString(NAMA_KONFEDERENSI);
+      namaAnggota.text = _pref.getString(NAMA_ANGGOTA);
+      noAnggota.text = _pref.getString(NOMOR_ANGGOTA);
+      tanggalRegistrasi.text = _pref.getString(TGL_REGISTRASI);
+      imgProfile.text = _pref.getString(IMG_PROFILE);
+      tanggalLahir.text = "$date-$month-$year";
+      tempatLahir.text = _pref.getString(TEMPAT_LAHIR);
+      alamat.text = _pref.getString(ALAMAT);
+      nik.text = _pref.getString(NIK);
+      pekerjaan.text = _pref.getString(PEKERJAAN);
+
+      namaPerusahaan.text = _pref.getString(NAMA_PERUSAHAAN);
+      alamatPerusahaan.text = _pref.getString(ALAMAT_PERUSAHAAN);
+      lokasiPenempatan.text = _pref.getString(LOKASI_PENEMPATAN);
+      namaKonfederasi.text = _pref.getString(NAMA_KONFEDERENSI);
+    } else {
+      namaAnggota.text = _pref.getString(NAMA_ANGGOTA);
+      noAnggota.text = _pref.getString(NOMOR_ANGGOTA);
+      tanggalRegistrasi.text = _pref.getString(TGL_REGISTRASI);
+      imgProfile.text = _pref.getString(IMG_PROFILE);
+      tanggalLahir.text = formatter;
+      tempatLahir.text = _pref.getString(TEMPAT_LAHIR);
+      alamat.text = _pref.getString(ALAMAT);
+      nik.text = _pref.getString(NIK);
+      pekerjaan.text = _pref.getString(PEKERJAAN);
+
+      namaPerusahaan.text = _pref.getString(NAMA_PERUSAHAAN);
+      alamatPerusahaan.text = _pref.getString(ALAMAT_PERUSAHAAN);
+      lokasiPenempatan.text = _pref.getString(LOKASI_PENEMPATAN);
+      namaKonfederasi.text = _pref.getString(NAMA_KONFEDERENSI);
+    }
 
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    String formattedTanggalRegistrasi(tglRegsiter) {
+      String formatted = tglRegsiter;
+
+      if(tglRegsiter.contains(RegExp(r"^\d{4}\-\d{2}\-\d{2}"))) {
+        List<String> split = tglRegsiter.split('-');
+
+        List<String> months = [
+          '',
+          'Januari',
+          'Februari',
+          'Maret',
+          'April',
+          'Mei',
+          'Juni',
+          'Juli',
+          'Agustus',
+          'September',
+          'Oktober',
+          'November',
+          'Desember',
+        ];
+
+        var bulan = int.parse(split[1]);
+
+        formatted = "${split[2].substring(0, split[2].length - 14)}-${split[1]}-${split[0]}";
+      }
+
+      return formatted;
+    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: new Scaffold(

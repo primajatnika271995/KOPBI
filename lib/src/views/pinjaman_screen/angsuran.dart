@@ -255,7 +255,9 @@ class _AngsuranListPageState extends State<AngsuranListPage>
   String dateFormat(DateTime dateTime) {
     if (dateTime == null) return '';
 
-    String date = dateTime.day.toString();
+    var a = dateTime.day + 1;
+
+    String date = a.toString();
 
     if (date.length == 1) date = "0$date";
 
@@ -285,6 +287,32 @@ class _AngsuranListPageState extends State<AngsuranListPage>
     Color jenisColor = Colors.green;
     Color jenisShadowColor = Color.fromARGB(100, 30, 231, 106);
 
+    String formatter = angsuran.tanggalJatuhTempo;
+
+    String date = formatter.substring(8, 10);
+    String month = formatter.substring(5, 7);
+    String year = formatter.substring(0, 4);
+
+    List<String> months = [
+      '',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+
+    var mnt = int.parse(month);
+
+    print("Tgl Jatuh Tempo ${angsuran.tanggalJatuhTempo} ");
+
     return ListTile(
       onTap: () {},
       title: Text(angsuran.status,
@@ -292,7 +320,7 @@ class _AngsuranListPageState extends State<AngsuranListPage>
           color: jenisColor
         ),
       ),
-      subtitle: Text("${dateFormat(angsuran.tanggalJatuhTempo)}",
+      subtitle: Text("$date ${months[mnt]} $year",
         style: TextStyle(
           color: Colors.grey,
         ),
