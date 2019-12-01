@@ -30,8 +30,39 @@ class _KartuAnggotaState extends State<KartuAnggota> {
     });
   }
 
+  String formattedTanggalRegistrasi(tglRegsiter) {
+    String formatted = tglRegsiter;
+
+    if(tglRegsiter.contains(RegExp(r"^\d{4}\-\d{2}\-\d{2}"))) {
+      List<String> split = tglRegsiter.split('-');
+
+      List<String> months = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+      ];
+
+      var bulan = int.parse(split[1]);
+
+      formatted = "${split[2].substring(0, split[2].length - 14)} ${months[bulan]} ${split[0]}";
+    }
+
+    return formatted;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Column(
@@ -113,7 +144,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                             ),
                           ),
                           SizedBox(height: 25.0),
-                          Text(tglRegister.length < 1 ? '-' : "Terdaftar sejak ${tglRegister.substring(0, tglRegister.length - 13)}",
+                          Text(formattedTanggalRegistrasi(tglRegister),
                               style: TextStyle(fontSize: 14.0))
                         ],
                       ),
