@@ -238,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
                   onTap: () {
-                    Navigator.of(context).pushNamed('/list-pinjaman');
+                    Navigator.of(context).pushNamed('/pinjaman');
                   },
                   child: Container(
                     height: 55,

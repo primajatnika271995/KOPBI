@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:division/division.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
@@ -9,10 +10,12 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:intl/intl.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/userApi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AngsuranListPage extends StatefulWidget {
   static String tag = 'angsuran-list-page';
@@ -54,6 +57,11 @@ class _AngsuranListPageState extends State<AngsuranListPage>
 
   bool isLoading;
 
+  String nik;
+  String namaAnggota;
+  String namaJabatan = "Anggota";
+  String imgUrl;
+
   @override
   // TODO: implement widget
   AngsuranListPage get widget => super.widget;
@@ -74,6 +82,7 @@ class _AngsuranListPageState extends State<AngsuranListPage>
     _listAngsuranDisplay = [];
 
     _totalAngsuranDibayar = 0;
+    getUserDetails();
 
     _dbAngsuran = ListAngsuran();
 
@@ -89,6 +98,13 @@ class _AngsuranListPageState extends State<AngsuranListPage>
     });
 
     getListSimpanan();
+  }
+
+  void getUserDetails() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    namaAnggota = _pref.getString(NAMA_ANGGOTA);
+    imgUrl = _pref.getString(IMG_PROFILE);
+    setState(() {});
   }
 
   void getListSimpanan() {
@@ -266,55 +282,30 @@ class _AngsuranListPageState extends State<AngsuranListPage>
   }
 
   Widget _buildItem(Angsuran angsuran, int index) {
-    Color jenisColor = Color.fromARGB(255, 30, 231, 106);
+    Color jenisColor = Colors.green;
     Color jenisShadowColor = Color.fromARGB(100, 30, 231, 106);
 
     return ListTile(
       onTap: () {},
-      contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 20.0),
-      title: Container(
-          padding: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: jenisColor,
-            borderRadius: BorderRadius.circular(15.0),
-            boxShadow: [
-              BoxShadow(
-                  color: jenisShadowColor, blurRadius: 15.0, spreadRadius: 1.0)
-            ],
-          ),
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                        width: (MediaQuery.of(context).size.width - 40.0) * 0.4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(dateFormat(angsuran.tanggalJatuhTempo),
-                                style: TextStyle(
-                                    fontSize:
-                                        ScreenUtil.getInstance().setSp(15),
-                                    fontFamily: 'SegoeUI')),
-                          ],
-                        )),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Text(angsuran.formattedTotalBayar,
-                            textAlign: TextAlign.end,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: ScreenUtil.getInstance().setSp(20),
-                                fontFamily: 'SegoeUI')),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )),
+      title: Text(angsuran.status,
+        style: TextStyle(
+          color: jenisColor
+        ),
+      ),
+      subtitle: Text("${dateFormat(angsuran.tanggalJatuhTempo)}",
+        style: TextStyle(
+          color: Colors.grey,
+        ),
+      ),
+      trailing: Text(
+        angsuran.formattedTotalBayar,
+        textAlign: TextAlign.end,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w700
+        ),
+      ),
     );
   }
 
@@ -341,165 +332,29 @@ class _AngsuranListPageState extends State<AngsuranListPage>
         return Scaffold(
           key: _scaffoldKey,
           resizeToAvoidBottomInset: true,
-          appBar: GradientAppBar(
-            backgroundColorStart: Color.fromARGB(255, 40, 181, 97),
-            backgroundColorEnd: Color.fromARGB(255, 28, 138, 39),
-            leading: IconButton(
-                splashColor: Colors.white70,
-                icon: Icon(Icons.home, color: Colors.white),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                }),
-            title: Text("Angsuran",
-                style: TextStyle(color: Colors.white, fontFamily: 'SegoeUI')),
+          appBar: AppBar(
+            elevation: 0,
+//            backgroundColorStart: Color.fromARGB(190, 153, 255, 51),
+//            backgroundColorEnd: Color.fromARGB(255, 51, 153, 153),
+            backgroundColor: Colors.green,
+            title: Text("Angsuran", style: TextStyle(color: Colors.white)),
+            titleSpacing: 0,
             bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(160.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                    pokokAnim != null
-                                        ? formatCurrency(pokokAnim.value)
-                                        : formatCurrency(0),
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            ScreenUtil.getInstance().setSp(20),
-                                        fontFamily: 'SegoeUI')),
-                                SizedBox(height: 5.0),
-                                Text("Pokok Pinjaman",
-                                    style: TextStyle(
-                                        color: Colors.white54,
-                                        fontSize:
-                                            ScreenUtil.getInstance().setSp(10),
-                                        fontFamily: 'SegoeUI')),
-                                SizedBox(height: 10.0),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                    angsuranAnim != null
-                                        ? formatCurrency(angsuranAnim.value)
-                                        : formatCurrency(0),
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            ScreenUtil.getInstance().setSp(20),
-                                        fontFamily: 'SegoeUI')),
-                                SizedBox(height: 5.0),
-                                Text("Angsuran",
-                                    style: TextStyle(
-                                        color: Colors.white54,
-                                        fontSize:
-                                            ScreenUtil.getInstance().setSp(10),
-                                        fontFamily: 'SegoeUI')),
-                                SizedBox(height: 10.0),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                              sisaAnim != null
-                                  ? formatCurrency(sisaAnim.value)
-                                  : formatCurrency(0),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: ScreenUtil.getInstance().setSp(35),
-                                  fontFamily: 'SegoeUI')),
-                          SizedBox(height: 5.0),
-                          Text("Sisa Pinjaman",
-                              style: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: ScreenUtil.getInstance().setSp(12),
-                                  fontFamily: 'SegoeUI')),
-                          SizedBox(height: 10.0),
-                        ],
-                      ),
-                    ),
-                    /* SizedBox(
-                    height: 90.0,
-                    child: PageView(
-                      controller: _tabController,
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: <Widget>[
-                              Text(pokokAnim != null ? formatCurrency(pokokAnim.value) : formatCurrency(0), style: TextStyle(color: Colors.white, fontSize: ScreenUtil.getInstance().setSp(35), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 5.0),
-                              Text("Simpanan Pokok", style: TextStyle(color: Colors.white54, fontSize: ScreenUtil.getInstance().setSp(12), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 10.0),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: <Widget>[
-                              Text(angsuranAnim != null ? formatCurrency(angsuranAnim.value) : formatCurrency(0), style: TextStyle(color: Colors.white, fontSize: ScreenUtil.getInstance().setSp(35), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 5.0),
-                              Text("Simpanan Wajib", style: TextStyle(color: Colors.white54, fontSize: ScreenUtil.getInstance().setSp(12), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 10.0),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: <Widget>[
-                              Text(sisaAnim != null ? formatCurrency(sisaAnim.value) : formatCurrency(0), style: TextStyle(color: Colors.white, fontSize: ScreenUtil.getInstance().setSp(35), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 5.0),
-                              Text("Simpanan Sukarela", style: TextStyle(color: Colors.white54, fontSize: ScreenUtil.getInstance().setSp(12), fontFamily: 'SegoeUI')),
-                              SizedBox(height: 10.0),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+              preferredSize: const Size.fromHeight(120),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Parent(
+                  style: userCardStyle,
+                  child: Column(
+                    children: <Widget>[
+                      _buildUserRow(),
+                      SizedBox(height: 10),
+                      _buildUserStats(),
+                    ],
                   ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 3.0, bottom: 10.0),
-                          child: Stack(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  tabIndicator(index: 0),
-                                  tabIndicator(index: 1),
-                                  tabIndicator(index: 2),
-                                ],
-                              ),
-                              Positioned(
-                                left: _tabActivePos,
-                                child: tabIndicator(active: true),
-                              )
-                            ],
-                          )
-                        )
-                      ],
-                    ),
-                  ) */
-                  ],
-                )),
+                ),
+              ),
+            ),
           ),
           body: Container(
             color: Colors.white,
@@ -530,4 +385,105 @@ class _AngsuranListPageState extends State<AngsuranListPage>
       },
     );
   }
+
+  Widget _buildUserRow() {
+    return Row(
+      children: <Widget>[
+        Parent(
+          style: userImageStyle,
+          child: CircleAvatar(
+            backgroundImage: imgUrl == null
+                ? AssetImage('assets/icons/no_user.jpg')
+                : NetworkImage(imgUrl),
+            backgroundColor: Colors.green,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              namaAnggota == null ? 'Admin' : namaAnggota,
+              style: nameTextStyle,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              namaJabatan,
+              style: nameDescriptionTextStyle,
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _buildUserStats() {
+    return Parent(
+      style: userStatsStyle,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          _buildUserStatsItem(
+              pokokAnim != null
+                  ? formatCurrency(pokokAnim.value)
+                  : formatCurrency(0),
+              'Pokok Pinjaman'),
+          _buildUserStatsItem(
+              angsuranAnim != null
+                  ? formatCurrency(angsuranAnim.value)
+                  : formatCurrency(0),
+              'Angsuran'),
+          _buildUserStatsItem(
+              sisaAnim != null
+                  ? formatCurrency(sisaAnim.value)
+                  : formatCurrency(0),
+              'Sisa Pinjaman'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserStatsItem(String value, String text) {
+    return Column(
+      children: <Widget>[
+        Text(
+          value.toString(),
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        Text(
+          text,
+          style: nameDescriptionTextStyle,
+        ),
+      ],
+    );
+  }
+
+  //Styling
+
+  final ParentStyle userCardStyle = ParentStyle()
+    ..height(120)
+    ..padding(horizontal: 5.0, vertical: 0)
+    ..alignment.center()
+    ..background.color(Colors.green);
+//    ..borderRadius(all: 20.0)
+//    ..elevation(0, color: hex('#3977FF'));
+
+  final ParentStyle userImageStyle = ParentStyle()
+    ..height(50)
+    ..width(50)
+    ..margin(right: 10.0)
+    ..borderRadius(all: 30)
+    ..background.hex('ffffff');
+
+  final ParentStyle userStatsStyle = ParentStyle()..margin(vertical: 10.0);
+
+  final TextStyle nameTextStyle = TextStyle(
+      color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.w600);
+
+  final TextStyle nameDescriptionTextStyle =
+  TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 12.0);
 }

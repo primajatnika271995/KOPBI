@@ -34,14 +34,14 @@ class Pinjaman {
   DateTime _tanggalTempo;
   DateTime _tanggalJatuhTempo;
   DateTime _tanggalUpdate;
-  int _lamaAngsuran;
-  int _angsuranKe;
-  int _nominalAngsuran;
-  int _sisaAngsuran;
-  int _persenBunga;
-  int _biayaAdmin;
-  int _nominalPinjaman;
-  int _sisaPinjaman;
+  dynamic _lamaAngsuran;
+  dynamic _angsuranKe;
+  dynamic _nominalAngsuran;
+  dynamic _sisaAngsuran;
+  dynamic _persenBunga;
+  dynamic _biayaAdmin;
+  dynamic _nominalPinjaman;
+  dynamic _sisaPinjaman;
   double _nominalBunga;
   double _totalBunga;
 

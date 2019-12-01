@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/views/pinjaman_screen/list_pengajuan.dart';
 import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
 
 class PinjamanScreen extends StatefulWidget {
@@ -16,16 +17,17 @@ class _PinjamanScreenState extends State<PinjamanScreen> {
           backgroundColor: Colors.green,
           title: Text("Pinjaman"),
           bottom: TabBar(
+            indicatorColor: Colors.white,
             tabs: [
-              Tab(text: "List Pengajuan"),
               Tab(text: "List Pinjaman"),
+              Tab(text: "List Pengajuan"),
             ],
           ),
         ),
         body: TabBarView(
           children: [
             PengajuanListPage(),
-            Container(),
+            PinjamanListPage(),
           ],
         ),
       ),

@@ -105,18 +105,18 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
     _listPinjaman = _dbPinjaman.listPinjaman;
 
     setState(() {
-      _listPengajuan.forEach((_) {
-        if (_.statusPengajuan.toLowerCase() != 'proc' && _.statusPengajuan.toLowerCase() != 'can') {
-          _listData.add({
-            'typeof': 'pengajuan',
-            'kode': _.kodePengajuan,
-            'tipe': _.tipePengajuan,
-            'status': _.statusPengajuan,
-            'formattedNominal': _.formattedNominalPengajuan,
-            'tanggal': _.tanggalPengajuan,
-          });
-        }
-      });
+//      _listPengajuan.forEach((_) {
+//        if (_.statusPengajuan.toLowerCase() != 'proc' && _.statusPengajuan.toLowerCase() != 'can') {
+//          _listData.add({
+//            'typeof': 'pengajuan',
+//            'kode': _.kodePengajuan,
+//            'tipe': _.tipePengajuan,
+//            'status': _.statusPengajuan,
+//            'formattedNominal': _.formattedNominalPengajuan,
+//            'tanggal': _.tanggalPengajuan,
+//          });
+//        }
+//      });
 
       _listPinjaman.forEach((_) {
         if (_.statusPinjaman.toLowerCase() != 'proc' && _.statusPinjaman.toLowerCase() != 'can') {
@@ -285,10 +285,10 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text("Pengajuan"),
-      ),
+//      appBar: AppBar(
+//        backgroundColor: Colors.green,
+//        title: Text("Pengajuan"),
+//      ),
       body: Container(
         color: Colors.white,
         //child: _listPengajuan.length == 0 ?
@@ -335,10 +335,10 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                   }
 
                   //if(pinjaman.statusPengajuan.toLowerCase().contains('can')) {
-                  if (data['status'].toLowerCase().contains('can')) {
+                  if (data['status'].toLowerCase().contains('belum')) {
                     statusColor = Color.fromARGB(255, 194, 9, 9);
                   } else {
-                    statusColor = Colors.blue;
+                    statusColor = Colors.green;
                   }
 
                   return Column(

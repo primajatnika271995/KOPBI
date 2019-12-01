@@ -37,6 +37,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
       List<String> split = tglRegsiter.split('-');
 
       List<String> months = [
+        '',
         'Januari',
         'Februari',
         'Maret',
