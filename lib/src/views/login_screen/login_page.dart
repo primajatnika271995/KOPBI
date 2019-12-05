@@ -38,9 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
 //                ],
 //              ),
               image: DecorationImage(
-                image: AssetImage('assets/logo/leaf-background.jpg'),
-                fit: BoxFit.cover
-              ),
+                  image: AssetImage('assets/logo/leaf-background.jpg'),
+                  fit: BoxFit.cover),
             ),
             height: screenHeight(context),
           ),
@@ -90,7 +89,11 @@ class _LoginScreenState extends State<LoginScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: [
-            BoxShadow(color: Color.fromARGB(130, 0, 0, 0), offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -1.0)
+            BoxShadow(
+                color: Color.fromARGB(130, 0, 0, 0),
+                offset: Offset.fromDirection(20.0),
+                blurRadius: 5.0,
+                spreadRadius: -1.0)
           ],
         ),
         child: TextFormField(
@@ -121,7 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
           validator: (value) {
             if (value.isEmpty) {
               return 'User ID tidak boleh kosong';
-            } return null;
+            }
+            return null;
           },
         ),
       ),
@@ -136,7 +140,11 @@ class _LoginScreenState extends State<LoginScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(5.0),
           boxShadow: [
-            BoxShadow(color: Color.fromARGB(130, 0, 0, 0), offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -1.0)
+            BoxShadow(
+                color: Color.fromARGB(130, 0, 0, 0),
+                offset: Offset.fromDirection(20.0),
+                blurRadius: 5.0,
+                spreadRadius: -1.0)
           ],
         ),
         child: TextFormField(
@@ -173,7 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
           validator: (value) {
             if (value.isEmpty) {
               return 'Password tidak boleh kosong';
-            } return null;
+            }
+            return null;
           },
         ),
       ),
@@ -203,19 +212,42 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget registerButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: Container(
-        width: screenWidth(context),
-        child: RaisedButton(
-          onPressed: navRegister,
-          child: Text(
-            'AKTIVASI',
-            style: TextStyle(color: Colors.white),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: RaisedButton(
+                onPressed: navRegister,
+                child: Text(
+                  'AKTIVASI',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
           ),
-          color: Colors.grey,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+          SizedBox(
+            width: 20,
           ),
-        ),
+          Expanded(
+            child: Container(
+              child: RaisedButton(
+                onPressed: navDaftar,
+                child: Text(
+                  'DAFTAR',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -239,6 +271,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void navRegister() {
     Navigator.of(context).pushNamed('/register');
+  }
+
+  void navDaftar() {
+    Navigator.of(context).pushNamed('/daftar');
   }
 
   void navHome() {

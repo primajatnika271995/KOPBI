@@ -5,6 +5,7 @@ import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:kopbi/src/views/isiulang_screen/isiulang.dart';
 import 'package:kopbi/src/views/konsumer_screen/konsumer.dart';
 import 'package:kopbi/src/views/kredit_screen/kredit.dart';
+import 'package:kopbi/src/views/login_screen/daftar.dart';
 import 'package:kopbi/src/views/login_screen/login_page.dart';
 import 'package:kopbi/src/views/login_screen/re_login.dart';
 import 'package:kopbi/src/views/main_screen/main_page.dart';
@@ -32,6 +33,7 @@ void app() {
         '/login': (context) => LoginScreen(),
         '/re-login': (context) => ReLoginScreen(),
         '/register': (context) => RegisterScreen(),
+        '/daftar': (context) => DaftarScreen(),
         '/bantuan': (context) => BantuanPage(),
         '/aktivasi': (context) => AktivasiScreen(),
         '/pinjaman': (context) => PinjamanScreen(),

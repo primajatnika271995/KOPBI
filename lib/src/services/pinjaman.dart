@@ -29,11 +29,11 @@ class Pinjaman {
   String _statusPinjaman;
   String _kodeUser;
   String _namaUser;
-  DateTime _tanggalPengajuan;
-  DateTime _tanggalPerubahan;
-  DateTime _tanggalTempo;
-  DateTime _tanggalJatuhTempo;
-  DateTime _tanggalUpdate;
+  dynamic _tanggalPengajuan;
+  dynamic _tanggalPerubahan;
+  dynamic _tanggalTempo;
+  dynamic _tanggalJatuhTempo;
+  dynamic _tanggalUpdate;
   dynamic _lamaAngsuran;
   dynamic _angsuranKe;
   dynamic _nominalAngsuran;
@@ -126,7 +126,7 @@ class Pinjaman {
     _kodeUser = m['kodeUser'];
     _namaUser = m['namaUser'];
     _tanggalPengajuan = parseDate(explodeDate(m['tanggalPengajuan']));
-    _tanggalPerubahan = parseDate(explodeDate(m['tanggalPerubahan']));
+    _tanggalPerubahan = m['tanggalPerubahan'] == null ? '' : m['tanggalPerubahan'];
     _tanggalTempo = parseDate(explodeDate(m['tanggalTempo']));
     _tanggalJatuhTempo = parseDate(explodeDate(m['tanggalJatuhTempo']));
     _tanggalUpdate = parseDate(explodeDate(m['tanggalUpdate']));

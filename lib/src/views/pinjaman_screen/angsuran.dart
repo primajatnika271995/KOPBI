@@ -255,7 +255,7 @@ class _AngsuranListPageState extends State<AngsuranListPage>
   String dateFormat(DateTime dateTime) {
     if (dateTime == null) return '';
 
-    var a = dateTime.day + 1;
+    var a = dateTime.day;
 
     String date = a.toString();
 
@@ -287,7 +287,7 @@ class _AngsuranListPageState extends State<AngsuranListPage>
     Color jenisColor = Colors.green;
     Color jenisShadowColor = Color.fromARGB(100, 30, 231, 106);
 
-    String formatter = angsuran.tanggalJatuhTempo;
+    String formatter = angsuran.tanggalBayar;
 
     String date = formatter.substring(8, 10);
     String month = formatter.substring(5, 7);
@@ -311,7 +311,7 @@ class _AngsuranListPageState extends State<AngsuranListPage>
 
     var mnt = int.parse(month);
 
-    print("Tgl Jatuh Tempo ${angsuran.tanggalJatuhTempo} ");
+    print("Tgl Bayar ${angsuran.tanggalBayar} ");
 
     return ListTile(
       onTap: () {},

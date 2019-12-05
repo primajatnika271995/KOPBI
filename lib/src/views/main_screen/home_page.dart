@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/services/angsuran.dart';
+import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _nik;
 
   ListSimpanan _listSimpanan;
+  ListPinjaman _listPinjaman;
 
   int _totalAngsuran;
 
@@ -123,9 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(bottom: 7),
                       child: RichText(
                         text: TextSpan(children: <TextSpan>[
-                          TextSpan(text: 'Rp', style: TextStyle(fontSize: 13)),
                           TextSpan(
-                              text: ' 0, - ',
+                              text: ' ${formattedTotalPinjaman}, - ',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18)),
                         ]),
@@ -582,13 +585,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String formattedNumber(dynamic number) {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(number);
+  }
+
+
   void getDataSimpanan() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _nik = _pref.getString(NIK);
     _listSimpanan = ListSimpanan();
+    _listPinjaman = ListPinjaman();
     _totalAngsuran = 0;
 
     formattedTotalSimpanan = _listSimpanan.formattedTotalSum;
+    formattedTotalPinjaman = _listPinjaman.formattedTotal;
 
     print(_nik);
 
@@ -598,6 +609,23 @@ class _HomeScreenState extends State<HomeScreen> {
         print(_listSimpanan.formattedTotalSum);
       });
     });
+
+    _listPinjaman.getList(nik: _nik).then((_) {
+      setState(() {
+        formattedTotalPinjaman = formattedNumber(_listPinjaman.total - _totalAngsuran);
+      });
+
+      _listPinjaman.listPinjaman.forEach((pinjaman) {
+        ListAngsuran listAnguran = ListAngsuran();
+        listAnguran.getList(nomorPinjaman: pinjaman.nomorPinjaman).then((_) {
+          setState(() {
+            _totalAngsuran += listAnguran.totalPaid;
+            formattedTotalPinjaman = formattedNumber(_listPinjaman.total - _totalAngsuran);
+          });
+        });
+      });
+    });
+
   }
 
   Future<bool> _onWillPop() {

@@ -296,7 +296,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
             ? Center(
             child: isLoading == true
                 ? CircularProgressIndicator(strokeWidth: 6.0)
-                : Text('Tidak ada pinjaman',
+                : Text('Tidak ada Pengajuan',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24.0,

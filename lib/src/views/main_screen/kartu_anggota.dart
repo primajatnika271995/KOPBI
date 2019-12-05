@@ -54,7 +54,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
 
       var bulan = int.parse(split[1]);
 
-      formatted = "${split[2].substring(0, split[2].length - 14)}-${split[1]}-${split[0]}";
+      formatted = "${split[2].substring(0, split[2].length - 13)}-${split[1]}-${split[0]}";
     }
 
     return formatted;

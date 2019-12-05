@@ -314,5 +314,10 @@ class ListSimpanan {
     _totalPokok = d['pokok'] - k['pokok'];
     _totalSukarela = d['sukarela'] - k['sukarela'];
     _totalSum = d['total'] - k['total'];
+
+    print(_totalWajib);
+    print(_totalPokok);
+    print(_totalSukarela);
+    print(_totalSum);
   }
 }
