@@ -244,7 +244,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                     Expanded(
                       flex: 15,
                       child: Text(
-                          "Pengambilan Simpanan Angota wajib menyertakan buku anggota yang dapat diperoleh di kantor Sekertariat KOPBI Indonesia dan memenuhi segala Ketentuan berlaku"),
+                          "Pengambilan Simpanan Anggota wajib menyertakan buku anggota yang dapat diperoleh di kantor Sekretariat KOPBI Indonesia dan memenuhi segala Ketentuan berlaku"),
                     ),
                   ],
                 ),

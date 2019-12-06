@@ -322,7 +322,17 @@ class ListPinjaman {
 
     for (Map<String, dynamic> item in m) {
       Pinjaman pinjaman = Pinjaman.fromMap(item);
-      _total += (pinjaman.nominalAngsuran * pinjaman.lamaAngsuran);
+
+      var a = pinjaman.nominalAngsuran; // nilai Pertama sudah berbentuk int
+      print(a);
+      var c = a / 1000; // nilai pertama dibagi 1000
+      print(c);
+      var z = c.toStringAsFixed(1); // hasil pembagian convert toString
+      print(z);
+      var q = double.parse(z) * 1000;
+      var x = q.toInt();// hasil string convert ke double
+      print(x);
+      _total += (x * pinjaman.lamaAngsuran);
       _listPinjaman.add(pinjaman);
     }
   }

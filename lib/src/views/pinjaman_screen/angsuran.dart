@@ -215,15 +215,26 @@ class _AngsuranListPageState extends State<AngsuranListPage>
   }
 
   void showData() {
+
+    var a = _pinjaman.nominalAngsuran; // nilai Pertama sudah berbentuk int
+    print(a);
+    var c = a / 1000; // nilai pertama dibagi 1000
+    print(c);
+    var z = c.toStringAsFixed(1); // hasil pembagian convert toString
+    print(z);
+    var q = double.parse(z) * 1000;
+    var x = q.toInt();// hasil string convert ke double
+    print(x);
+
     pokokAnim = IntTween(begin: 0, end: _pinjaman.nominalPinjaman).animate(
         CurvedAnimation(
             parent: totalAnimController, curve: Curves.easeInOutSine));
-    angsuranAnim = IntTween(begin: 0, end: _pinjaman.nominalAngsuran).animate(
+    angsuranAnim = IntTween(begin: 0, end: x).animate(
         CurvedAnimation(
             parent: totalAnimController, curve: Curves.easeInOutSine));
     sisaAnim = IntTween(
             begin: 0,
-            end: (_pinjaman.lamaAngsuran * _pinjaman.nominalAngsuran) -
+            end: (_pinjaman.lamaAngsuran *  x) -
                 _totalAngsuranDibayar)
         .animate(CurvedAnimation(
             parent: totalAnimController, curve: Curves.easeInOutSine));
