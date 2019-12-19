@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_mailer/flutter_mailer.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:image/image.dart' as img;
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -9,6 +14,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final globalKey = GlobalKey<ScaffoldState>();
 //  Variable checkbox
   bool isPrivacy = false;
 
@@ -19,9 +25,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  File imageKtp;
+  File imageDataDiri;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: globalKey,
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Text(
@@ -36,13 +46,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   informasiRegister(),
                   namaLengkapField(),
                   nomorKtpField(),
                   nomorPonselField(),
                   emailField(),
-                  acceptPrivacyPoliceField(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                    child: Text(
+                      "Upload Foto KTP dan Foto Diri",
+                      style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  formPhoto(),
+//                  acceptPrivacyPoliceField(),
                 ],
               ),
             ),
@@ -54,6 +76,83 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget formPhoto() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: InkWell(
+              onTap: getImageKTP,
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(5),
+                  image: imageKtp == null
+                      ? null
+                      : DecorationImage(
+                          image: FileImage(imageKtp),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                child: imageKtp == null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.file_upload, color: Colors.white),
+                            Text(
+                              "Upload KTP",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: getImageDataDiri,
+              child: Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(5),
+                  image: imageDataDiri == null
+                      ? null
+                      : DecorationImage(
+                          image: FileImage(imageDataDiri),
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                child: imageDataDiri == null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.file_upload, color: Colors.white),
+                            Text(
+                              "Upload Foto Diri",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -245,19 +344,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
       var nomorHP = nomorPonselCtrl.text;
       var email = emailCtrl.text;
 
-      final Email emailTo = Email(
-        body:
-        'Permohonan Aktivasi Anggota \n\n Nama Lengkap : $namaUser \n Nomor KTP : $nomorKTP \n Nomor HP : $nomorHP \n Email : $email \n\n Mohon dapat diverifikasi account tersebut diatas. Terimakasih',
-        subject: 'Aktivasi Anggota',
-        recipients: ['cs@kopbi.or.id'],
-        isHTML: false,
-      );
+      if (imageKtp == null || imageDataDiri == null) {
+        globalKey.currentState.showSnackBar(SnackBar(
+          content: Text("Silahkan Upload Foto KTP dan Data Diri"),
+        ));
+      } else {
+        final MailOptions emailTo = MailOptions(
+          body:
+              'Permohonan Aktivasi Anggota \n\n Nama Lengkap : $namaUser \n Nomor KTP : $nomorKTP \n Nomor HP : $nomorHP \n Email : $email \n\n Mohon dapat diverifikasi account tersebut diatas. Terimakasih',
+          subject: 'Aktivasi Anggota',
+          recipients: ['cs@kopbi.or.id'],
+          attachments: ['${imageKtp.path}', '${imageDataDiri.path}'],
+          isHTML: false,
+        );
 
-      try {
-        await FlutterEmailSender.send(emailTo);
-        onDialog();
-      } catch (error) {
-        print(error.toString());
+        try {
+          await FlutterMailer.send(emailTo);
+          onDialog();
+        } catch (error) {
+          print(error.toString());
+        }
       }
     }
   }
@@ -270,7 +376,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return AlertDialog(
           title: Text('Berhasil'),
           content: Text(
-              'Terima kasih telah telah melakukan Permohonan Aktivasi Anggota'),
+              'Terima kasih telah melakukan Permohonan Aktivasi Anggota'),
           actions: <Widget>[
             OutlineButton(
               onPressed: () {
@@ -282,5 +388,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       },
     );
+  }
+
+  /// Call function to Get Image From Camera
+
+  void getImageKTP() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    print('Select Camera');
+
+    var rename = await File(image.path).rename(
+        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/${nomorKtpCtrl.text}_ktp_upload.jpg');
+
+    setState(() {
+//      imageKtp = image;
+
+      imageKtp = rename;
+
+//      // Rename File
+//      img.Image reImage = img.decodeImage(File(image.path).readAsBytesSync());
+//
+//      img.Image thumbnail = img.copyResize(reImage, width: 120);
+//
+//      imageKtp = File('out/thumbnail.png')..writeAsBytesSync(img.encodePng(thumbnail));
+//      print(imageKtp.path);
+    });
+  }
+
+  /// Call function to Get Image From Camera
+
+  void getImageDataDiri() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    print('Select Camera');
+
+    var rename = await File(image.path).rename(
+        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/${nomorKtpCtrl.text}_selfie_upload.jpg');
+
+    setState(() {
+      imageDataDiri = rename;
+    });
   }
 }

@@ -102,7 +102,7 @@ class _SimpananListPageState extends State<SimpananListPage>
       switch (_) {
         case HttpStatus.success:
           setState(() {
-            _listSimpanan = _dbSimpanan.listSimpanan;
+            _listSimpanan = _dbSimpanan.listSimpanan.where((i) => i.kodeSimpanan.toLowerCase() == 'spw').toList();
 
             _listSimpanan.sort((a, b) {
               String tglTglA = a.tanggalSimpanan.day.toString();
@@ -284,15 +284,38 @@ class _SimpananListPageState extends State<SimpananListPage>
             color: simpanan.jenisIuran.toLowerCase() == 'penarikan'
                 ? Colors.white
                 : Colors.black,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        subtitle: Text(
-          dateFormat(simpanan.tanggalSimpanan),
-          style: TextStyle(
-            color: simpanan.jenisIuran.toLowerCase() == 'penarikan'
-                ? Colors.white
-                : Colors.grey,
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              dateFormat(simpanan.tanggalSimpanan).substring(3, dateFormat(simpanan.tanggalSimpanan).length),
+              style: TextStyle(
+                color: simpanan.jenisIuran.toLowerCase() == 'penarikan'
+                    ? Colors.white
+                    : Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              dateFormat(simpanan.tanggalSimpanan),
+              style: TextStyle(
+                color: simpanan.jenisIuran.toLowerCase() == 'penarikan'
+                    ? Colors.white
+                    : Colors.grey,
+                  fontSize: 12,
+              ),
+            ),
+          ],
         ),
         trailing: Text(
           simpanan.formattedNominalSimpanan,
