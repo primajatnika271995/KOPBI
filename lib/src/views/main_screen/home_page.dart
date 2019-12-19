@@ -5,6 +5,7 @@ import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,6 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String formattedTotalSimpanan;
   String formattedTotalPinjaman;
+
+  var currentVersion;
+  var oriBuildNumber = "13";
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 55,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/icons/Isi Ulang.png'),
+                        image: AssetImage('assets/icons/Isi-Ulang.png'),
                       ),
                     ),
                   ),
@@ -652,6 +656,53 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getUserDetails();
     getDataSimpanan();
+    getPackageName();
     super.initState();
   }
+
+  void getPackageName() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+
+    print("Aplikasi Version : $version");
+    print("Aplikasi Build Number : $buildNumber");
+
+    if (buildNumber != oriBuildNumber) {
+      updateApplicationDialog();
+    }
+
+  }
+
+  updateApplicationDialog() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog<String>(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) => new AlertDialog(
+          backgroundColor: Colors.white,
+          elevation: 20,
+          title: new Text("Aplikasi KPBI Terbaru Telah Tersedia"),
+          content: new Text("Pelanggan YTH, Kami telah melakukan pemutakhiran Aplikasi KOPBI."
+              "\n\nSilahkan Install Aplikasi KOPBI terbaru untuk mendapatkan fitur terbaru dan pelayanan terbaik. Terimakasih"),
+          actions: <Widget>[
+//            new FlatButton(
+//              child: new Text("Nanti", style: TextStyle(color: Colors.grey[800]),),
+//              onPressed: () {
+//                Navigator.of(context).pop();
+//              },
+//            ),
+            new FlatButton(
+              child: new Text("Install Sekarang"),
+              onPressed: () {
+                launch("https://play.google.com/store/apps/details?id=id.or.kopbi.solusi.mobile");
+              },
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+
 }
