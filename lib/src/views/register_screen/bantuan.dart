@@ -36,7 +36,7 @@ class _BantuanPageState extends State<BantuanPage> {
                   child: CircleAvatar(
                     backgroundColor: Colors.transparent,
                     radius: 100.0,
-                    child: Image.asset('assets/icons/Logo KOPBI.png'),
+                    child: Image.asset('assets/icons/Logo-KOPBI.png'),
                   ),
                 ),
 

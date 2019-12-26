@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' show Client;
 import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/urls.dart';
+import 'package:kopbi/src/models/appVersionModel.dart';
 import 'package:kopbi/src/models/loginResponseModel.dart';
 import 'package:kopbi/src/models/usersDetailsModel.dart';
 
@@ -18,6 +19,15 @@ class LoginProvider {
       }
 
       return compute(loginResponseModelFromJson, res);
+    }
+    return null;
+  }
+  
+  Future<http.Response> appVersion() async {
+    final response = await _client.post("http://solusi.kopbi.or.id/api/kopbi-master/list-komponen/INFO_APP");
+
+    if (response.statusCode == 200) {
+      return response;
     }
     return null;
   }

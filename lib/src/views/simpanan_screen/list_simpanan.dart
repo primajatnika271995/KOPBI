@@ -102,8 +102,9 @@ class _SimpananListPageState extends State<SimpananListPage>
       switch (_) {
         case HttpStatus.success:
           setState(() {
-            _listSimpanan = _dbSimpanan.listSimpanan.where((i) => i.kodeSimpanan.toLowerCase() == 'spw').toList();
+//            _listSimpanan = _dbSimpanan.listSimpanan.where((i) => i.kodeSimpanan.toLowerCase() == 'spw').toList();
 
+              _listSimpanan = _dbSimpanan.listSimpanan;
             _listSimpanan.sort((a, b) {
               String tglTglA = a.tanggalSimpanan.day.toString();
               String tglBlnA = a.tanggalSimpanan.month.toString();
@@ -293,8 +294,8 @@ class _SimpananListPageState extends State<SimpananListPage>
             SizedBox(
               height: 5,
             ),
-            Text(
-              dateFormat(simpanan.tanggalSimpanan).substring(3, dateFormat(simpanan.tanggalSimpanan).length),
+            simpanan.kodeSimpanan.toLowerCase() == 'spw' && simpanan.jenisIuran.toLowerCase() != 'penarikan' ? Text(
+              "${simpanan.bulan} ${simpanan.tahun} ",
               style: TextStyle(
                 color: simpanan.jenisIuran.toLowerCase() == 'penarikan'
                     ? Colors.white
@@ -302,7 +303,7 @@ class _SimpananListPageState extends State<SimpananListPage>
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
-            ),
+            ) : Container(),
             SizedBox(
               height: 5,
             ),

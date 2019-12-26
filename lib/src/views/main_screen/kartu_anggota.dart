@@ -88,7 +88,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                       child: RotatedBox(
                         quarterTurns: 3,
                         child: Image(
-                            image: AssetImage('assets/icons/Logo KOPBI.png')),
+                            image: AssetImage('assets/icons/Logo-KOPBI.png')),
                       ),
                     ),
                     Container(
@@ -106,7 +106,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                               children: <Widget>[
                                 Container(
                                   child:
-                                      Image.asset('assets/icons/Logo KOPBI.png'),
+                                      Image.asset('assets/icons/Logo-KOPBI.png'),
                                 ),
                                 Expanded(
                                   child: Container(

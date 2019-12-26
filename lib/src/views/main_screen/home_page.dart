@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/models/appVersionModel.dart';
 import 'package:kopbi/src/services/angsuran.dart';
+import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:package_info/package_info.dart';
@@ -32,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var currentVersion;
   var oriBuildNumber = "13";
+
+  var buildVersionBE;
 
   @override
   Widget build(BuildContext context) {
@@ -656,23 +662,44 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getUserDetails();
     getDataSimpanan();
-    getPackageName();
+//    getPackageName();
+    getVersionBackend();
     super.initState();
   }
 
-  void getPackageName() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
+  void getVersionBackend() async {
+    LoginProvider api = new LoginProvider();
+    await api.appVersion().then((response) async {
+      print(response.body);
+      List<AppVersion> value = appVersionFromJson(response.body);
+      print(value[0].nominal);
 
-    print("Aplikasi Version : $version");
-    print("Aplikasi Build Number : $buildNumber");
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String version = packageInfo.version;
+      String buildNumber = packageInfo.buildNumber;
 
-    if (buildNumber != oriBuildNumber) {
-      updateApplicationDialog();
-    }
+      print("Aplikasi Version : $version");
+      print("Aplikasi Build Number : $buildNumber");
 
+      if (version != value[0].nominal) {
+        updateApplicationDialog();
+      }
+    });
   }
+
+//  void getPackageName() async {
+//    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+//    String version = packageInfo.version;
+//    String buildNumber = packageInfo.buildNumber;
+//
+//    print("Aplikasi Version : $version");
+//    print("Aplikasi Build Number : $buildNumber");
+//
+//    if (buildNumber != oriBuildNumber) {
+//      updateApplicationDialog();
+//    }
+//
+//  }
 
   updateApplicationDialog() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {

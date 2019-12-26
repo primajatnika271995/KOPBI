@@ -22,6 +22,7 @@ class PengajuanTambahPage extends StatefulWidget {
 class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   ListBarang _dbBarang;
+  ListSimpanan _listSimpanan;
 
   TextEditingController _keteranganController;
   MoneyMaskedTextController _nominalPengajuanController;
@@ -41,6 +42,8 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   int _nominalBunga;
   int _totalBunga;
   int _biayaAdmin;
+
+  int totalSimpanan;
 
   String nomorNik;
   String nomorKtp;
@@ -85,6 +88,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     super.initState();
 
     getDetails();
+    getDataSimpanan();
 
     _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -196,6 +200,23 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       alamatPerusahaan = _pref.getString(ALAMAT_PERUSAHAAN);
       emailPerusahaan = _pref.getString(EMAIL_PERUSAHAAN);
       kodeAnggota = _pref.getString(KODE_USER);
+    });
+  }
+
+  void getDataSimpanan() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var _nik = _pref.getString(NIK);
+    _listSimpanan = ListSimpanan();
+
+    totalSimpanan = _listSimpanan.totalSum;
+
+    print(_nik);
+
+    _listSimpanan.getList(nik: _nik).then((_) {
+      setState(() {
+        totalSimpanan = _listSimpanan.totalSum;
+        print(_listSimpanan.formattedTotalSum);
+      });
     });
   }
 
@@ -338,6 +359,20 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   String hitungBunga() {
     setState(() {
+
+      if (_nominalPengajuan < totalSimpanan) {
+        setState(() {
+          _persenBunga = 8;
+        });
+      } else if (_nominalPengajuan > totalSimpanan) {
+        setState(() {
+          _persenBunga = 2;
+        });
+      }
+
+      print("ini total simpanan : $totalSimpanan");
+      print("ini bagi hasil : $_persenBunga");
+
       _bunga =
           ((_nominalPengajuan * ((_persenBunga) / 100)).round() / 100).ceil() *
               100;
@@ -588,10 +623,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                                               textInputAction:
                                                   TextInputAction.done,
                                               focusNode: _nominalFocus,
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(7.0),
-                                              ),
                                               onSaved: (_) {
                                                 _nominalFocus.unfocus();
                                               },

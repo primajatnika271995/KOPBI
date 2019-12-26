@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         height: screenHeight(context, dividedBy: 2.1),
         child:
-            Image.asset('assets/icons/Logo KOPBI.png', height: 150, width: 150),
+            Image.asset('assets/icons/Logo-KOPBI.png', height: 150, width: 150),
       ),
     );
   }
