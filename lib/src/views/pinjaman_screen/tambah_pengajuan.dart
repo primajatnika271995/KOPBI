@@ -362,7 +362,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
       if (_nominalPengajuan < totalSimpanan) {
         setState(() {
-          _persenBunga = 8;
+          _persenBunga = (8 / 12);
         });
       } else if (_nominalPengajuan > totalSimpanan) {
         setState(() {
