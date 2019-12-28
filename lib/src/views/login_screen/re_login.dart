@@ -51,6 +51,25 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
                 avatarContent(),
                 idField(),
                 passwordField(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Container(
+                    width: screenWidth(context),
+                    child: RaisedButton(
+                      onPressed: loginService,
+                      color: Colors.red,
+                      child: _isLoading
+                          ? Text(
+                        'Mohon tunggu ...',
+                        style: TextStyle(color: Colors.white),
+                      )
+                          : Text(
+                        'MASUK',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -69,19 +88,12 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Container(
-                width: screenWidth(context),
-                child: RaisedButton(
+                child: OutlineButton(
                   onPressed: navLogout,
-                  color: Colors.red,
-                  child: _isLoading
-                      ? Text(
-                          'Mohon tunggu ...',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      : Text(
-                          'PINDAH KE AKUN LAIN',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                  child: Text(
+                    'PINDAH KE AKUN LAIN',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ),
@@ -113,7 +125,7 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
 
   Widget passwordField() {
     return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 25),
+      padding: const EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 15),
       child: TextFormField(
           controller: _passCtrl,
           style: TextStyle(color: Colors.white),
@@ -145,7 +157,7 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
               ),
             ),
           ),
-          onEditingComplete: loginService),
+      ),
     );
   }
 

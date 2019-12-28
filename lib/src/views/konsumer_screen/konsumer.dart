@@ -8,36 +8,46 @@ class KonsumerScreen extends StatefulWidget {
 class _KonsumerScreenState extends State<KonsumerScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 1,
-        backgroundColor: Colors.green,
-        title: Text(
-          'Konsumer',
-          style: TextStyle(color: Colors.white, fontSize: 16),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: Colors.green,
+          title: Text(
+            'Konsumer',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            tabs: <Widget>[
+              Tab(text: "Riwayat Konsumer"),
+              Tab(text: "Pengajuan Konsumer")
+            ],
+          ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        body: TabBarView(
           children: <Widget>[
-            Image.asset('assets/icons/no_data.png', height: 250, width: 250),
-            Text(
-              'Maaf, menu belum bisa anda gunakan untuk saat ini.',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            Center(
+              child: Text(
+                'Tidak ada riwayat',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.0,
+                  color: Colors.black45,
+                ),
+              ),
             ),
-//            Text(
-//              'Tidak Ada Riwayat',
-//              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-//            ),
-//            Padding(
-//              padding: EdgeInsets.symmetric(horizontal: 40),
-//              child: Text(
-//                'Perbanyak transaksimu dan nikmati berbagai promo menarik dari KOPBI Solution.',
-//                style: TextStyle(fontSize: 13),
-//                textAlign: TextAlign.center,
-//              ),
-//            ),
+            Center(
+              child: Text(
+                'Tidak ada pengajuan',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.0,
+                  color: Colors.black45,
+                ),
+              ),
+            ),
           ],
         ),
       ),

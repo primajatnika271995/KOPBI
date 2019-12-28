@@ -84,20 +84,16 @@ class _MyBannerState extends State<MyBanner> {
       case 'informasi':
         task = Timer(Duration(seconds: 1), () async {
           try {
-            String url = "https://aksarabiner.id/kopbi_banner/?q=informasi";
-
-            var uriResponse = await client.get(url);
-
-            List<dynamic> m = jsonDecode(uriResponse.body);
 
             _listBannerUrl = [];
 
             setState(() {
               clearBanner();
 
-              m.forEach((url) {
-                _listBannerUrl.add(url);
-              });
+              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/1.jpg");
+              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/2.jpg");
+              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/3.jpg");
+              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/4.jpg");
 
               showBanner();
             });
@@ -111,12 +107,6 @@ class _MyBannerState extends State<MyBanner> {
       case 'event':
         task = Timer(Duration(seconds: 1), () async {
           try {
-            String url = "https://aksarabiner.id/kopbi_banner/?q=kegiatan";
-
-            var uriResponse = await client.get(url);
-
-            List<dynamic> m = jsonDecode(uriResponse.body);
-
             _listBannerUrl = [];
 
             setState(() {

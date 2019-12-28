@@ -206,43 +206,6 @@ class MapScreenState extends State<ProfilePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Nama',
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 25.0, right: 25.0, top: 2.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Flexible(
-                            child: new TextField(
-                              decoration: const InputDecoration(
-                                hintText: "Enter Your Name",
-                              ),
-                              controller: namaAnggota,
-                              enabled: !_status,
-                            ),
-                          ),
-                        ],
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 25.0, right: 25.0, top: 25.0),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          new Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Text(
                                 'Nomor Anggota',
                                 style: TextStyle(
                                     fontSize: 16.0,
@@ -279,7 +242,7 @@ class MapScreenState extends State<ProfilePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               new Text(
-                                'Nomor NIK',
+                                'Nama',
                                 style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold),
@@ -297,8 +260,9 @@ class MapScreenState extends State<ProfilePage> {
                           new Flexible(
                             child: new TextField(
                               decoration: const InputDecoration(
-                                  hintText: "Nomor NIK"),
-                              controller: nik,
+                                hintText: "Enter Your Name",
+                              ),
+                              controller: namaAnggota,
                               enabled: !_status,
                             ),
                           ),
@@ -403,6 +367,45 @@ class MapScreenState extends State<ProfilePage> {
                       ],
                     ),
                   ),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 25.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Alamat',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
+                  Padding(
+                    padding:
+                    EdgeInsets.only(left: 25.0, right: 25.0, top: 2.0),
+                    child: new Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        new Flexible(
+                          child: new TextField(
+                            decoration: const InputDecoration(
+                              hintText: "Masukan Alamat",
+                            ),
+                            controller: alamat,
+                            maxLines: 2,
+                            enabled: !_status,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -439,6 +442,42 @@ class MapScreenState extends State<ProfilePage> {
 //                                  _status ? _getEditIcon() : new Container(),
 //                                ],
 //                              )
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 25.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Nomor NIK',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 2.0),
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Flexible(
+                            child: new TextField(
+                              decoration: const InputDecoration(
+                                  hintText: "Nomor NIK"),
+                              controller: nik,
+                              enabled: !_status,
+                            ),
+                          ),
                         ],
                       )),
                   Padding(
@@ -550,6 +589,44 @@ class MapScreenState extends State<ProfilePage> {
                               enabled: !_status,
                             ),
                           ),
+                        ],
+                      )),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 25.0),
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.0, right: 25.0, top: 5.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Text(
+                                'Confederation Information',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.lightGreen,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+//                              new Column(
+//                                mainAxisAlignment: MainAxisAlignment.end,
+//                                mainAxisSize: MainAxisSize.min,
+//                                children: <Widget>[
+//                                  _status ? _getEditIcon() : new Container(),
+//                                ],
+//                              )
                         ],
                       )),
                   Padding(
