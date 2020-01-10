@@ -87,16 +87,30 @@ class _MyBannerState extends State<MyBanner> {
 
             _listBannerUrl = [];
 
-            setState(() {
-              clearBanner();
+            _listBannerUrl = [];
 
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/1.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/2.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/3.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/4.jpg");
+            http.Response uriResponse = await client.post("http://solusi.kopbi.or.id/api/kopbi-master/list-konten/informasi");
 
-              showBanner();
+            List<dynamic> m = jsonDecode(uriResponse.body);
+
+            m.forEach((url) {
+              print(url["id"]);
+              setState(() {
+                _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/${url['id']}.jpg");
+                showBanner();
+              });
             });
+
+//            setState(() {
+//              clearBanner();
+//
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/1.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/2.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/3.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/4.jpg");
+//
+//              showBanner();
+//            });
           } catch (ie) {
             print('Error detail');
             print(ie);
@@ -107,19 +121,32 @@ class _MyBannerState extends State<MyBanner> {
       case 'event':
         task = Timer(Duration(seconds: 1), () async {
           try {
+
             _listBannerUrl = [];
 
-            setState(() {
-              clearBanner();
+            http.Response uriResponse = await client.post("http://solusi.kopbi.or.id/api/kopbi-master/list-konten/kegiatan");
 
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg");
-              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg");
+            List<dynamic> m = jsonDecode(uriResponse.body);
 
-              showBanner();
+            m.forEach((url) {
+              print(url["id"]);
+              setState(() {
+                _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/${url["id"]}.jpg");
+                showBanner();
+              });
             });
+
+//            setState(() {
+//              clearBanner();
+//
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg");
+//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg");
+//
+//              showBanner();
+//            });
           } catch (ie) {
             print('Error detail');
             print(ie);

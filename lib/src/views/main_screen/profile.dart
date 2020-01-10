@@ -138,21 +138,21 @@ class MapScreenState extends State<ProfilePage> {
                             )),
                       ],
                     ),
-                    Padding(
-                        padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new CircleAvatar(
-                              backgroundColor: Colors.red,
-                              radius: 25.0,
-                              child: new Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                              ),
-                            )
-                          ],
-                        )),
+//                    Padding(
+//                        padding: EdgeInsets.only(top: 90.0, right: 100.0),
+//                        child: new Row(
+//                          mainAxisAlignment: MainAxisAlignment.center,
+//                          children: <Widget>[
+//                            new CircleAvatar(
+//                              backgroundColor: Colors.red,
+//                              radius: 25.0,
+//                              child: new Icon(
+//                                Icons.camera_alt,
+//                                color: Colors.white,
+//                              ),
+//                            )
+//                          ],
+//                        )),
                   ]),
                 )
               ],

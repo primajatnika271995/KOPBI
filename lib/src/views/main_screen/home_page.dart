@@ -168,16 +168,25 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                InkWell(
-                  borderRadius: BorderRadius.circular(30),
-                  onTap: navSetting,
-                  child: CircleAvatar(
-                    backgroundImage: _imgProfile == null
-                        ? AssetImage('assets/icons/no_user.jpg')
-                        : NetworkImage(_imgProfile),
-                    backgroundColor: Colors.green,
-                    radius: 30,
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    InkWell(
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: navSetting,
+                      child: CircleAvatar(
+                        backgroundImage: _imgProfile == null
+                            ? AssetImage('assets/icons/no_user.jpg')
+                            : NetworkImage(_imgProfile),
+                        backgroundColor: Colors.green,
+                        radius: 25,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Text('Pengaturan Akun'),
+                    ),
+                  ],
                 ),
                 Container(
                   height: 60,
@@ -346,6 +355,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
                   onTap: () {
+                    Navigator.of(context).pushNamed('/kredit');
+                  },
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/icons/Kredit.png'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  'Kredit',
+                  style: TextStyle(fontSize: 13),
+                ),
+              )
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Material(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(1000),
+                  onTap: () {
                     Navigator.of(context).pushNamed('/isi-ulang');
                   },
                   child: Container(
@@ -391,34 +428,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
                   'Tiket',
-                  style: TextStyle(fontSize: 13),
-                ),
-              )
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              Material(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(1000),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/kredit');
-                  },
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/icons/Kredit.png'),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'Kredit',
                   style: TextStyle(fontSize: 13),
                 ),
               )
@@ -704,12 +713,12 @@ class _HomeScreenState extends State<HomeScreen> {
   updateApplicationDialog() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await showDialog<String>(
-        barrierDismissible: false,
+        barrierDismissible: true,
         context: context,
         builder: (BuildContext context) => new AlertDialog(
           backgroundColor: Colors.white,
           elevation: 20,
-          title: new Text("Aplikasi KPBI Terbaru Telah Tersedia"),
+          title: new Text("Aplikasi KOPBI Terbaru Telah Tersedia"),
           content: new Text("Pelanggan YTH, Kami telah melakukan pemutakhiran Aplikasi KOPBI."
               "\n\nSilahkan Install Aplikasi KOPBI terbaru untuk mendapatkan fitur terbaru dan pelayanan terbaik. Terimakasih"),
           actions: <Widget>[
@@ -720,7 +729,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //              },
 //            ),
             new FlatButton(
-              child: new Text("Install Sekarang"),
+              child: new Text("Update"),
               onPressed: () {
                 launch("https://play.google.com/store/apps/details?id=id.or.kopbi.solusi.mobile");
               },
