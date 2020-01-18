@@ -108,6 +108,25 @@ class _SettingScreenState extends State<SettingScreen> {
             readOnly: true,
             decoration: InputDecoration(
               hasFloatingPlaceholder: false,
+              hintText: 'Ketentuan dan Kebijakan',
+              hintStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            onTap: () {
+              Navigator.of(context).pushNamed('/ketentuan-kebijakan');
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hasFloatingPlaceholder: false,
               hintText: 'Pusat Bantuan',
               hintStyle: TextStyle(color: Colors.black),
               focusedBorder: UnderlineInputBorder(
