@@ -5,7 +5,7 @@ class InformasiScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      url: 'https://kopbi.or.id/profile-kopbi/',
+      url: 'https://www.kopbi.or.id/profile-kopbi/',
       appBar: AppBar(
         elevation: 1,
         backgroundColor: Colors.green,
