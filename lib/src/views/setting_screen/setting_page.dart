@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:kopbi/src/views/setting_screen/ubah_foto_profile.dart';
+import 'package:kopbi/src/views/setting_screen/ubah_password.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -59,7 +61,11 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             onTap: () {
-              print('UBAH FOTO PROFILE');
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UbahFotoProfileScreen(),
+                ),
+              );
             },
           ),
         ),
@@ -78,7 +84,11 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             onTap: () {
-              print('Ubah Password');
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UbahPasswordScreen(),
+                ),
+              );
             },
           ),
         ),
