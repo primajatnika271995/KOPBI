@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class KartuAnggota extends StatefulWidget {
@@ -12,6 +13,8 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   String nama = 'admin';
   String idNumber = 'admin';
   String tglRegister = 'admin';
+
+  GlobalKey globalKey = new GlobalKey();
 
   @override
   void initState() {
@@ -69,88 +72,91 @@ class _KartuAnggotaState extends State<KartuAnggota> {
       child: Column(
         children: <Widget>[
           SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Center(
-              child: Container(
-                width: 325.0,
-                height: 185.0,
-                decoration: BoxDecoration(
-                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(7.0)),
-                child: Stack(
-                  children: <Widget>[
-                    Positioned(
-                      width: 350.0,
-                      top: -62.0,
-                      right: -210.0,
-                      child: RotatedBox(
-                        quarterTurns: 3,
-                        child: Image(
-                            image: AssetImage('assets/icons/Logo-KOPBI.png')),
+          InkWell(
+            onTap: _barCodePopUp,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Center(
+                child: Container(
+                  width: 325.0,
+                  height: 185.0,
+                  decoration: BoxDecoration(
+                      boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(7.0)),
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        width: 350.0,
+                        top: -62.0,
+                        right: -210.0,
+                        child: RotatedBox(
+                          quarterTurns: 3,
+                          child: Image(
+                              image: AssetImage('assets/icons/Logo-KOPBI.png')),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 18.0),
-                      decoration: BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.circular(12.0)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(height: 10),
-                          Container(
-                            height: 50.0,
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  child:
-                                      Image.asset('assets/icons/Logo-KOPBI.png'),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text("KARTU ANGGOTA",
-                                            style: TextStyle(fontSize: 18.0)),
-                                        Text("Bersama, Maju, Sejahtera",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 14, 65, 38),
-                                                fontSize: 15.0,
-                                                fontStyle: FontStyle.italic)),
-                                      ],
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 18.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius: BorderRadius.circular(12.0)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(height: 10),
+                            Container(
+                              height: 50.0,
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    child:
+                                        Image.asset('assets/icons/Logo-KOPBI.png'),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text("KARTU ANGGOTA",
+                                              style: TextStyle(fontSize: 18.0)),
+                                          Text("Bersama, Maju, Sejahtera",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 14, 65, 38),
+                                                  fontSize: 15.0,
+                                                  fontStyle: FontStyle.italic)),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 25.0),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text('$nama',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold)),
-                                SizedBox(height: 2),
-                                Text('$idNumber'),
-                              ],
+                            SizedBox(height: 25.0),
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text('$nama',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold)),
+                                  SizedBox(height: 2),
+                                  Text('$idNumber'),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 25.0),
-                          Text("Terdaftar Sejak ${formattedTanggalRegistrasi(tglRegister)}",
-                              style: TextStyle(fontSize: 14.0))
-                        ],
-                      ),
-                    )
-                  ],
+                            SizedBox(height: 25.0),
+                            Text("Terdaftar Sejak ${formattedTanggalRegistrasi(tglRegister)}",
+                                style: TextStyle(fontSize: 14.0))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -291,4 +297,52 @@ class _KartuAnggotaState extends State<KartuAnggota> {
     ) ??
         false;
   }
+
+  Future _barCodePopUp() {
+    return showDialog(
+      context: (context),
+      builder: (_) => Dialog(
+        child: Container(
+          height: 300,
+          width: 250,
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 60),
+                ),
+                Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: RepaintBoundary(
+                      key: globalKey,
+                      child: QrImage(
+                        data: idNumber,
+                        version: QrVersions.auto,
+                        size: 170,
+                        foregroundColor: Colors.black,
+                        gapless: false,
+                        errorStateBuilder: (cxt, err) {
+                          return Container(
+                            child: Center(
+                              child: Text(
+                                "Loading QR Code...",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+  }
+
 }
