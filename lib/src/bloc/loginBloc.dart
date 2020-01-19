@@ -61,6 +61,23 @@ class LoginBloc {
     _pref.setString(KODE_PERUSAHAAN, value.kodePerusahaan);
     _pref.setString(EMAIL_PERUSAHAAN, value.emailPerusahaan);
     _pref.setString(KODE_USER, value.kodeAnggota);
+    _pref.setString(JENIS_KELAMIN, value.jenisKelamin);
+    _pref.setString(STATUS, value.status);
+    _pref.setString(KODE_JABATAN, value.kodeJabatan);
+    _pref.setString(NAMA_JABATAN, value.namaJabatan);
+    _pref.setString(KODE_BANK, value.kodeBank);
+    _pref.setString(NAMA_BANK, value.namaBank);
+    _pref.setString(CABANG_BANK, value.cabangBank);
+    _pref.setString(NOMOR_REKENING, value.nomorRekening);
+    _pref.setString(PASSWORD, value.password);
+    _pref.setString(STATUS_ANGGOTA, value.statusAnggota);
+    _pref.setString(ROLE, value.role);
+    _pref.setString(EMAIL_PRIBADI, value.emailPribadi);
+    _pref.setString(NAMA_SAUDARA_DEKAT, value.namaSaudaraDekat);
+    _pref.setString(HUBUNGAN_SAUDARA, value.hubunganSaudara);
+    _pref.setString(ALAMAT_SAUDARA, value.alamatSaudara);
+    _pref.setString(NO_HP_SAUDARA, value.nomorHpSaudara);
+    _pref.setString(NO_KTP, value.nomorKtp);
   }
 
   dispose() async {

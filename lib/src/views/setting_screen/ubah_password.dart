@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/services/update.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UbahPasswordScreen extends StatefulWidget {
   @override
@@ -13,6 +15,14 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
   bool passwordLamaObs = true;
   bool passwordBaruObs = true;
   bool passwordConfObs = true;
+
+  bool isLoading = false;
+
+  void toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
 
   void toggleLama() {
     setState(() {
@@ -30,6 +40,27 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
     setState(() {
       passwordBaruObs = !passwordBaruObs;
     });
+  }
+
+  void updatePassword() async {
+    if (passwordBaruCtrl.text != passwordBaruConfirmCtrl.text) {
+      print("Password Tidak Sama");
+    } else if (passwordBaruCtrl.text.isEmpty) {
+      print("Password Tidak boleh kosong");
+    } else {
+      toggleLoading();
+      UpdateService service = new UpdateService();
+      await service.updatePassword(passwordBaruCtrl.text).then((response) async {
+        print("Update Password Response : ${response.statusCode}");
+        print("Update Password Response : ${response.body}");
+        SharedPreferences _pref = await SharedPreferences.getInstance();
+        if (response.statusCode == 200) {
+          toggleLoading();
+          _pref.clear();
+          Navigator.of(context).pushReplacementNamed('/login');
+        }
+      });
+    }
   }
 
   @override
@@ -101,10 +132,10 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: isLoading ? null : updatePassword,
                 color: Colors.green,
                 child: Text(
-                  'Simpan Perubahan',
+                  isLoading ? 'Waiting...' : 'Simpan Perubahan',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
