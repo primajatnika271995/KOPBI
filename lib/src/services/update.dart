@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
-import 'package:async/async.dart';
 
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,41 +12,25 @@ class UpdateService {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     var nomorAnggota = pref.getString(NOMOR_ANGGOTA);
-//    var uri = Uri.parse(
-//        "http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota.jpg");
-//    var request = new http.MultipartRequest("POST", uri);
-//
-//    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
-//    var length = await image.length();
-//    var multipartFile1 = new http.MultipartFile('file', stream, length,
-//        filename: image.path);
-//    request.files.add(multipartFile1);
-//
-//    var response = await request.send();
-//
-//    if (response.statusCode == 200) {
-//      print("OK");
-//    } else if (response.statusCode == 500) {
-//      var responseData = await response.stream.toBytes();
-//      var responseString = String.fromCharCodes(responseData);
-//      print(responseString);
-//    }
+    var token = pref.getString(JWT_TOKEN);
+
     FormData formData = FormData.fromMap({
-      "file": await MultipartFile.fromFile(image.path, filename: "$nomorAnggota.jpg"),
+      "file": await MultipartFile.fromFile(image.path,
+          filename: "$nomorAnggota.jpg"),
     });
 
-    print("image? $image");
-    print("noAnggota? $nomorAnggota");
-
-    return await dio.post("http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota", data: formData);
+    return await dio.post(
+        "http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota",
+        options: Options(headers: {
+          'Content-type': 'application/x-www-form-urlencoded',
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }),
+        data: formData);
   }
 
-  Future<http.Response> updatePassword(String passwordBaru) async {
+  Future<Response> updatePassword(String passwordBaru) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
 
     print("${"kodeAnggota " + pref.getString(KODE_USER)}");
     print("${"nomorAnggota " + pref.getString(NOMOR_ANGGOTA)}");
@@ -129,9 +110,15 @@ class UpdateService {
       "jabatanKeanggotaan": pref.getString(JABATAN_KEANGGOTAAN)
     };
 
-    return await http.post(
-        "http://solusi.kopbi.or.id/api/kopbi-agt/post-anggota",
-        body: json.encode(body),
-        headers: headers);
+    var token = pref.getString(JWT_TOKEN);
+
+    return await dio.post("http://solusi.kopbi.or.id/api/kopbi-agt/post-anggota",
+      options: Options(headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+        'jwtToken': token,
+      }),
+      data: body,
+    );
   }
 }

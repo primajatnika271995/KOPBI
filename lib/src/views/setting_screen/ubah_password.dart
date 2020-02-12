@@ -52,7 +52,6 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
       UpdateService service = new UpdateService();
       await service.updatePassword(passwordBaruCtrl.text).then((response) async {
         print("Update Password Response : ${response.statusCode}");
-        print("Update Password Response : ${response.body}");
         SharedPreferences _pref = await SharedPreferences.getInstance();
         if (response.statusCode == 200) {
           toggleLoading();
