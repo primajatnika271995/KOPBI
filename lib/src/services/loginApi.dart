@@ -34,17 +34,19 @@ class LoginProvider {
       "password": password,
     };
 
-    final response = await _dio.post(APIUrl.login_anggota,
-        options: Options(
-          headers: {
-            'Content-type': 'application/x-www-form-urlencoded',
-            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
-          },
-        ),
-        data: {
-          "userName": userId,
-          "password": password,
-        });
+    final response = await _dio.post(
+      APIUrl.login_anggota,
+      options: Options(
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded',
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+        },
+      ),
+      data: {
+        "userName": userId,
+        "password": password,
+      },
+    );
 
     if (response.statusCode == 200) {
       return compute(usersDetailsModelFromJson, json.encode(response.data));

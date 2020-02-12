@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:path/path.dart' show join;
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BannerItem {
   String _url;
@@ -47,19 +51,31 @@ class _MyBannerState extends State<MyBanner> {
   Timer taskShowBanner;
 
   Directory _dir;
+  String jwtToken;
 
   bool isPerformingRequest;
 
   var client;
 
+  Dio _dio = new Dio();
+
   @override
   // TODO: implement widget
   MyBanner get widget => super.widget;
+
+  void getToken() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    setState(() {
+      jwtToken = _pref.getString(JWT_TOKEN);
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    getToken();
 
     isPerformingRequest = false;
 
@@ -87,16 +103,26 @@ class _MyBannerState extends State<MyBanner> {
 
             _listBannerUrl = [];
 
-            _listBannerUrl = [];
+            Response response = await _dio.post(
+              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/informasi",
+              options: Options(
+                headers: {
+                  'jwtToken': jwtToken,
+                  'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+                },
+              ),
+            );
 
-            http.Response uriResponse = await client.post("http://solusi.kopbi.or.id/api/kopbi-master/list-konten/informasi");
+            MessageModel value = messageModelFromJson(json.encode(response.data));
+            print(value.data);
 
-            List<dynamic> m = jsonDecode(uriResponse.body);
+            List<dynamic> m = json.decode(value.data);
 
             m.forEach((url) {
               print(url["id"]);
               setState(() {
-                _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/${url['id']}.jpg");
+                _listBannerUrl.add(
+                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url['id']}.jpg");
                 showBanner();
               });
             });
@@ -124,14 +150,26 @@ class _MyBannerState extends State<MyBanner> {
 
             _listBannerUrl = [];
 
-            http.Response uriResponse = await client.post("http://solusi.kopbi.or.id/api/kopbi-master/list-konten/kegiatan");
+            Response response = await _dio.post(
+              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/kegiatan",
+              options: Options(
+                headers: {
+                  'jwtToken': jwtToken,
+                  'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+                },
+              ),
+            );
 
-            List<dynamic> m = jsonDecode(uriResponse.body);
+            MessageModel value = messageModelFromJson(json.encode(response.data));
+            print(value.data);
+
+            List<dynamic> m = json.decode(value.data);
 
             m.forEach((url) {
               print(url["id"]);
               setState(() {
-                _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/${url["id"]}.jpg");
+                _listBannerUrl.add(
+                    "http://solusi.kopbi.or.id:8889/kobi-images/kegiatan/${url['id']}.jpg");
                 showBanner();
               });
             });
