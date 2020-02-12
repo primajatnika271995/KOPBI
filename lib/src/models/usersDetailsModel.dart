@@ -9,10 +9,78 @@ UsersDetailsModel usersDetailsModelFromJson(String str) => UsersDetailsModel.fro
 String usersDetailsModelToJson(UsersDetailsModel data) => json.encode(data.toJson());
 
 class UsersDetailsModel {
+  bool success;
+  String message;
+  Data data;
+
+  UsersDetailsModel({
+    this.success,
+    this.message,
+    this.data,
+  });
+
+  factory UsersDetailsModel.fromJson(Map<String, dynamic> json) => UsersDetailsModel(
+    success: json["success"] == null ? null : json["success"],
+    message: json["message"] == null ? null : json["message"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "success": success == null ? null : success,
+    "message": message == null ? null : message,
+    "data": data == null ? null : data.toJson(),
+  };
+}
+
+class Data {
+  Session session;
+  User user;
+
+  Data({
+    this.session,
+    this.user,
+  });
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    session: json["session"] == null ? null : Session.fromJson(json["session"]),
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "session": session == null ? null : session.toJson(),
+    "user": user == null ? null : user.toJson(),
+  };
+}
+
+class Session {
+  DateTime expiryDate;
+  String jwt;
+
+  Session({
+    this.expiryDate,
+    this.jwt,
+  });
+
+  factory Session.fromJson(Map<String, dynamic> json) => Session(
+    expiryDate: json["expiryDate"] == null ? null : DateTime.parse(json["expiryDate"]),
+    jwt: json["jwt"] == null ? null : json["jwt"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "expiryDate": expiryDate == null ? null : expiryDate.toIso8601String(),
+    "jwt": jwt == null ? null : jwt,
+  };
+}
+
+class User {
+  dynamic createdBy;
+  dynamic createdDate;
+  dynamic updatedBy;
+  dynamic updatedDate;
   String kodeAnggota;
   String nomorAnggota;
   String nama;
-  dynamic nomorKtp;
+  String nomorKtp;
   String nomorNik;
   String jenisKelamin;
   dynamic tempatLahir;
@@ -42,8 +110,16 @@ class UsersDetailsModel {
   dynamic hubunganSaudara;
   dynamic alamatSaudara;
   dynamic nomorHpSaudara;
+  dynamic pendapatan;
+  dynamic simpananWajib;
+  dynamic simpananSukarela;
+  dynamic jabatanKeanggotaan;
 
-  UsersDetailsModel({
+  User({
+    this.createdBy,
+    this.createdDate,
+    this.updatedBy,
+    this.updatedDate,
     this.kodeAnggota,
     this.nomorAnggota,
     this.nama,
@@ -77,13 +153,21 @@ class UsersDetailsModel {
     this.hubunganSaudara,
     this.alamatSaudara,
     this.nomorHpSaudara,
+    this.pendapatan,
+    this.simpananWajib,
+    this.simpananSukarela,
+    this.jabatanKeanggotaan,
   });
 
-  factory UsersDetailsModel.fromJson(Map<String, dynamic> json) => UsersDetailsModel(
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    createdBy: json["createdBy"],
+    createdDate: json["createdDate"],
+    updatedBy: json["updatedBy"],
+    updatedDate: json["updatedDate"],
     kodeAnggota: json["kodeAnggota"] == null ? null : json["kodeAnggota"],
     nomorAnggota: json["nomorAnggota"] == null ? null : json["nomorAnggota"],
     nama: json["nama"] == null ? null : json["nama"],
-    nomorKtp: json["nomorKtp"],
+    nomorKtp: json["nomorKtp"] == null ? null : json["nomorKtp"],
     nomorNik: json["nomorNik"] == null ? null : json["nomorNik"],
     jenisKelamin: json["jenisKelamin"] == null ? null : json["jenisKelamin"],
     tempatLahir: json["tempatLahir"],
@@ -113,13 +197,21 @@ class UsersDetailsModel {
     hubunganSaudara: json["hubunganSaudara"],
     alamatSaudara: json["alamatSaudara"],
     nomorHpSaudara: json["nomorHpSaudara"],
+    pendapatan: json["pendapatan"],
+    simpananWajib: json["simpananWajib"],
+    simpananSukarela: json["simpananSukarela"],
+    jabatanKeanggotaan: json["jabatanKeanggotaan"],
   );
 
   Map<String, dynamic> toJson() => {
+    "createdBy": createdBy,
+    "createdDate": createdDate,
+    "updatedBy": updatedBy,
+    "updatedDate": updatedDate,
     "kodeAnggota": kodeAnggota == null ? null : kodeAnggota,
     "nomorAnggota": nomorAnggota == null ? null : nomorAnggota,
     "nama": nama == null ? null : nama,
-    "nomorKtp": nomorKtp,
+    "nomorKtp": nomorKtp == null ? null : nomorKtp,
     "nomorNik": nomorNik == null ? null : nomorNik,
     "jenisKelamin": jenisKelamin == null ? null : jenisKelamin,
     "tempatLahir": tempatLahir,
@@ -149,5 +241,9 @@ class UsersDetailsModel {
     "hubunganSaudara": hubunganSaudara,
     "alamatSaudara": alamatSaudara,
     "nomorHpSaudara": nomorHpSaudara,
+    "pendapatan": pendapatan,
+    "simpananWajib": simpananWajib,
+    "simpananSukarela": simpananSukarela,
+    "jabatanKeanggotaan": jabatanKeanggotaan,
   };
 }

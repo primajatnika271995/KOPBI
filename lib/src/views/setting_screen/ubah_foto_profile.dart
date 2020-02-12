@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/services/update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as Im;
 
 class UbahFotoProfileScreen extends StatefulWidget {
   @override
@@ -12,6 +13,8 @@ class UbahFotoProfileScreen extends StatefulWidget {
 }
 
 class _UbahFotoProfileScreenState extends State<UbahFotoProfileScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   File photo;
   String nomorAnggota;
 
@@ -32,28 +35,47 @@ class _UbahFotoProfileScreenState extends State<UbahFotoProfileScreen> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
+//
+//    var rename = await File(image.path).rename(
+//        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$nomorAnggota.jpg');
 
-    var rename = await File(image.path).rename(
-        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$nomorAnggota.jpg');
+    Im.Image compres = Im.decodeImage(image.readAsBytesSync());
+    Im.Image smallerImage = Im.copyResize(compres, width: 300, height: 400); // choose the size here, it will maintain aspect ratio
+
+
+    var newim2 = new File('/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$nomorAnggota.jpg')
+      ..writeAsBytesSync(Im.encodeJpg(smallerImage, quality: 85));
 
     setState(() {
-      photo = rename;
+      photo = newim2;
     });
   }
 
   void postUpdate() async {
-
     if (photo == null) {
       print("Foto Tidak boleh kosong");
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('Foto Tidak boleh kosong'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } else {
       UpdateService service = new UpdateService();
+      toggleLoading();
       await service.updateFoto(photo).then((response) async {
-        print(response.statusCode);
         SharedPreferences _pref = await SharedPreferences.getInstance();
-
-        if (response.statusCode == 200)  {
+        if (response.statusCode == 200) {
+          toggleLoading();
           _pref.clear();
           Navigator.of(context).pushReplacementNamed('/login');
+        } else if (response.statusCode == 500) {
+          _scaffoldKey.currentState.showSnackBar(
+            SnackBar(
+              content: Text('Error 500'),
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
       });
     }
@@ -69,6 +91,7 @@ class _UbahFotoProfileScreenState extends State<UbahFotoProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 1,
         backgroundColor: Colors.green,
@@ -96,7 +119,9 @@ class _UbahFotoProfileScreenState extends State<UbahFotoProfileScreen> {
                         decoration: new BoxDecoration(
                           shape: BoxShape.circle,
                           image: new DecorationImage(
-                            image: photo == null ? AssetImage('assets/icons/no_user.jpg') : FileImage(photo),
+                            image: photo == null
+                                ? AssetImage('assets/icons/no_user.jpg')
+                                : FileImage(photo),
                             fit: BoxFit.cover,
                           ),
                         ),

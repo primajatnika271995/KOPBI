@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/bloc/loginBloc.dart';
+import 'package:kopbi/src/models/encrypt_model.dart';
+import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -292,9 +294,13 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      print('Value userID : ${_userCtrl.text}');
-      print('Value Pasword : ${_passCtrl.text}');
-      await loginBloc.login(context, _userCtrl.text, _passCtrl.text);
+      LoginProvider service = new LoginProvider();
+      await service.encryptPassword(_passCtrl.text).then((response) async {
+        var value = encryptModelFromJson(response.body);
+
+        print(value.response);
+        await loginBloc.login(context, _userCtrl.text, value.response);
+      });
       print('Done');
       setState(() {
         _isLoading = false;

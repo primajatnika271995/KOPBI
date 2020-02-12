@@ -12,6 +12,7 @@ import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _namaAnggota;
   String _IDAnggota;
-  String _imgProfile;
+  String imgProfile;
   String _nik;
 
   ListSimpanan _listSimpanan;
@@ -173,19 +174,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: <Widget>[
                     InkWell(
                       borderRadius: BorderRadius.circular(30),
-                      onTap: navSetting,
+                      onTap: () {},
                       child: CircleAvatar(
-                        backgroundImage: _imgProfile == null
+                        backgroundImage: imgProfile == null
                             ? AssetImage('assets/icons/no_user.jpg')
-                            : NetworkImage(_imgProfile),
+                            : NetworkImage(imgProfile),
                         backgroundColor: Colors.green,
                         radius: 25,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Text('Pengaturan Akun'),
-                    ),
+//                    Padding(
+//                      padding: const EdgeInsets.symmetric(vertical: 2),
+//                      child: Text('Pengaturan Akun'),
+//                    ),
                   ],
                 ),
                 Container(
@@ -585,10 +586,11 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _namaAnggota = _pref.getString(NAMA_ANGGOTA);
     _IDAnggota = _pref.getString(NOMOR_ANGGOTA);
-    _imgProfile = _pref.getString(IMG_PROFILE);
+    imgProfile = _pref.getString(IMG_PROFILE);
+
     setState(() {});
 
-    print(_imgProfile);
+    print("INI IMAGE PROFILE :" + imgProfile);
   }
 
   void navSetting() {
@@ -673,6 +675,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getDataSimpanan();
 //    getPackageName();
     getVersionBackend();
+    imageCache.clear();
     super.initState();
   }
 

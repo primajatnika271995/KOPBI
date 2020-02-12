@@ -25,10 +25,17 @@ class _MainScreenState extends State<MainScreen> {
             'KOPBI Solution',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/settings');
+              },
+            ),
+          ],
           bottom: TabBar(
             labelStyle: TextStyle(fontSize: 12),
             indicatorColor: Colors.transparent,
-
             tabs: <Widget>[
               Tab(
                 text: 'Home',

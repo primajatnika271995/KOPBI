@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/bloc/loginBloc.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/models/encrypt_model.dart';
+import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +13,7 @@ class ReLoginScreen extends StatefulWidget {
 
 class _ReLoginScreenState extends State<ReLoginScreen> {
 //  Variable Temp
-  String _IDAnggota;
+  String _idAnggota;
   String _imgProfile;
   String _contactAnggota;
 
@@ -117,7 +119,7 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Text(
-        '$_IDAnggota',
+        '$_idAnggota',
         style: TextStyle(fontSize: 15, color: Colors.white),
       ),
     );
@@ -177,9 +179,13 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
     setState(() {
       _isLoading = true;
     });
-    print('Value userID : $_contactAnggota');
-    print('Value Pasword : ${_passCtrl.text}');
-    await loginBloc.login(context, _contactAnggota, _passCtrl.text);
+    LoginProvider service = new LoginProvider();
+    await service.encryptPassword(_passCtrl.text).then((response) async {
+      var value = encryptModelFromJson(response.body);
+
+      print(value.response);
+      await loginBloc.login(context, _contactAnggota, value.response);
+    });
     print('Done');
     setState(() {
       _isLoading = false;
@@ -188,7 +194,7 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
 
   void getUserDetails() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
-    _IDAnggota = _pref.getString(NOMOR_ANGGOTA);
+    _idAnggota = _pref.getString(NOMOR_ANGGOTA);
     _imgProfile = _pref.getString(IMG_PROFILE);
     _contactAnggota = _pref.getString(CONTACT_ANGGOTA);
     setState(() {});

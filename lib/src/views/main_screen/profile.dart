@@ -133,7 +133,7 @@ class MapScreenState extends State<ProfilePage> {
                                 image: imgProfile.text.length < 5
                                     ? AssetImage('assets/icons/no_user.jpg')
                                     : NetworkImage(imgProfile.text),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fitWidth,
                               ),
                             )),
                       ],

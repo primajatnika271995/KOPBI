@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
+import 'package:async/async.dart';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +15,33 @@ class UpdateService {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     var nomorAnggota = pref.getString(NOMOR_ANGGOTA);
-    FormData formData = FormData.from({
-      "file": await UploadFileInfo(new File(image.path), "$nomorAnggota.jpg")
+//    var uri = Uri.parse(
+//        "http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota.jpg");
+//    var request = new http.MultipartRequest("POST", uri);
+//
+//    var stream = new http.ByteStream(DelegatingStream.typed(image.openRead()));
+//    var length = await image.length();
+//    var multipartFile1 = new http.MultipartFile('file', stream, length,
+//        filename: image.path);
+//    request.files.add(multipartFile1);
+//
+//    var response = await request.send();
+//
+//    if (response.statusCode == 200) {
+//      print("OK");
+//    } else if (response.statusCode == 500) {
+//      var responseData = await response.stream.toBytes();
+//      var responseString = String.fromCharCodes(responseData);
+//      print(responseString);
+//    }
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(image.path, filename: "$nomorAnggota.jpg"),
     });
 
-    return await dio.post("http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota.jpg", data: formData);
+    print("image? $image");
+    print("noAnggota? $nomorAnggota");
+
+    return await dio.post("http://solusi.kopbi.or.id/api/kobi-images/upload/anggota/$nomorAnggota", data: formData);
   }
 
   Future<http.Response> updatePassword(String passwordBaru) async {
@@ -60,6 +84,10 @@ class UpdateService {
     print("${"hubunganSaudara " + pref.getString(HUBUNGAN_SAUDARA)}");
     print("${"alamatSaudara " + pref.getString(ALAMAT_SAUDARA)}");
     print("${"nomorHpSaudara " + pref.getString(NO_HP_SAUDARA)}");
+    print("${"pendapatan " + pref.getString(PENDAPATAN)}");
+    print("${"simpananWajib " + pref.getString(SIMPANAN_WAJIB)}");
+    print("${"simpananSukarela " + pref.getString(SIMPANAN_SUKARELA)}");
+    print("${"jabatanAnggota " + pref.getString(JABATAN_KEANGGOTAAN)}");
 
     Map body = {
       "kodeAnggota": pref.getString(KODE_USER),
@@ -95,12 +123,15 @@ class UpdateService {
       "hubunganSaudara": pref.getString(HUBUNGAN_SAUDARA),
       "alamatSaudara": pref.getString(ALAMAT_SAUDARA),
       "nomorHpSaudara": pref.getString(NO_HP_SAUDARA),
-      "pendapatan": "",
-      "simpananWajib": "",
-      "simpananSukarela": "",
-      "jabatanKeanggotaan": ""
+      "pendapatan": pref.getString(PENDAPATAN),
+      "simpananWajib": pref.getString(SIMPANAN_WAJIB),
+      "simpananSukarela": pref.getString(SIMPANAN_SUKARELA),
+      "jabatanKeanggotaan": pref.getString(JABATAN_KEANGGOTAAN)
     };
 
-    return await http.post("http://solusi.kopbi.or.id/api/kopbi-agt/post-anggota", body: json.encode(body), headers: headers);
+    return await http.post(
+        "http://solusi.kopbi.or.id/api/kopbi-agt/post-anggota",
+        body: json.encode(body),
+        headers: headers);
   }
 }
