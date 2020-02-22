@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/userApi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Pinjaman {
   String _kodePinjaman;
@@ -29,10 +33,16 @@ class Pinjaman {
   String _statusPinjaman;
   String _kodeUser;
   String _namaUser;
+  String _namaUserHRD;
+  String _catatanHRD;
+  String _namaUserPengawas;
+  String _catatanPengawas;
   dynamic _tanggalPengajuan;
   dynamic _tanggalPerubahan;
   dynamic _tanggalTempo;
   dynamic _tanggalJatuhTempo;
+  DateTime _tanggalAppHRD;
+  DateTime _tanggalAppPengawas;
   dynamic _tanggalUpdate;
   dynamic _lamaAngsuran;
   dynamic _angsuranKe;
@@ -66,10 +76,16 @@ class Pinjaman {
   String get statusPinjaman => _statusPinjaman;
   String get kodeUser => _kodeUser;
   String get namaUser => _namaUser;
+  String get namaUserHRD => _namaUserHRD;
+  String get catatanHRD => _catatanHRD;
+  String get namaUserPengawas => _namaUserPengawas;
+  String get catatanPengawas => _catatanPengawas;
   DateTime get tanggalPengajuan => _tanggalPengajuan;
   DateTime get tanggalPerubahan => _tanggalPerubahan;
   DateTime get tanggalTempo => _tanggalTempo;
   DateTime get tanggalJatuhTempo => _tanggalJatuhTempo;
+  DateTime get tanggalAppHRD => _tanggalAppHRD;
+  DateTime get tanggalAppPengawas => _tanggalAppPengawas;
   DateTime get tanggalUpdate => _tanggalUpdate;
   int get lamaAngsuran => _lamaAngsuran;
   int get angsuranKe => _angsuranKe;
@@ -125,8 +141,14 @@ class Pinjaman {
     _sisaAngsuran = m['sisaAngsuran'];
     _kodeUser = m['kodeUser'];
     _namaUser = m['namaUser'];
+    _namaUserHRD = m['namaUserHRD'];
+    _catatanHRD = m['catatanHRD'];
+    _namaUserPengawas = m['namaUserPengawas'];
+    _catatanPengawas = m['catatanPengawas'];
     _tanggalPengajuan = parseDate(explodeDate(m['tanggalPengajuan']));
     _tanggalPerubahan = m['tanggalPerubahan'] == null ? '' : m['tanggalPerubahan'];
+    _tanggalAppHRD = parseDate(explodeDate(m['tanggalAppHRD']));
+    _tanggalAppPengawas = parseDate(explodeDate(m['tanggalAppPengawas']));
     _tanggalTempo = parseDate(explodeDate(m['tanggalTempo']));
     _tanggalJatuhTempo = parseDate(explodeDate(m['tanggalJatuhTempo']));
     _tanggalUpdate = parseDate(explodeDate(m['tanggalUpdate']));
@@ -179,10 +201,16 @@ class Pinjaman {
       'statusPinjaman': _statusPinjaman,
       'kodeUser': _kodeUser,
       'namaUser': _namaUser,
+      'namaUserHRD': _namaUserHRD,
+      'catatanHRD': _catatanHRD,
+      'namaUserPengawas': _namaUserPengawas,
+      'catatanPengawas': _catatanPengawas,
       'tanggalPengajuan': _tanggalPengajuan.toString(),
       'tanggalPerubahan': _tanggalPerubahan.toString(),
       'tanggalTempo': _tanggalTempo.toString(),
       'tanggalJatuhTempo': _tanggalJatuhTempo.toString(),
+      'tanggalAppHRD': _tanggalAppHRD.toString(),
+      'tanggalAppPengawas': _tanggalAppPengawas.toString(),
       'tanggalUpdate': _tanggalUpdate.toString(),
       'lamaAngsuran': _lamaAngsuran.toString(),
       'angsuranKe': _angsuranKe.toString(),
@@ -236,7 +264,10 @@ class Pinjaman {
   }
 
   Future<HttpStatus> submitPengajuanBaru({@required User user}) async {
-    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
+    var dio = Dio();
 
     Map<String, String> postData = this.toMap(isPinjamanBaru: true);
 
@@ -259,10 +290,16 @@ class Pinjaman {
     try {
       String url = "${APIUrl.pengajuan}/post-pengajuan";
 
-      var uriResponse = await client.post(url, body: {postData});
+      var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+      ), data: postData);
 
       if(uriResponse.statusCode == 200) {
-        Map<String, dynamic> response = jsonDecode(uriResponse.body);
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        Map<String, dynamic> response = jsonDecode(value.data);
         if(response['success'] == true) {
           return HttpStatus.success;
         }
@@ -275,7 +312,7 @@ class Pinjaman {
       print('End error detail');
       return HttpStatus.serverError;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 }
@@ -293,15 +330,25 @@ class ListPinjaman {
   }
 
   Future<HttpStatus> getList({@required String nik}) async {
-    var client = new http.Client();
+//    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
+    var dio = Dio();
 
     try {
       String url = "${APIUrl.pinjaman}/list-pinjaman/$nik";
 
-      var uriResponse = await client.post(url);
+      var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        },
+      ),);
 
-      if(uriResponse.statusCode == 200 && uriResponse.body.length > 0) {
-        _makeList(uriResponse.body);
+      if(uriResponse.statusCode == 200) {
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        _makeList(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
@@ -312,7 +359,7 @@ class ListPinjaman {
       print('End error detail');
       return HttpStatus.error;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 

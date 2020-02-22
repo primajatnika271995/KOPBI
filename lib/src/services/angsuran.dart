@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Angsuran {
   String _kodeAngsuran;
@@ -34,26 +38,30 @@ class Angsuran {
   int get totalBunga => _totalBunga;
 
   String get formattedNominalAngsuran {
-    if(_nominalAngsuran == null || _nominalAngsuran.isNaN) return '';
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    if (_nominalAngsuran == null || _nominalAngsuran.isNaN) return '';
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_nominalAngsuran);
   }
 
   String get formattedBiayaAdmin {
-    if(_biayaAdmin == null || _biayaAdmin.isNaN) return '';
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    if (_biayaAdmin == null || _biayaAdmin.isNaN) return '';
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_biayaAdmin);
   }
 
   String get formattedTotalBayar {
-    if(_totalBayar == null || _totalBayar.isNaN) return '';
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    if (_totalBayar == null || _totalBayar.isNaN) return '';
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_totalBayar);
   }
 
   String get formattedTotalBunga {
-    if(_totalBunga == null || _totalBunga.isNaN) return '';
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    if (_totalBunga == null || _totalBunga.isNaN) return '';
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_totalBunga);
   }
 
@@ -70,16 +78,19 @@ class Angsuran {
     _nomorPinjaman = m['nomorPinjaman'] == null ? '' : m['nomorPinjaman'];
     _status = m['status'] == null ? '' : m['status'];
 
-    _tanggalJatuhTempo = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
+    _tanggalJatuhTempo =
+        m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
     _tanggalBayar = m['tanggalBayar'] == null ? '' : m['tanggalBayar'];
 
     _angsuranKe = m['angsuranKe'] == null ? 0 : tryParseInt(m['angsuranKe']);
-    _nominalAngsuran = m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);
+    _nominalAngsuran =
+        m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);
     _biayaAdmin = m['biayaAdmin'] == null ? 0 : tryParseInt(m['biayaAdmin']);
     _totalBayar = m['totalBayar'] == null ? 0 : tryParseInt(m['totalBayar']);
     _persenBunga = m['persenBunga'] == null ? 0 : tryParseInt(m['persenBunga']);
 
-    _nominalBunga = m['nominalBunga'] == null ? 0 : tryParseInt(m['nominalBunga']);
+    _nominalBunga =
+        m['nominalBunga'] == null ? 0 : tryParseInt(m['nominalBunga']);
     _totalBunga = m['totalBunga'] == null ? 0 : tryParseInt(m['totalBunga']);
   }
 
@@ -119,7 +130,7 @@ class Angsuran {
   }
 
   Map<String, int> explodeDate(String dateStr) {
-    if(dateStr == null || dateStr.length < 13) return null;
+    if (dateStr == null || dateStr.length < 13) return null;
 
     String year = dateStr.substring(0, 4);
     String month = dateStr.substring(5, 7);
@@ -138,8 +149,9 @@ class Angsuran {
       'millisecond': 0,
     };
 
-    if(dateStr.length > 20) {
-      String millisecond = dateStr.substring(20).replaceAll(new RegExp(r"[^\d]"), '');
+    if (dateStr.length > 20) {
+      String millisecond =
+          dateStr.substring(20).replaceAll(new RegExp(r"[^\d]"), '');
       //map['millisecond'] = int.parse(millisecond);
       map['millisecond'] = 0;
     }
@@ -148,9 +160,10 @@ class Angsuran {
   }
 
   DateTime parseDate(Map<String, int> map) {
-    if(map == null) return null;
+    if (map == null) return null;
 
-    return new DateTime(map['year'], map['month'], map['date'], map['hour'], map['minute'], map['second']);
+    return new DateTime(map['year'], map['month'], map['date'], map['hour'],
+        map['minute'], map['second']);
   }
 }
 
@@ -164,25 +177,37 @@ class ListAngsuran {
   int get totalPaid => _totalPaid;
 
   String get formattedTotal {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_total);
   }
 
   String get formattedTotalPaid {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_totalPaid);
   }
 
   Future<HttpStatus> getList({@required String nomorPinjaman}) async {
-    var client = new http.Client();
+//    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
 
+    var dio = Dio();
     try {
       String url = "${APIUrl.pinjaman}/list-angsuran/$nomorPinjaman";
+      var uriResponse = await dio.post(
+        url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }),
+      );
 
-      var uriResponse = await client.post(url);
-
-      if(uriResponse.statusCode == 200 && uriResponse.body.length > 0) {
-        _makeList(uriResponse.body);
+      if (uriResponse.statusCode == 200) {
+        MessageModel value =
+            messageModelFromJson(json.encode(uriResponse.data));
+        _makeList(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
@@ -193,7 +218,7 @@ class ListAngsuran {
       print('End error detail');
       return HttpStatus.error;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 
@@ -206,7 +231,8 @@ class ListAngsuran {
 
       _total += angsuran.totalBayar;
 
-      if(angsuran.status.toLowerCase() == 'paid') _totalPaid += angsuran.totalBayar;
+      if (angsuran.status.toLowerCase() == 'paid')
+        _totalPaid += angsuran.totalBayar;
 
       _listAngsuran.add(angsuran);
     }

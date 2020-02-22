@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/models/encrypt_model.dart';
+import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/services/update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +19,9 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
   bool passwordConfObs = true;
 
   bool isLoading = false;
+
+  String encriptOldPassword;
+  String encriptNewPassword;
 
   void toggleLoading() {
     setState(() {
@@ -50,15 +55,32 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
     } else {
       toggleLoading();
       UpdateService service = new UpdateService();
-      await service.updatePassword(passwordBaruCtrl.text).then((response) async {
-        print("Update Password Response : ${response.statusCode}");
-        SharedPreferences _pref = await SharedPreferences.getInstance();
+      LoginProvider encript = new LoginProvider();
+
+      await encript.encryptPassword(passwordLamaCtrl.text).then((response) async {
         if (response.statusCode == 200) {
-          toggleLoading();
-          _pref.clear();
-          Navigator.of(context).pushReplacementNamed('/login');
+          var valueOld = encryptModelFromJson(response.body);
+          setState(() {
+            encriptOldPassword = valueOld.response;
+          });
+          await encript.encryptPassword(passwordBaruCtrl.text).then((resp) async {
+            var valueNew = encryptModelFromJson(resp.body);
+            setState(() {
+              encriptNewPassword = valueNew.response;
+            });
+            await service.updatePassword(encriptOldPassword, encriptNewPassword).then((response) async {
+              print("Update Password Response : ${response.statusCode}");
+              SharedPreferences _pref = await SharedPreferences.getInstance();
+              if (response.statusCode == 200) {
+                toggleLoading();
+                _pref.clear();
+                Navigator.of(context).pushReplacementNamed('/login');
+              }
+            });
+          });
         }
       });
+
     }
   }
 

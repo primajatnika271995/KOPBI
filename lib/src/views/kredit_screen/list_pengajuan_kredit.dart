@@ -14,23 +14,24 @@ import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/userApi.dart';
 import 'package:kopbi/src/views/component/transition/fade_transition.dart';
 import 'package:kopbi/src/views/kredit_screen/histori_kredit.dart';
+import 'package:kopbi/src/views/kredit_screen/pengajaun_kredit.dart';
 import 'package:kopbi/src/views/pinjaman_screen/angsuran.dart';
 import 'package:kopbi/src/views/pinjaman_screen/tambah_pengajuan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PinjamanListPage extends StatefulWidget {
+class PengajuanKreditListPage extends StatefulWidget {
   static String tag = 'pengajuan-list-page';
 
-  PinjamanListPage({Key key, this.title, this.user}) : super(key: key);
+  PengajuanKreditListPage({Key key, this.title, this.user}) : super(key: key);
 
   final String title;
   final User user;
 
   @override
-  _PinjamanListPageState createState() => _PinjamanListPageState();
+  _PengajuanKreditListPageState createState() => _PengajuanKreditListPageState();
 }
 
-class _PinjamanListPageState extends State<PinjamanListPage> {
+class _PengajuanKreditListPageState extends State<PengajuanKreditListPage> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   User _user;
 
@@ -53,7 +54,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
 
   @override
   // TODO: implement widget
-  PinjamanListPage get widget => super.widget;
+  PengajuanKreditListPage get widget => super.widget;
 
   @override
   void initState() {
@@ -109,7 +110,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
 
     setState(() {
       _listPengajuan.forEach((_) {
-        if (_.statusPengajuan.toLowerCase() != 'can' && _.tipePengajuan.toLowerCase() != 'barang') {
+        if (_.statusPengajuan.toLowerCase() != 'can' && _.tipePengajuan.toLowerCase() != 'uang') {
           _listData.add({
             'typeof': 'pengajuan',
             'kode': _.kodePengajuan,
@@ -117,7 +118,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
             'status': _.statusPengajuan,
             'formattedNominal': _.formattedNominalPengajuan,
             'tanggal': _.tanggalPengajuan,
-            'tanggalUpdate': _.tanggalUpdate,
+            'barang': _.namaBarang,
           });
         }
       });
@@ -229,10 +230,10 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
       print('Updating Status Pengajuan');
 
       var uriResponse = await dio.post(url, options: Options(
-          headers: {
-            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
-            'jwtToken': token,
-          }
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
       ), data: jsonEncode(postdata));
 
       if (uriResponse.statusCode == 200) {
@@ -412,11 +413,8 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
                     radius: 20,
                   ),
                   title: Text('Pinjaman ${data['tipe']}'),
-                  subtitle: data['tanggalUpdate'] == null ?  Text(
-                    'Tanggal Pengajuan ${dateFormat(data['tanggal'])}',
-                    style: TextStyle(fontSize: 12),
-                  ) : Text(
-                    'Tanggal Pencairan ${dateFormat(data['tanggalUpdate'])}',
+                  subtitle: Text(
+                    '${data['barang']} \nTanggal Pengajuan ${dateFormat(data['tanggal'])}',
                     style: TextStyle(fontSize: 12),
                   ),
                   trailing: Text(
@@ -516,7 +514,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
           Navigator.of(context)
               .push(
             MaterialPageRoute(
-              builder: (context) => PengajuanTambahPage(),
+              builder: (context) => PengajuanKreditPage(),
             ),
           )
               .then((_) {

@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.person, color: Colors.black),
             hasFloatingPlaceholder: true,
-            labelText: 'User ID',
+            labelText: 'Nomor Handphone',
             labelStyle: TextStyle(color: Colors.black),
             border: UnderlineInputBorder(
               borderSide: BorderSide(

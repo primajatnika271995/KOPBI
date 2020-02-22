@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/views/pinjaman_screen/list_histori_pengajuan.dart';
 import 'package:kopbi/src/views/pinjaman_screen/list_pengajuan.dart';
 import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
 
@@ -23,6 +24,13 @@ class _PinjamanScreenState extends State<PinjamanScreen> {
               Tab(text: "List Pengajuan"),
             ],
           ),
+//          actions: <Widget>[
+//            IconButton(icon: Icon(Icons.history), onPressed: () {
+//              Navigator.of(context).push(MaterialPageRoute(
+//                builder: (context) => HistoriPengajuanUangListPage(),
+//              ),);
+//            }),
+//          ],
         ),
         body: TabBarView(
           children: [

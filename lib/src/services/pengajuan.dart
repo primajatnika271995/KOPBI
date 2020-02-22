@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Pengajuan {
@@ -35,9 +36,15 @@ class Pengajuan {
   String _tanggalPengajuanRaw;
   String _tanggalPerubahanRaw;
   String _tanggalUpdateRaw;
+  String _namaUserHRD;
+  String _catatanHRD;
+  String _namaUserPengawas;
+  String _catatanPengawas;
   DateTime _tanggalJatuhTempo;
   DateTime _tanggalPengajuan;
   DateTime _tanggalPerubahan;
+  DateTime _tanggalAppHRD;
+  DateTime _tanggalAppPengawas;
   DateTime _tanggalUpdate;
   int _lamaAngsuran;
   int _nominalAngsuran;
@@ -68,6 +75,10 @@ class Pengajuan {
   String get nomorPinjaman => _nomorPinjaman;
   String get kodeUser => _kodeUser;
   String get namaUser => _namaUser;
+  String get namaUserHRD => _namaUserHRD;
+  String get catatanHRD => _catatanHRD;
+  String get namaUserPengawas => _namaUserPengawas;
+  String get catatanPengawas => _catatanPengawas;
   String get tanggalTempo => _tanggalTempo;
   String get tanggalJatuhTempoRaw => _tanggalJatuhTempoRaw;
   String get tanggalPengajuanRaw => _tanggalPengajuanRaw;
@@ -76,6 +87,8 @@ class Pengajuan {
   DateTime get tanggalJatuhTempo => _tanggalJatuhTempo;
   DateTime get tanggalPengajuan => _tanggalPengajuan;
   DateTime get tanggalPerubahan => _tanggalPerubahan;
+  DateTime get tanggalAppHRD => _tanggalAppHRD;
+  DateTime get tanggalAppPengawas => _tanggalAppPengawas;
   DateTime get tanggalUpdate => _tanggalUpdate;
   int get lamaAngsuran => _lamaAngsuran;
   int get nominalAngsuran => _nominalAngsuran;
@@ -125,6 +138,11 @@ class Pengajuan {
     _nomorPinjaman = m['nomorPinjaman'] == null ? '' : m['nomorPinjaman'];
     _kodeUser = m['kodeUser'] == null ? '' : m['kodeUser'];
     _namaUser = m['namaUser'] == null ? '' : m['namaUser'];
+    _namaUser = m['namaUser'];
+    _namaUserHRD = m['namaUserHRD'];
+    _catatanHRD = m['catatanHRD'];
+    _namaUserPengawas = m['namaUserPengawas'];
+    _catatanPengawas = m['catatanPengawas'];
     _tanggalTempo = m['tanggalTempo'] == null ? '' : m['tanggalTempo'];
     _tanggalJatuhTempoRaw = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
     _tanggalPengajuanRaw = m['tanggalPengajuan'] == null ? '' : m['tanggalPengajuan'];
@@ -134,7 +152,8 @@ class Pengajuan {
     _tanggalPengajuan = m['tanggalPengajuan'] == null ? null : parseDate(explodeDate(m['tanggalPengajuan']));
     _tanggalPerubahan = m['tanggalPerubahan'] == null ? null : parseDate(explodeDate(m['tanggalPerubahan']));
     _tanggalUpdate = m['tanggalUpdate'] == null ? null : parseDate(explodeDate(m['tanggalUpdate']));
-
+    _tanggalAppHRD = parseDate(explodeDate(m['tanggalAppHRD']));
+    _tanggalAppPengawas = parseDate(explodeDate(m['tanggalAppPengawas']));
     _lamaAngsuran = m['lamaAngsuran'] == null ? 0 : tryParseInt(m['lamaAngsuran']);
     _nominalAngsuran = m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);
     _nominalPengajuan = m['nominalPengajuan'] == null ? 0 : tryParseInt(m['nominalPengajuan']);
@@ -176,11 +195,17 @@ class Pengajuan {
       'nomorPinjaman': _nomorPinjaman,
       'kodeUser': _kodeUser,
       'namaUser': _namaUser,
+      'namaUserHRD': _namaUserHRD,
+      'catatanHRD': _catatanHRD,
+      'namaUserPengawas': _namaUserPengawas,
+      'catatanPengawas': _catatanPengawas,
       'tanggalTempo': _tanggalTempo,
       'tanggalJatuhTempo': _tanggalJatuhTempo.toString(),
       'tanggalPengajuan': _tanggalPengajuan.toString(),
       'tanggalPerubahan': _tanggalPerubahan.toString(),
       'tanggalUpdate': _tanggalUpdate.toString(),
+      'tanggalAppHRD': _tanggalAppHRD.toString(),
+      'tanggalAppPengawas': _tanggalAppPengawas.toString(),
       'lamaAngsuran': _lamaAngsuran.toString(),
       'nominalAngsuran': _nominalAngsuran.toString(),
       'nominalPengajuan': _nominalPengajuan.toString(),
@@ -243,7 +268,10 @@ class Pengajuan {
     var kodeUser = _pref.getString(KODE_USER);
 
 
-    var client = new http.Client();
+//    var client = new http.Client();
+    var dio = Dio();
+
+    var token = _pref.getString(JWT_TOKEN);
 
     Map<String, String> postData = this.toMap(isPengajuanBaru: true);
 
@@ -266,10 +294,16 @@ class Pengajuan {
     try {
       String url = "${APIUrl.pengajuan}/post-pengajuan";
 
-      var uriResponse = await client.post(url, body: {postData});
+      var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+      ), data: postData);
 
       if(uriResponse.statusCode == 200) {
-        Map<String, dynamic> response = jsonDecode(uriResponse.body);
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        Map<String, dynamic> response = jsonDecode(value.data);
         if(response['success'] == true) {
           return HttpStatus.success;
         }
@@ -282,7 +316,7 @@ class Pengajuan {
       print('End error detail');
       return HttpStatus.serverError;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 }
@@ -300,15 +334,25 @@ class ListPengajuan {
   }
 
   Future<HttpStatus> getList({@required String nik}) async {
-    var client = new http.Client();
+//    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
+    var dio = Dio();
 
     try {
       String url = "${APIUrl.pengajuan}/list-pengajuan/$nik";
 
-      var uriResponse = await client.post(url);
+      var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+      ),);
 
-      if(uriResponse.statusCode == 200 && uriResponse.body.length > 0) {
-        _makeList(uriResponse.body);
+      if(uriResponse.statusCode == 200) {
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        _makeList(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
@@ -319,7 +363,7 @@ class ListPengajuan {
       print('End error detail');
       return HttpStatus.error;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 

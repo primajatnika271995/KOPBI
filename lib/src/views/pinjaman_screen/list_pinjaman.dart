@@ -119,7 +119,9 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
 //      });
 
       _listPinjaman.forEach((_) {
-        if (_.statusPinjaman.toLowerCase() != 'proc' && _.statusPinjaman.toLowerCase() != 'can') {
+        if (_.statusPinjaman.toLowerCase() != 'proc' &&
+            _.statusPinjaman.toLowerCase() != 'can' &&
+            _.tipePengajuan.toLowerCase() != 'barang') {
           _listData.add({
             'typeof': 'pinjaman',
             'kode': _.nomorPinjaman,
@@ -127,6 +129,12 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
             'status': _.statusPinjaman,
             'formattedNominal': _.formattedNominalPinjaman,
             'tanggal': _.tanggalPengajuan,
+            'tanggalApproveHRD': _.tanggalAppHRD,
+            'tanggalApprovePengawas': _.tanggalAppPengawas,
+            'namaHRD': _.namaUserHRD,
+            'namaPengawas': _.namaUserPengawas,
+            'catatanHRD': _.catatanHRD,
+            'catatanPengawas': _.catatanPengawas,
           });
         }
       });
@@ -369,11 +377,20 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                             Pinjaman pinjaman = _listPinjaman.firstWhere(
                                 (_) => _.nomorPinjaman == data['kode']);
                             Navigator.push(
-                                context,
-                                FadeRoute(
-                                    page: AngsuranListPage(
-                                        user: widget.user,
-                                        pinjaman: pinjaman)));
+                              context,
+                              FadeRoute(
+                                page: AngsuranListPage(
+                                  user: widget.user,
+                                  pinjaman: pinjaman,
+                                  tglApproveHrd: pinjaman.tanggalAppPengawas,
+                                  namaHrd: pinjaman.namaUserHRD,
+                                  catatanHrd: pinjaman.catatanHRD,
+                                  tglApprovePengawas: pinjaman.tanggalAppPengawas,
+                                  namaPengawas: pinjaman.namaUserPengawas,
+                                  catatanPengawas: pinjaman.catatanPengawas,
+                                ),
+                              ),
+                            );
                           }
                         },
                         //contentPadding: _listPengajuanActive[pinjaman.kodePengajuan] == true ?
@@ -388,9 +405,13 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                           radius: 20,
                         ),
                         title: Text('Pinjaman ${data['tipe']}'),
-                        subtitle: Text(
-                          'Tanggal Pengajuan ${dateFormat(data['tanggal'])}',
-                          style: TextStyle(fontSize: 12),
+                        subtitle: Column(
+                          children: <Widget>[
+                            Text(
+                              'Tanggal Pengajuan ${dateFormat(data['tanggal'])}',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
                         ),
                         trailing: Text(
                           data['formattedNominal'],
@@ -413,53 +434,64 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                           ),
                         ),
                       ),
-                      _listDataActive[data['kode']] == true ?
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            child: FlatButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (_) => new AlertDialog(
-                                      title: Text('Konfirmasi'),
-                                      content: Text('Anda yakin ingin membatalkan pengajuan?'),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          onPressed: () {
-                                            //batalkan(pinjaman);
+                      _listDataActive[data['kode']] == true
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  child: FlatButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (_) => new AlertDialog(
+                                                title: Text('Konfirmasi'),
+                                                content: Text(
+                                                    'Anda yakin ingin membatalkan pengajuan?'),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      //batalkan(pinjaman);
 
-                                            Pengajuan pengajuan = _listPengajuan.firstWhere((_) => _.kodePengajuan == data['kode']);
-                                            batalkan(pengajuan);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Ya'),
-                                        ),
-                                        FlatButton(
-                                          onPressed: () { Navigator.of(context).pop(); },
-                                          child: Text('Tidak'),
-                                        ),
-                                      ],
-                                    )
-                                );
-                              },
-                              color: Color.fromARGB(255, 194, 9, 9),
-                              textColor: Colors.white,
-                              child: isLoading == true ?
-                              Container(
-                                  height: 20.0,
-                                  width: 10.0,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                                  )
-                              ) :
-                              Text("Batalkan", style: TextStyle(fontSize: 15.0)),
-                            ),
-                          ),
-                        ],
-                      ) : Container()
+                                                      Pengajuan pengajuan =
+                                                          _listPengajuan
+                                                              .firstWhere((_) =>
+                                                                  _.kodePengajuan ==
+                                                                  data['kode']);
+                                                      batalkan(pengajuan);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Ya'),
+                                                  ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Tidak'),
+                                                  ),
+                                                ],
+                                              ));
+                                    },
+                                    color: Color.fromARGB(255, 194, 9, 9),
+                                    textColor: Colors.white,
+                                    child: isLoading == true
+                                        ? Container(
+                                            height: 20.0,
+                                            width: 10.0,
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      Colors.white),
+                                            ))
+                                        : Text("Batalkan",
+                                            style: TextStyle(fontSize: 15.0)),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Container()
                     ],
                   );
                 },

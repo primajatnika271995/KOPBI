@@ -13,24 +13,23 @@ import 'package:kopbi/src/services/pengajuan.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/userApi.dart';
 import 'package:kopbi/src/views/component/transition/fade_transition.dart';
-import 'package:kopbi/src/views/kredit_screen/histori_kredit.dart';
 import 'package:kopbi/src/views/pinjaman_screen/angsuran.dart';
 import 'package:kopbi/src/views/pinjaman_screen/tambah_pengajuan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PinjamanListPage extends StatefulWidget {
+class HistoriPengajuanUangListPage extends StatefulWidget {
   static String tag = 'pengajuan-list-page';
 
-  PinjamanListPage({Key key, this.title, this.user}) : super(key: key);
+  HistoriPengajuanUangListPage({Key key, this.title, this.user}) : super(key: key);
 
   final String title;
   final User user;
 
   @override
-  _PinjamanListPageState createState() => _PinjamanListPageState();
+  _HistoriPengajuanUangListPageState createState() => _HistoriPengajuanUangListPageState();
 }
 
-class _PinjamanListPageState extends State<PinjamanListPage> {
+class _HistoriPengajuanUangListPageState extends State<HistoriPengajuanUangListPage> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   User _user;
 
@@ -53,7 +52,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
 
   @override
   // TODO: implement widget
-  PinjamanListPage get widget => super.widget;
+  HistoriPengajuanUangListPage get widget => super.widget;
 
   @override
   void initState() {
@@ -109,7 +108,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
 
     setState(() {
       _listPengajuan.forEach((_) {
-        if (_.statusPengajuan.toLowerCase() != 'can' && _.tipePengajuan.toLowerCase() != 'barang') {
+        if (_.statusPengajuan.toLowerCase() != 'proc' && _.statusPengajuan.toLowerCase() != 'can' && _.statusPengajuan.toLowerCase() != 'new' && _.statusPengajuan.toLowerCase() != 'app' && _.statusPengajuan.toLowerCase() != 'vrf' && _.tipePengajuan.toLowerCase() != 'barang') {
           _listData.add({
             'typeof': 'pengajuan',
             'kode': _.kodePengajuan,
@@ -117,7 +116,12 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
             'status': _.statusPengajuan,
             'formattedNominal': _.formattedNominalPengajuan,
             'tanggal': _.tanggalPengajuan,
-            'tanggalUpdate': _.tanggalUpdate,
+            'tanggalApproveHRD': _.tanggalAppHRD,
+            'tanggalApprovePengawas': _.tanggalAppPengawas,
+            'namaHRD': _.namaUserHRD,
+            'namaPengawas': _.namaUserPengawas,
+            'catatanHRD': _.catatanHRD,
+            'catatanPengawas': _.catatanPengawas,
           });
         }
       });
@@ -299,10 +303,10 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
-//      appBar: AppBar(
-//        backgroundColor: Colors.green,
-//        title: Text("Pengajuan"),
-//      ),
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        title: Text("Histori Pengajuan"),
+      ),
       body: Container(
         color: Colors.white,
         //child: _listPengajuan.length == 0 ?
@@ -310,7 +314,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
             ? Center(
             child: isLoading == true
                 ? CircularProgressIndicator(strokeWidth: 6.0)
-                : Text('Tidak ada Pengajuan',
+                : Text('Tidak ada Histori Pengajuan',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24.0,
@@ -382,22 +386,12 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
                     } else {
                       Pinjaman pinjaman = _listPinjaman.firstWhere(
                               (_) => _.nomorPinjaman == data['kode']);
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HistoriPengjuanKredit(
-                          tglApproveHrd: pinjaman.tanggalAppPengawas,
-                          namaHrd: pinjaman.namaUserHRD,
-                          catatanHrd: pinjaman.catatanHRD,
-                          tglApprovePengawas: pinjaman.tanggalAppPengawas,
-                          namaPengawas: pinjaman.namaUserPengawas,
-                          catatanPengawas: pinjaman.catatanPengawas,
-                        ),
-                      ),);
-//                      Navigator.push(
-//                          context,
-//                          FadeRoute(
-//                              page: AngsuranListPage(
-//                                  user: widget.user,
-//                                  pinjaman: pinjaman)));
+                      Navigator.push(
+                          context,
+                          FadeRoute(
+                              page: AngsuranListPage(
+                                  user: widget.user,
+                                  pinjaman: pinjaman)));
                     }
                   },
                   //contentPadding: _listPengajuanActive[pinjaman.kodePengajuan] == true ?
@@ -405,23 +399,78 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
                       ? EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 0.0)
                       : EdgeInsets.symmetric(
                       vertical: 5.0, horizontal: 10.0),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: jenisIcon,
-                    foregroundColor: Colors.white,
-                    radius: 20,
-                  ),
-                  title: Text('Pinjaman ${data['tipe']}'),
-                  subtitle: data['tanggalUpdate'] == null ?  Text(
-                    'Tanggal Pengajuan ${dateFormat(data['tanggal'])}',
-                    style: TextStyle(fontSize: 12),
-                  ) : Text(
-                    'Tanggal Pencairan ${dateFormat(data['tanggalUpdate'])}',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  trailing: Text(
-                    data['formattedNominal'],
-                    style: TextStyle(fontWeight: FontWeight.bold),
+//                  leading: CircleAvatar(
+//                    backgroundColor: Colors.white,
+//                    child: jenisIcon,
+//                    foregroundColor: Colors.white,
+//                    radius: 20,
+//                  ),
+                  title: Text('Tanggal Approve HRD', style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                  ),),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${dateFormat(data['tanggalApproveHRD'])}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'NAMA HRD',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                      Text(
+                        '${data['namaHRD']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Catatan HRD',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                      Text(
+                        '${data['catatanHRD']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Tanggal Approve Pengawas',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                      Text(
+                        '${dateFormat(data['tanggalApprovePengawas'])}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'NAMA Pengawas',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                      Text(
+                        '${data['namaPengawas']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Catatan Pengawas',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                      Text(
+                        '${data['catatanPengawas']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -443,27 +492,8 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
                 _listDataActive[data['kode']] == true ?
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => HistoriPengjuanKredit(
-                              tglApproveHrd: dateFormat(data['tanggalApproveHRD']),
-                              namaHrd: dateFormat(data['namaHRD']),
-                              catatanHrd: dateFormat(data['catatanHRD']),
-                              tglApprovePengawas: dateFormat(data['tanggalApprovePengawas']),
-                              namaPengawas: dateFormat(data['namaPengawas']),
-                              catatanPengawas: dateFormat(data['catatanPengawas']),
-                            ),
-                          ),);
-                        },
-                        color: Colors.blue,
-                        textColor: Colors.white,
-                        child: Text("Histori", style: TextStyle(fontSize: 15.0)),
-                      ),
-                    ),
                     Container(
                       child: FlatButton(
                         onPressed: () {
@@ -511,22 +541,22 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              builder: (context) => PengajuanTambahPage(),
-            ),
-          )
-              .then((_) {
-            returnBackData();
-          });
-        },
-        backgroundColor: Colors.green,
-        child: Icon(Icons.add),
-        tooltip: "Tambah pinjaman",
-      ),
+//      floatingActionButton: FloatingActionButton(
+//        onPressed: () {
+//          Navigator.of(context)
+//              .push(
+//            MaterialPageRoute(
+//              builder: (context) => PengajuanTambahPage(),
+//            ),
+//          )
+//              .then((_) {
+//            returnBackData();
+//          });
+//        },
+//        backgroundColor: Colors.green,
+//        child: Icon(Icons.add),
+//        tooltip: "Tambah pinjaman",
+//      ),
     );
   }
 

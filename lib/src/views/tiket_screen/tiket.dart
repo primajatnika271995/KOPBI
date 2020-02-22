@@ -13,7 +13,7 @@ class _TiketScreenState extends State<TiketScreen> {
         elevation: 1,
         backgroundColor: Colors.green,
         title: Text(
-          'Tiket',
+          'Kendaraan',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),

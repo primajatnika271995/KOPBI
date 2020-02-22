@@ -15,17 +15,30 @@ import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/userApi.dart';
+import 'package:kopbi/src/views/kredit_screen/histori_kredit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AngsuranListPage extends StatefulWidget {
   static String tag = 'angsuran-list-page';
 
-  AngsuranListPage({Key key, this.title, this.user, this.pinjaman})
+  AngsuranListPage({Key key, this.title, this.user, this.pinjaman, this.tglApproveHrd,
+    this.namaHrd,
+    this.catatanHrd,
+    this.tglApprovePengawas,
+    this.namaPengawas,
+    this.catatanPengawas,})
       : super(key: key);
 
   final String title;
   final User user;
   final Pinjaman pinjaman;
+
+  dynamic tglApproveHrd;
+  String namaHrd;
+  String catatanHrd;
+  dynamic tglApprovePengawas;
+  String namaPengawas;
+  String catatanPengawas;
 
   @override
   _AngsuranListPageState createState() => _AngsuranListPageState();
@@ -378,6 +391,20 @@ class _AngsuranListPageState extends State<AngsuranListPage>
             backgroundColor: Colors.green,
             title: Text("Angsuran", style: TextStyle(color: Colors.white)),
             titleSpacing: 0,
+              actions: <Widget>[
+            IconButton(icon: Icon(Icons.history), onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => HistoriPengjuanKredit(
+                  tglApproveHrd: widget.tglApprovePengawas,
+                  namaHrd: widget.pinjaman.namaUserHRD,
+                  catatanHrd: widget.pinjaman.catatanHRD,
+                  tglApprovePengawas: widget.pinjaman.tanggalAppPengawas,
+                  namaPengawas: widget.pinjaman.namaUserPengawas,
+                  catatanPengawas: widget.pinjaman.catatanPengawas,
+                ),
+              ),);
+            }),
+          ],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(120),
               child: Padding(

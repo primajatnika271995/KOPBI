@@ -22,7 +22,7 @@ class LoginBloc {
       UsersDetailsModel value = await _repository.loginAnggota(userId, password);
 
       if (!value.success) {
-        flushBar(context, "Message Status False", 3);
+        flushBar(context, "Nomor Handphone atau Password salah!", 3);
       }
 
       if (value.success) {

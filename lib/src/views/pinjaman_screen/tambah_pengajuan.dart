@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -9,9 +11,11 @@ import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/barangApi.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
+import 'package:kopbi/src/views/pinjaman_screen/upload_verifikasi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengajuanTambahPage extends StatefulWidget {
@@ -25,6 +29,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   ListSimpanan _listSimpanan;
 
   TextEditingController _keteranganController;
+  var _keteranganBarangController = TextEditingController();
   MoneyMaskedTextController _nominalPengajuanController;
 
   FocusNode _keteranganFocus;
@@ -58,6 +63,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   //Only display
   String _barang;
+  String _keteranganBarang;
   String _perumahan;
   int _quickNominalSelected;
 
@@ -81,6 +87,8 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   @override
   // TODO: implement widget
   PengajuanTambahPage get widget => super.widget;
+
+  bool _isCheck = false;
 
   @override
   void initState() {
@@ -282,6 +290,11 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     };
 
     var client = new http.Client();
+    var dio = Dio();
+
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
 
     try {
       setState(() {
@@ -306,19 +319,35 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
       print('Submitting');
 
-      var uriResponse = await client.post(url, body: jsonEncode(postdata));
+      var uriResponse = await dio.post(url,
+          options: Options(headers: {
+            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+            'jwtToken': token,
+          }),
+          data: jsonEncode(postdata));
 
       print(uriResponse.statusCode);
-      print(uriResponse.body);
+      print(uriResponse.data);
 
       if (uriResponse.statusCode == 200) {
         Navigator.of(context).pop();
-        Map<String, dynamic> response = jsonDecode(uriResponse.body);
+        MessageModel value =
+            messageModelFromJson(json.encode(uriResponse.data));
+        Map<String, dynamic> response = jsonDecode(value.data);
         if (response['success'] == true) {
           /* _scaffoldKey.currentState.showSnackBar(SnackBar(
             content: Text("Pengajuan pinjaman berhasil dibuat"),
           )); */
-          Navigator.pop(context, 'success');
+
+          if (_nominalPengajuan > 2000000) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => UploadFotoVerifikasi(),
+              ),
+            );
+          } else {
+            Navigator.pop(context, 'success');
+          }
         }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -359,7 +388,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   String hitungBunga() {
     setState(() {
-
       if (_nominalPengajuan < totalSimpanan) {
         setState(() {
           _persenBunga = (8 / 12);
@@ -446,83 +474,70 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
           children: <Widget>[
-            Text("Pilih jenis pengajuan", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.lightGreen),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Row(
-                  children: <Widget>[
-                    jenisButton(
-                        asset: "uang",
-                        label: "Uang",
-                        active: _tipePengajuan == 'Uang',
-                        callback: () {
-                          setState(() {
-                            _kodeTipePengajuan = 'UANG';
-                            _tipePengajuan = 'Uang';
-                            _nominalQuickSelect(500000);
-                          });
-                        }),
-                    jenisButton(
-                        asset: "barang",
-                        label: "Barang",
-                        active: _tipePengajuan == 'Barang',
-                        callback: () {
-                          setState(() {
-                            _kodeTipePengajuan = 'BRG';
-                            _tipePengajuan = 'Barang';
-                            _quickNominalSelected = null;
-                            if (_listBarang.length > 0) {
-                              _barang = _listBarang.first.namaBarang;
-                              _nominalPengajuanController.text =
-                                  _listBarang.first.harga.toString();
-                            } else {
-                              _barang = "Tidak ada barang";
-                              _nominalPengajuan = 0;
-                            }
-                          });
-                        }),
-                    /* jenisButton(
-                      asset: "perumahan",
-                      label: "Perumahan",
-                      active: _tipePengajuan == 'Perumahan',
-                      callback: () {
-                        _scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Text("Sementara tidak tersedia"),
-                        ));
-                        /* setState(() {
-                          _kodeTipePengajuan = 'PERUM';
-                          _tipePengajuan = 'Perumahan';
-                          _quickNominalSelected = null;
-                          _perumahan = _listPerumahan.first['nama'];
-                          _nominalPengajuanController.text = _listPerumahan.first['harga'].toString();
-                        }); */
-                      }
-                    ), */
-                  ],
-                ),
-              ),
-            ),
-
-            //Keterangan
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.0),
-              child: TextFormField(
-                controller: _keteranganController,
-                maxLines: null,
-                focusNode: _keteranganFocus,
-                decoration: InputDecoration(
-                    labelText: "Tujuan pinjaman",
-                    labelStyle: TextStyle(fontSize: 18, color: Colors.black)),
-                onEditingComplete: () {
-                  _keteranganFocus.unfocus();
-                },
-              ),
-            ),
+//            Text("Pilih jenis pengajuan", style: TextStyle(fontSize: 18)),
+//            SizedBox(height: 8),
+//            Container(
+//              decoration: BoxDecoration(
+//                border: Border.all(color: Colors.lightGreen),
+//              ),
+//              child: Padding(
+//                padding: EdgeInsets.symmetric(vertical: 10.0),
+//                child: Row(
+//                  children: <Widget>[
+//                    jenisButton(
+//                        asset: "uang",
+//                        label: "Uang",
+//                        active: _tipePengajuan == 'Uang',
+//                        callback: () {
+//                          setState(() {
+//                            _kodeTipePengajuan = 'UANG';
+//                            _tipePengajuan = 'Uang';
+//                            _nominalQuickSelect(500000);
+//                          });
+//                        }),
+//                    jenisButton(
+//                        asset: "barang",
+//                        label: "Barang",
+//                        active: _tipePengajuan == 'Barang',
+//                        callback: () {
+//                          setState(() {
+//                            _kodeTipePengajuan = 'BRG';
+//                            _tipePengajuan = 'Barang';
+//                            _quickNominalSelected = null;
+//                            if (_listBarang.length > 0) {
+//                              _barang = _listBarang.first.namaBarang;
+//                              _keteranganBarang = _listBarang.first.keterangan;
+//                              _nominalPengajuanController.text =
+//                                  _listBarang.first.harga.toString();
+//                              _keteranganBarangController.text =
+//                                  _listBarang.first.keterangan;
+//                            } else {
+//                              _barang = "Tidak ada barang";
+//                              _nominalPengajuan = 0;
+//                            }
+//                          });
+//                        }),
+//                    /* jenisButton(
+//                      asset: "perumahan",
+//                      label: "Perumahan",
+//                      active: _tipePengajuan == 'Perumahan',
+//                      callback: () {
+//                        _scaffoldKey.currentState.showSnackBar(SnackBar(
+//                          content: Text("Sementara tidak tersedia"),
+//                        ));
+//                        /* setState(() {
+//                          _kodeTipePengajuan = 'PERUM';
+//                          _tipePengajuan = 'Perumahan';
+//                          _quickNominalSelected = null;
+//                          _perumahan = _listPerumahan.first['nama'];
+//                          _nominalPengajuanController.text = _listPerumahan.first['harga'].toString();
+//                        }); */
+//                      }
+//                    ), */
+//                  ],
+//                ),
+//              ),
+//            ),
 
             //Detail
             Container(
@@ -679,6 +694,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                                               ],
                                         onChanged: (v) {
                                           if (_listBarang.length > 0) {
+                                            print(_listBarang[0].namaBarang);
                                             setState(() {
                                               _barang = v;
                                               _kodeBarang = _listBarang
@@ -695,6 +711,11 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                                                           _.namaBarang == v)
                                                       .harga
                                                       .toString();
+                                              _keteranganBarangController.text =
+                                                  _listBarang
+                                                      .firstWhere((_) =>
+                                                          _.keterangan == v)
+                                                      .keterangan;
                                             });
                                           }
                                         },
@@ -735,6 +756,18 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                                   width: 330.0,
                                   child: TextFormField(
                                     enabled: false,
+                                    controller: _keteranganBarangController,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                                  height: 40.0,
+                                  width: 330.0,
+                                  child: TextFormField(
+                                    enabled: false,
                                     controller: _nominalPengajuanController,
                                   ),
                                 ),
@@ -742,6 +775,26 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                             ],
                           ),
                         ),
+
+                  //Keterangan
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 20.0, left: 10, right: 10, top: 10),
+                    child: TextFormField(
+                      controller: _keteranganController,
+                      maxLines: null,
+                      focusNode: _keteranganFocus,
+                      decoration: InputDecoration(
+                          labelText: "Tujuan pinjaman",
+                          labelStyle: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700)),
+                      onEditingComplete: () {
+                        _keteranganFocus.unfocus();
+                      },
+                    ),
+                  ),
 
                   //Tenor
                   Padding(
@@ -959,15 +1012,60 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
               ),
             ),
 
+            Row(
+              children: <Widget>[
+                Checkbox(
+                    value: _isCheck,
+                    onChanged: (bool val) {
+                      setState(() {
+                        _isCheck = val;
+                      });
+                    }),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Saya setuju dengan",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        TextSpan(
+                            text: " Syarat dan Ketentuan ",
+                            style: TextStyle(
+                              color: Colors.lightGreen,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            recognizer: TapGestureRecognizer()..onTap = () {
+                              Navigator.of(context).pushNamed('/ketentuan-kebijakan');
+                            }
+                        ),
+                        TextSpan(
+                          text: "yang berlaku",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ]
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             //Submit Button
             Padding(
-              padding: EdgeInsets.only(top: 15.0),
+              padding: EdgeInsets.only(top: 35.0),
               child: FlatButton(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 color: Colors.green,
                 textColor: Colors.white,
+                disabledColor: Colors.grey,
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.0),
                   child: isLoading
@@ -980,11 +1078,11 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                       : Text("Buat Pengajuan",
                           style: TextStyle(fontSize: 16.0)),
                 ),
-                onPressed: () {
+                onPressed: _isCheck ? () {
                   if (!isLoading) {
                     submit(context: context);
                   }
-                },
+                } : null,
               ),
             ),
           ],

@@ -26,7 +26,7 @@ class _DaftarScreenState extends State<DaftarScreen> {
             Expanded(
               child: Container(
                 child: InAppWebView(
-                    initialUrl: "http://kopbi.or.id/formulir-pendaftaran-menjadi-anggota-kopbi/",
+                    initialUrl: "https://www.kopbi.or.id/formulir-pendaftaran-menjadi-anggota-kopbi/",
                     initialHeaders: {},
                     initialOptions: InAppWebViewWidgetOptions(
                       inAppWebViewOptions: InAppWebViewOptions(

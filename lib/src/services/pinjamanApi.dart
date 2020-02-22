@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Pengajuan {
   String _kodePengajuan;
@@ -84,12 +87,14 @@ class Pengajuan {
   int get biayaAdmin => _biayaAdmin;
 
   String get formattedNominalAngsuran {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_nominalAngsuran);
   }
 
   String get formattedNominalPengajuan {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_nominalPengajuan);
   }
 
@@ -103,7 +108,8 @@ class Pengajuan {
 
   Pengajuan.fromMap(Map<String, dynamic> m) {
     _kodePengajuan = m['kodePengajuan'] == null ? '' : m['kodePengajuan'];
-    _kodeTipePengajuan = m['kodeTipePengajuan'] == null ? '' : m['kodeTipePengajuan'];
+    _kodeTipePengajuan =
+        m['kodeTipePengajuan'] == null ? '' : m['kodeTipePengajuan'];
     _tipePengajuan = m['tipePengajuan'] == null ? '' : m['tipePengajuan'];
     _nomorKtp = m['nomorKtp'] == null ? '' : m['nomorKtp'];
     _nomorAnggota = m['nomorAnggota'] == null ? '' : m['nomorAnggota'];
@@ -112,7 +118,8 @@ class Pengajuan {
     _nomorHp = m['nomorHp'] == null ? '' : m['nomorHp'];
     _kodePerusahaan = m['kodePerusahaan'] == null ? '' : m['kodePerusahaan'];
     _namaPerusahaan = m['namaPerusahaan'] == null ? '' : m['namaPerusahaan'];
-    _alamatPerusahaan = m['alamatPerusahaan'] == null ? '' : m['alamatPerusahaan'];
+    _alamatPerusahaan =
+        m['alamatPerusahaan'] == null ? '' : m['alamatPerusahaan'];
     _emailPerusahaan = m['emailPerusahaan'] == null ? '' : m['emailPerusahaan'];
     _kodeBarang = m['kodeBarang'] == null ? '' : m['kodeBarang'];
     _namaBarang = m['namaBarang'] == null ? '' : m['namaBarang'];
@@ -124,20 +131,35 @@ class Pengajuan {
     _kodeUser = m['kodeUser'] == null ? '' : m['kodeUser'];
     _namaUser = m['namaUser'] == null ? '' : m['namaUser'];
     _tanggalTempo = m['tanggalTempo'] == null ? '' : m['tanggalTempo'];
-    _tanggalJatuhTempoRaw = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
-    _tanggalPengajuanRaw = m['tanggalPengajuan'] == null ? '' : m['tanggalPengajuan'];
-    _tanggalPerubahanRaw = m['tanggalPerubahan'] == null ? '' : m['tanggalPerubahan'];
+    _tanggalJatuhTempoRaw =
+        m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
+    _tanggalPengajuanRaw =
+        m['tanggalPengajuan'] == null ? '' : m['tanggalPengajuan'];
+    _tanggalPerubahanRaw =
+        m['tanggalPerubahan'] == null ? '' : m['tanggalPerubahan'];
     _tanggalUpdateRaw = m['tanggalUpdate'] == null ? '' : m['tanggalUpdate'];
-    _tanggalJatuhTempo = m['tanggalJatuhTempo'] == null ? null : parseDate(explodeDate(m['tanggalJatuhTempo']));
-    _tanggalPengajuan = m['tanggalPengajuan'] == null ? null : parseDate(explodeDate(m['tanggalPengajuan']));
-    _tanggalPerubahan = m['tanggalPerubahan'] == null ? null : parseDate(explodeDate(m['tanggalPerubahan']));
-    _tanggalUpdate = m['tanggalUpdate'] == null ? null : parseDate(explodeDate(m['tanggalUpdate']));
+    _tanggalJatuhTempo = m['tanggalJatuhTempo'] == null
+        ? null
+        : parseDate(explodeDate(m['tanggalJatuhTempo']));
+    _tanggalPengajuan = m['tanggalPengajuan'] == null
+        ? null
+        : parseDate(explodeDate(m['tanggalPengajuan']));
+    _tanggalPerubahan = m['tanggalPerubahan'] == null
+        ? null
+        : parseDate(explodeDate(m['tanggalPerubahan']));
+    _tanggalUpdate = m['tanggalUpdate'] == null
+        ? null
+        : parseDate(explodeDate(m['tanggalUpdate']));
 
-    _lamaAngsuran = m['lamaAngsuran'] == null ? 0 : tryParseInt(m['lamaAngsuran']);
-    _nominalAngsuran = m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);
-    _nominalPengajuan = m['nominalPengajuan'] == null ? 0 : tryParseInt(m['nominalPengajuan']);
+    _lamaAngsuran =
+        m['lamaAngsuran'] == null ? 0 : tryParseInt(m['lamaAngsuran']);
+    _nominalAngsuran =
+        m['nominalAngsuran'] == null ? 0 : tryParseInt(m['nominalAngsuran']);
+    _nominalPengajuan =
+        m['nominalPengajuan'] == null ? 0 : tryParseInt(m['nominalPengajuan']);
     _persenBunga = m['persenBunga'] == null ? 0 : tryParseInt(m['persenBunga']);
-    _nominalBunga = m['nominalBunga'] == null ? 0 : tryParseInt(m['nominalBunga']);
+    _nominalBunga =
+        m['nominalBunga'] == null ? 0 : tryParseInt(m['nominalBunga']);
     _totalBunga = m['totalBunga'] == null ? 0 : tryParseInt(m['totalBunga']);
     _biayaAdmin = m['biayaAdmin'] == null ? 0 : tryParseInt(m['biayaAdmin']);
   }
@@ -151,7 +173,7 @@ class Pengajuan {
   }
 
   Map<String, String> toMap({bool isPengajuanBaru}) {
-    if(isPengajuanBaru == null) isPengajuanBaru = false;
+    if (isPengajuanBaru == null) isPengajuanBaru = false;
 
     Map<String, String> map = {
       'kodeTipePengajuan': _kodeTipePengajuan,
@@ -188,13 +210,13 @@ class Pengajuan {
       'biayaAdmin': _biayaAdmin.toString(),
     };
 
-    if(!isPengajuanBaru) map['kodePengajuan'] = _kodePengajuan;
+    if (!isPengajuanBaru) map['kodePengajuan'] = _kodePengajuan;
 
     return map;
   }
 
   Map<String, int> explodeDate(String dateStr) {
-    if(dateStr == null || dateStr.length < 13) return null;
+    if (dateStr == null || dateStr.length < 13) return null;
 
     String year = dateStr.substring(0, 4);
     String month = dateStr.substring(5, 7);
@@ -213,8 +235,9 @@ class Pengajuan {
       'millisecond': 0,
     };
 
-    if(dateStr.length > 20) {
-      String millisecond = dateStr.substring(20).replaceAll(new RegExp(r"[^\d]"), '');
+    if (dateStr.length > 20) {
+      String millisecond =
+          dateStr.substring(20).replaceAll(new RegExp(r"[^\d]"), '');
       map['millisecond'] = int.parse(millisecond);
     }
 
@@ -222,9 +245,10 @@ class Pengajuan {
   }
 
   DateTime parseDate(Map<String, int> map) {
-    if(map == null) return null;
+    if (map == null) return null;
 
-    return new DateTime(map['year'], map['month'], map['date'], map['hour'], map['minute'], map['second']);
+    return new DateTime(map['year'], map['month'], map['date'], map['hour'],
+        map['minute'], map['second']);
   }
 }
 
@@ -233,23 +257,36 @@ class ListPengajuan {
   int _total = 0;
 
   List<Pengajuan> get listPengajuan => _listPengajuan;
-  int get total =>_total;
+  int get total => _total;
 
   String get formattedTotal {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_total);
   }
 
   Future<HttpStatus> getList({@required String nik}) async {
-    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
+    var dio = Dio();
 
     try {
       String url = "${APIUrl.pengajuan}/list-pengajuan/$nik";
 
-      var uriResponse = await client.post(url);
+      var uriResponse = await dio.post(
+        url,
+        options: Options(
+          headers: {
+            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+            'jwtToken': token,
+          },
+        ),
+      );
 
-      if(uriResponse.statusCode == 200 && uriResponse.body.length > 0) {
-        _makeList(uriResponse.body);
+      if (uriResponse.statusCode == 200) {
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        _makeList(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
@@ -260,7 +297,7 @@ class ListPengajuan {
       print('End error detail');
       return HttpStatus.error;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 

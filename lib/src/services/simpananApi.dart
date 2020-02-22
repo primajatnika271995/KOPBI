@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Simpanan {
   String _idSimpanan;
@@ -231,15 +235,24 @@ class ListSimpanan {
   }
 
   Future<HttpStatus> getList({@required String nik}) async {
-    var client = new http.Client();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var token = _pref.getString(JWT_TOKEN);
+    var dio = Dio();
 
     try {
       String url = "${APIUrl.pinjaman}/list-simpanan/$nik";
 
-      var uriResponse = await client.post(url);
+      var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+      ),);
 
-      if(uriResponse.statusCode == 200 && uriResponse.body.length > 0) {
-        _makeList(uriResponse.body);
+      if(uriResponse.statusCode == 200) {
+        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+        _makeList(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
@@ -250,7 +263,7 @@ class ListSimpanan {
       print('End error detail');
       return HttpStatus.error;
     } finally {
-      client.close();
+      dio.close();
     }
   }
 

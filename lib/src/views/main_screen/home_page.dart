@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/appVersionModel.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
@@ -289,6 +290,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
                   onTap: () {
+                    Navigator.of(context).pushNamed('/kredit');
+                  },
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/icons/Kredit.png'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  'Kredit',
+                  style: TextStyle(fontSize: 13),
+                ),
+              )
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Material(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(1000),
+                  onTap: () {
                     Navigator.of(context).pushNamed('/konsumer');
                   },
                   child: Container(
@@ -306,6 +335,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
                   'Konsumer',
+                  style: TextStyle(fontSize: 13),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget menuRow2() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Material(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(1000),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/tiket');
+                  },
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/icons/kredit_motor.png'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  'Kendaraan',
                   style: TextStyle(fontSize: 13),
                 ),
               )
@@ -339,45 +407,6 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget menuRow2() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Material(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(1000),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/kredit');
-                  },
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/icons/Kredit.png'),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'Kredit',
-                  style: TextStyle(fontSize: 13),
-                ),
-              )
-            ],
-          ),
           Column(
             children: <Widget>[
               Material(
@@ -406,34 +435,34 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          Column(
-            children: <Widget>[
-              Material(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(1000),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/tiket');
-                  },
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/icons/Tiket.png'),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'Tiket',
-                  style: TextStyle(fontSize: 13),
-                ),
-              )
-            ],
-          ),
+//          Column(
+//            children: <Widget>[
+//              Material(
+//                child: InkWell(
+//                  borderRadius: BorderRadius.circular(1000),
+//                  onTap: () {
+//                    Navigator.of(context).pushNamed('/tiket');
+//                  },
+//                  child: Container(
+//                    height: 55,
+//                    width: 55,
+//                    decoration: BoxDecoration(
+//                      image: DecorationImage(
+//                        image: AssetImage('assets/icons/Tiket.png'),
+//                      ),
+//                    ),
+//                  ),
+//                ),
+//              ),
+//              Padding(
+//                padding: const EdgeInsets.only(top: 10),
+//                child: Text(
+//                  'Tiket',
+//                  style: TextStyle(fontSize: 13),
+//                ),
+//              )
+//            ],
+//          ),
           Column(
             children: <Widget>[
               Material(
@@ -673,7 +702,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getUserDetails();
     getDataSimpanan();
-//    getPackageName();
     getVersionBackend();
     imageCache.clear();
     super.initState();
@@ -682,9 +710,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void getVersionBackend() async {
     LoginProvider api = new LoginProvider();
     await api.appVersion().then((response) async {
-      print(response.body);
-      List<AppVersion> value = appVersionFromJson(response.body);
-      print(value[0].nominal);
+      MessageModel value = messageModelFromJson(json.encode(response.data));
+      List<AppVersion> data = appVersionFromJson(value.data);
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String version = packageInfo.version;
@@ -692,26 +719,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       print("Aplikasi Version : $version");
       print("Aplikasi Build Number : $buildNumber");
+      print("BE Version : ${data[0].nominal}");
 
-      if (version != value[0].nominal) {
+      if (version != data[0].nominal) {
         updateApplicationDialog();
       }
     });
   }
-
-//  void getPackageName() async {
-//    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-//    String version = packageInfo.version;
-//    String buildNumber = packageInfo.buildNumber;
-//
-//    print("Aplikasi Version : $version");
-//    print("Aplikasi Build Number : $buildNumber");
-//
-//    if (buildNumber != oriBuildNumber) {
-//      updateApplicationDialog();
-//    }
-//
-//  }
 
   updateApplicationDialog() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -725,12 +739,6 @@ class _HomeScreenState extends State<HomeScreen> {
           content: new Text("Pelanggan YTH, Kami telah melakukan pemutakhiran Aplikasi KOPBI."
               "\n\nSilahkan Install Aplikasi KOPBI terbaru untuk mendapatkan fitur terbaru dan pelayanan terbaik. Terimakasih"),
           actions: <Widget>[
-//            new FlatButton(
-//              child: new Text("Nanti", style: TextStyle(color: Colors.grey[800]),),
-//              onPressed: () {
-//                Navigator.of(context).pop();
-//              },
-//            ),
             new FlatButton(
               child: new Text("Update"),
               onPressed: () {
@@ -742,6 +750,4 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     });
   }
-
-
 }

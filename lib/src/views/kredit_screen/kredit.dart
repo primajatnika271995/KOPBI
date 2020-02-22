@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/views/kredit_screen/list_histori_pengajuan_kredit.dart';
+import 'package:kopbi/src/views/kredit_screen/list_pengajuan_kredit.dart';
+import 'package:kopbi/src/views/kredit_screen/list_pinjaman_kredit.dart';
 import 'package:kopbi/src/views/kredit_screen/pengajaun_kredit.dart';
 
 class KreditScreen extends StatefulWidget {
@@ -26,44 +29,33 @@ class _KreditScreenState extends State<KreditScreen> {
               Tab(text: "Pengajuan Kredit")
             ],
           ),
+//          actions: <Widget>[
+//            IconButton(icon: Icon(Icons.history), onPressed: () {
+//              Navigator.of(context).push(MaterialPageRoute(
+//                builder: (context) => HistoriPengajuanBarangListPage(),
+//              ),);
+//            }),
+//          ],
         ),
         body: TabBarView(
           children: <Widget>[
-            Center(
-              child: Text(
-                'Tidak ada Kredit',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Belum ada pengajuan Kredit',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
-            ),
+            PinjamanKreditListPage(),
+            PengajuanKreditListPage(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context)
-                .push(
-              MaterialPageRoute(
-                builder: (context) => PengajuanKredit(),
-              ),
-            );
-          },
-          backgroundColor: Colors.green,
-          child: Icon(Icons.add),
-          tooltip: "Pengajuan Kredit",
-        ),
+//        floatingActionButton: FloatingActionButton(
+//          onPressed: () {
+//            Navigator.of(context)
+//                .push(
+//              MaterialPageRoute(
+//                builder: (context) => PengajuanKreditPage(),
+//              ),
+//            );
+//          },
+//          backgroundColor: Colors.green,
+//          child: Icon(Icons.add),
+//          tooltip: "Pengajuan Kredit",
+//        ),
       ),
     );
   }
