@@ -119,6 +119,12 @@ class _PengajuanKreditListPageState extends State<PengajuanKreditListPage> {
             'formattedNominal': _.formattedNominalPengajuan,
             'tanggal': _.tanggalPengajuan,
             'barang': _.namaBarang,
+            'tanggalApproveHRD': _.tanggalAppHRD,
+            'namaHRD': _.namaUserHRD,
+            'catatanHRD': _.catatanHRD,
+            'tanggalApprovePengawas': _.tanggalAppPengawas,
+            'namaPengawas': _.namaUserPengawas,
+            'catatanPengawas': _.catatanPengawas,
           });
         }
       });
@@ -449,11 +455,11 @@ class _PengajuanKreditListPageState extends State<PengajuanKreditListPage> {
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => HistoriPengjuanKredit(
                               tglApproveHrd: dateFormat(data['tanggalApproveHRD']),
-                              namaHrd: dateFormat(data['namaHRD']),
-                              catatanHrd: dateFormat(data['catatanHRD']),
+                              namaHrd: data['namaHRD'],
+                              catatanHrd: data['catatanHRD'],
                               tglApprovePengawas: dateFormat(data['tanggalApprovePengawas']),
-                              namaPengawas: dateFormat(data['namaPengawas']),
-                              catatanPengawas: dateFormat(data['catatanPengawas']),
+                              namaPengawas: data['namaPengawas'],
+                              catatanPengawas: data['catatanPengawas'],
                             ),
                           ),);
                         },

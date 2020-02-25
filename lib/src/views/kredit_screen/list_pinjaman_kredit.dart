@@ -406,13 +406,10 @@ class _PinjamanKreditListPageState extends State<PinjamanKreditListPage> {
                     radius: 20,
                   ),
                   title: Text('Pinjaman ${data['tipe']}'),
-                  subtitle: data['tanggalUpdate'] == null ? Text(
-                    '${data['barang']} \nTanggal Pengajuan ${dateFormat(data['tanggal'])}',
+                  subtitle: Text(
+                    '${data['barang']} \nTanggal Pencairan ${dateFormat(data['tanggalUpdate'])}',
                     style: TextStyle(fontSize: 12),
-                  ) :  Text(
-            '${data['barang']} \nTanggal Pencairan ${dateFormat(data['tanggalUpdate'])}',
-            style: TextStyle(fontSize: 12),
-            ),
+                  ),
                   trailing: Text(
                     data['formattedNominal'],
                     style: TextStyle(fontWeight: FontWeight.bold),

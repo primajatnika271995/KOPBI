@@ -135,6 +135,7 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
             'namaPengawas': _.namaUserPengawas,
             'catatanHRD': _.catatanHRD,
             'catatanPengawas': _.catatanPengawas,
+            'tanggalUpdate': _.tanggalUpdate,
           });
         }
       });
@@ -406,9 +407,11 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                         ),
                         title: Text('Pinjaman ${data['tipe']}'),
                         subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              'Tanggal Pengajuan ${dateFormat(data['tanggal'])}',
+                              'Tanggal Pencairan ${dateFormat(data['tanggalUpdate'])}',
                               style: TextStyle(fontSize: 12),
                             ),
                           ],
