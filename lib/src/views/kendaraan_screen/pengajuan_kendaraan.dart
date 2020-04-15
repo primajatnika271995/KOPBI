@@ -1,30 +1,29 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/barangApi.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
-import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
-import 'package:kopbi/src/views/pinjaman_screen/upload_verifikasi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PengajuanTambahPage extends StatefulWidget {
+class PengajuanKendaraan extends StatefulWidget {
   @override
-  _PengajuanTambahPageState createState() => _PengajuanTambahPageState();
+  _PengajuanKendaraanState createState() => _PengajuanKendaraanState();
 }
 
-class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
+class _PengajuanKendaraanState extends State<PengajuanKendaraan> {
   GlobalKey<ScaffoldState> _scaffoldKey;
+
+  double _dLamaAngsuran = 11;
+  int _lamaAngsuran = 11;
+
   ListBarang _dbBarang;
   ListSimpanan _listSimpanan;
 
@@ -33,7 +32,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   MoneyMaskedTextController _nominalPengajuanController;
 
   FocusNode _keteranganFocus;
-  FocusNode _nominalFocus;
 
   //Post data
   String _kodeTipePengajuan;
@@ -43,7 +41,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   String _namaBarang;
   double _persenBunga;
   int _nominalPengajuan;
-  int _lamaAngsuran;
   int _nominalBunga;
   int _totalBunga;
   int _biayaAdmin;
@@ -64,9 +61,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   //Only display
   String _barang;
-  String _keteranganBarang;
-  String _perumahan;
-  int _quickNominalSelected;
 
   MoneyMaskedTextController _pokokController;
   MoneyMaskedTextController _bungaController;
@@ -78,18 +72,17 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   int _admin;
   int _nominalAngsuran;
 
-  double _dLamaAngsuran;
+  Item selectedUser;
 
   bool isLoading;
 
   List<Barang> _listBarang;
-  List<Map<String, dynamic>> _listPerumahan;
+
+  bool _isCheck = false;
 
   @override
   // TODO: implement widget
-  PengajuanTambahPage get widget => super.widget;
-
-  bool _isCheck = false;
+  PengajuanKendaraan get widget => super.widget;
 
   @override
   void initState() {
@@ -108,7 +101,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     _dbBarang.getList().then((_) {
       switch (_) {
         case HttpStatus.success:
-          _listBarang = _dbBarang.listBarang;
+          _listBarang = _dbBarang.listBarang.where((f) => f.stokBarang >= 1 && f.kategori == 'kendaraan').toList();
           print("List Barang Sukses");
           break;
         case HttpStatus.error:
@@ -125,40 +118,20 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
     isLoading = false;
 
-    _quickNominalSelected = 500000;
+    _dLamaAngsuran = 11;
 
-    _dLamaAngsuran = 1;
+    _kodeTipePengajuan = 'KNDRN';
+    _tipePengajuan = 'Kendaraan';
 
-    _kodeTipePengajuan = 'UANG';
-    _tipePengajuan = 'Uang';
     _nominalPengajuan = 500000;
-    _lamaAngsuran = 1;
+    _lamaAngsuran = 11;
 //    _persenBunga = (2 / _dLamaAngsuran);
     _persenBunga = 2;
     _nominalBunga = 0;
     _totalBunga = 0;
     _biayaAdmin = 5000;
 
-    _listPerumahan = [
-      {
-        'kode': 'CLST1',
-        'nama': 'Cluster A',
-        'harga': 150000000,
-      },
-      {
-        'kode': 'CLST2',
-        'nama': 'Cluster B',
-        'harga': 250000000,
-      },
-      {
-        'kode': 'CLST3',
-        'nama': 'Cluster C',
-        'harga': 300000000,
-      }
-    ];
-
     _keteranganFocus = new FocusNode();
-    _nominalFocus = new FocusNode();
 
     _keterangan = '';
     _keteranganController = new TextEditingController();
@@ -169,31 +142,29 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     });
 
     _nominalPengajuanController =
-        new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
+    new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
     _nominalPengajuanController.addListener(() {
       setState(() {
         if (_nominalPengajuanController.text.isEmpty) {
-          //_nominalPengajuan = 0;
           _nominalPengajuanController.text = '0';
         } else {
           _nominalPengajuan = int.parse(_nominalPengajuanController.text
               .replaceAll(new RegExp(r"[^\d]"), ''));
         }
-        _quickNominalSelected = null;
       });
     });
 
     _pokokController =
-        new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
+    new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
 
     _bungaController =
-        new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
+    new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
 
     _adminController =
-        new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
+    new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
 
     _nominalAngsuranController =
-        new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
+    new MoneyMaskedTextController(precision: 0, decimalSeparator: '');
   }
 
   void getDetails() async {
@@ -244,10 +215,10 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     await _dbSimpanan.getList(nik: nomorNik);
 
     if (_dbSimpanan.listSimpanan
-            .where((simpanan) =>
-                simpanan.jenisIuran.toLowerCase() == 'setoran' &&
-                simpanan.namaSimpanan.toLowerCase() == 'simpanan wajib')
-            .length >=
+        .where((simpanan) =>
+    simpanan.jenisIuran.toLowerCase() == 'setoran' &&
+        simpanan.namaSimpanan.toLowerCase() == 'simpanan wajib')
+        .length >=
         6) return true;
 
     return false;
@@ -256,6 +227,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   void submit({BuildContext context}) async {
     print('Prepare Submit');
 
+    print("Nama Barang : $_namaBarang");
     Map<String, String> postdata = {
       "kodeTipePengajuan": _kodeTipePengajuan,
       "tipePengajuan": _tipePengajuan,
@@ -265,9 +237,9 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       "nomorNik": nomorNik,
       "nomorHp": nomorHp,
       "kodePerusahaan": kodePerusahaan,
-      "lokasiPenempatan": lokasiPenempatan,
       "namaPerusahaan": namaPerusahaan,
       "alamatPerusahaan": alamatPerusahaan,
+      "lokasiPenempatan": lokasiPenempatan,
       "emailPerusahaan": emailPerusahaan,
       "tanggalPengajuan": new DateTime.now().toString(),
       "lamaAngsuran": _lamaAngsuran.toString(),
@@ -298,7 +270,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
     var token = _pref.getString(JWT_TOKEN);
-
 
     try {
       setState(() {
@@ -368,22 +339,13 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       if (uriResponse.statusCode == 200) {
         Navigator.of(context).pop();
         MessageModel value =
-            messageModelFromJson(json.encode(uriResponse.data));
+        messageModelFromJson(json.encode(uriResponse.data));
         Map<String, dynamic> response = jsonDecode(value.data);
         if (response['success'] == true) {
           /* _scaffoldKey.currentState.showSnackBar(SnackBar(
             content: Text("Pengajuan pinjaman berhasil dibuat"),
           )); */
-
-          if (_nominalPengajuan > 2000000) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => UploadFotoVerifikasi(),
-              ),
-            );
-          } else {
-            Navigator.pop(context, 'success');
-          }
+          Navigator.pop(context, 'success');
         }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -405,14 +367,6 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
     }
   }
 
-  void _nominalQuickSelect(int selected) {
-    setState(() {
-      _nominalPengajuanController.text = '0';
-      _nominalPengajuan = selected;
-      _quickNominalSelected = selected;
-    });
-  }
-
   String hitungPokok() {
     setState(() {
       _pokok = ((_nominalPengajuan / _lamaAngsuran).round() / 100).ceil() * 100;
@@ -424,21 +378,21 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   String hitungBunga() {
     setState(() {
-      if (_nominalPengajuan < totalSimpanan) {
-        setState(() {
-          _persenBunga = (8 / 12);
-        });
-      } else if (_nominalPengajuan > totalSimpanan) {
-        setState(() {
-          _persenBunga = 2;
-        });
-      }
+//      if (_nominalPengajuan < totalSimpanan) {
+//        setState(() {
+//          _persenBunga = (8 / 12);
+//        });
+//      } else if (_nominalPengajuan > totalSimpanan) {
+//        setState(() {
+//          _persenBunga = 2;
+//        });
+//      }
 
       print("ini total simpanan : $totalSimpanan");
       print("ini bagi hasil : $_persenBunga");
 
       _bunga =
-          ((_nominalPengajuan * ((_persenBunga) / 100)).round() / 100).ceil() *
+          ((_nominalPengajuan * ((1) / 100)).round() / 100).ceil() *
               100;
       _nominalBunga = _bunga;
       _totalBunga = _bunga * _lamaAngsuran;
@@ -468,114 +422,17 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget jenisButton(
-        {String asset, bool active, String label, Function callback}) {
-      return Expanded(
-        child: Container(
-          height: 85.0,
-          alignment: Alignment.topCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                splashColor: Color.fromARGB(255, 141, 197, 198),
-                color: active
-                    ? Color.fromARGB(255, 141, 197, 198)
-                    : Colors.transparent,
-                textColor: Colors.white,
-                shape: CircleBorder(),
-                padding: EdgeInsets.all(0.0),
-                child:
-                    Image.asset("assets/icons/" + asset + ".png", width: 60.0),
-                onPressed: () {
-                  callback();
-                },
-              ),
-              SizedBox(height: 5.0),
-              Text(label, textAlign: TextAlign.center),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.green,
-        title: Text("Ajukan Pinjaman"),
+        title: Text("Ajukan Pinjaman Kendaraan"),
       ),
       body: Center(
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
           children: <Widget>[
-//            Text("Pilih jenis pengajuan", style: TextStyle(fontSize: 18)),
-//            SizedBox(height: 8),
-//            Container(
-//              decoration: BoxDecoration(
-//                border: Border.all(color: Colors.lightGreen),
-//              ),
-//              child: Padding(
-//                padding: EdgeInsets.symmetric(vertical: 10.0),
-//                child: Row(
-//                  children: <Widget>[
-//                    jenisButton(
-//                        asset: "uang",
-//                        label: "Uang",
-//                        active: _tipePengajuan == 'Uang',
-//                        callback: () {
-//                          setState(() {
-//                            _kodeTipePengajuan = 'UANG';
-//                            _tipePengajuan = 'Uang';
-//                            _nominalQuickSelect(500000);
-//                          });
-//                        }),
-//                    jenisButton(
-//                        asset: "barang",
-//                        label: "Barang",
-//                        active: _tipePengajuan == 'Barang',
-//                        callback: () {
-//                          setState(() {
-//                            _kodeTipePengajuan = 'BRG';
-//                            _tipePengajuan = 'Barang';
-//                            _quickNominalSelected = null;
-//                            if (_listBarang.length > 0) {
-//                              _barang = _listBarang.first.namaBarang;
-//                              _keteranganBarang = _listBarang.first.keterangan;
-//                              _nominalPengajuanController.text =
-//                                  _listBarang.first.harga.toString();
-//                              _keteranganBarangController.text =
-//                                  _listBarang.first.keterangan;
-//                            } else {
-//                              _barang = "Tidak ada barang";
-//                              _nominalPengajuan = 0;
-//                            }
-//                          });
-//                        }),
-//                    /* jenisButton(
-//                      asset: "perumahan",
-//                      label: "Perumahan",
-//                      active: _tipePengajuan == 'Perumahan',
-//                      callback: () {
-//                        _scaffoldKey.currentState.showSnackBar(SnackBar(
-//                          content: Text("Sementara tidak tersedia"),
-//                        ));
-//                        /* setState(() {
-//                          _kodeTipePengajuan = 'PERUM';
-//                          _tipePengajuan = 'Perumahan';
-//                          _quickNominalSelected = null;
-//                          _perumahan = _listPerumahan.first['nama'];
-//                          _nominalPengajuanController.text = _listPerumahan.first['harga'].toString();
-//                        }); */
-//                      }
-//                    ), */
-//                  ],
-//                ),
-//              ),
-//            ),
-
-            //Detail
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.lightGreen),
@@ -584,248 +441,117 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
               child: Column(
                 children: <Widget>[
                   //Nominal
-                  _tipePengajuan == 'Uang'
-                      ? Padding(
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Pilih Kendaraan",
+                            style: TextStyle(fontSize: 18.0)),
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text('Berapa banyak?',
-                                  style: TextStyle(fontSize: 18.0)),
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Container(
-                                            width: 130,
-                                            child: FlatButton(
-                                              color: _quickNominalSelected ==
-                                                      500000
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                              textColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
-                                              child: Text("Rp. 500.000"),
-                                              onPressed: () {
-                                                _nominalQuickSelect(500000);
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 130,
-                                            child: FlatButton(
-                                              color: _quickNominalSelected ==
-                                                      1000000
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                              textColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
-                                              child: Text("Rp. 1.000.000"),
-                                              onPressed: () {
-                                                _nominalQuickSelect(1000000);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Container(
-                                            width: 130,
-                                            child: FlatButton(
-                                              color: _quickNominalSelected ==
-                                                      1500000
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                              textColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
-                                              child: Text("Rp. 1.500.000"),
-                                              onPressed: () {
-                                                _nominalQuickSelect(1500000);
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 30.0,
-                                            width: 130.0,
-                                            child: TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              controller:
-                                                  _nominalPengajuanController,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              focusNode: _nominalFocus,
-                                              onSaved: (_) {
-                                                _nominalFocus.unfocus();
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text("Pilih " + _tipePengajuan,
-                                  style: TextStyle(fontSize: 18.0)),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: _tipePengajuan == 'Barang'
-                                    ? DropdownButton<String>(
-                                        isExpanded: true,
-                                        value: _barang,
-                                        items: _listBarang.length > 0
-                                            ? _listBarang.map((_) {
-                                                return new DropdownMenuItem<
-                                                    String>(
-                                                  value: _.namaBarang,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10.0),
-                                                    child: new Text(
-                                                      _.namaBarang,
-                                                      style: TextStyle(
-                                                          fontSize: 16.0),
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList()
-                                            : [
-                                                DropdownMenuItem<String>(
-                                                  value: "Tidak ada barang",
-                                                  child: new Text(
-                                                    "Tidak ada barang",
-                                                    style: TextStyle(
-                                                        fontSize: 16.0),
-                                                  ),
-                                                )
-                                              ],
-                                        onChanged: (v) {
-                                          if (_listBarang.length > 0) {
-                                            print(_listBarang[0].namaBarang);
-                                            setState(() {
-                                              _barang = v;
-                                              _kodeBarang = _listBarang
-                                                  .firstWhere(
-                                                      (_) => _.namaBarang == v)
-                                                  .kodeBarang;
-                                              _namaBarang = _listBarang
-                                                  .firstWhere(
-                                                      (_) => _.namaBarang == v)
-                                                  .namaBarang;
-                                              _nominalPengajuanController.text =
-                                                  _listBarang
-                                                      .firstWhere((_) =>
-                                                          _.namaBarang == v)
-                                                      .harga
-                                                      .toString();
-                                              _keteranganBarangController.text =
-                                                  _listBarang
-                                                      .firstWhere((_) =>
-                                                          _.keterangan == v)
-                                                      .keterangan;
-                                            });
-                                          }
-                                        },
-                                      )
-                                    : DropdownButton<String>(
-                                        isExpanded: true,
-                                        value: _perumahan,
-                                        items: _listPerumahan.map((_) {
-                                          return new DropdownMenuItem<String>(
-                                            value: _['nama'],
-                                            child: new Text(
-                                              _['nama'],
-                                              style: TextStyle(fontSize: 20.0),
-                                            ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (v) {
-                                          setState(() {
-                                            _perumahan = v;
-                                            //_kodeBarang = _listPerumahan.firstWhere((_) => _['nama'] == v)['kode'];
-                                            //_namaBarang = _listPerumahan.firstWhere((_) => _['nama'] == v)['nama'];
-                                            _kodeBarang = null;
-                                            _namaBarang = null;
-                                            _nominalPengajuanController.text =
-                                                _listPerumahan
-                                                    .firstWhere((_) =>
-                                                        _['nama'] == v)['harga']
-                                                    .toString();
-                                          });
-                                        },
-                                      ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                                  height: 40.0,
-                                  width: 330.0,
-                                  child: TextFormField(
-                                    enabled: false,
-                                    controller: _keteranganBarangController,
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: _barang,
+                            hint: Text("Silahkan pilih Kendaraan"),
+                            items: _listBarang.length > 0
+                                ? _listBarang.map((_) {
+                              return new DropdownMenuItem<
+                                  String>(
+                                value: _.namaBarang,
+                                child: Padding(
+                                  padding:
+                                  EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: new Text(
+                                    _.namaBarang,
+                                    style: TextStyle(
+                                        fontSize: 16.0),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                                  height: 40.0,
-                                  width: 330.0,
-                                  child: TextFormField(
-                                    enabled: false,
-                                    controller: _nominalPengajuanController,
-                                  ),
+                              );
+                            }).toList()
+                                : [
+                              DropdownMenuItem<String>(
+                                value: "Tidak ada Kendaraan",
+                                child: new Text(
+                                  "Tidak ada Kendaraan",
+                                  style: TextStyle(
+                                      fontSize: 16.0),
                                 ),
-                              ),
+                              )
                             ],
+                            onChanged: (v) {
+                              if (_listBarang.length > 0) {
+                                print(_listBarang[0].namaBarang);
+                                setState(() {
+                                  _barang = v;
+                                  _kodeBarang = _listBarang
+                                      .firstWhere(
+                                          (_) => _.namaBarang == v)
+                                      .kodeBarang;
+                                  _namaBarang = _listBarang
+                                      .firstWhere(
+                                          (_) => _.namaBarang == v)
+                                      .namaBarang;
+                                  _nominalPengajuanController.text =
+                                      _listBarang
+                                          .firstWhere((_) =>
+                                      _.namaBarang == v)
+                                          .harga
+                                          .toString();
+                                  _keteranganBarangController.text =
+                                      _listBarang
+                                          .firstWhere((_) =>
+                                      _.namaBarang == v)
+                                          .keterangan;
+                                });
+                              }
+                            },
                           ),
                         ),
-
-                  //Keterangan
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            width: 330.0,
+                            child: TextFormField(
+                              enabled: false,
+                              controller: _keteranganBarangController,
+                              maxLines: null,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10.0),
+                            height: 40.0,
+                            width: 330.0,
+                            child: TextFormField(
+                              enabled: false,
+                              controller: _nominalPengajuanController,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        bottom: 20.0, left: 10, right: 10, top: 10),
+                    padding: EdgeInsets.only(bottom: 20.0, top: 10, left: 10, right: 10),
                     child: TextFormField(
                       controller: _keteranganController,
                       maxLines: null,
+                      minLines: 2,
                       focusNode: _keteranganFocus,
                       decoration: InputDecoration(
-                          labelText: "Tujuan pinjaman",
-                          labelStyle: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700)),
+                        labelText: "Tujuan Pinjaman dan Catatan",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       onEditingComplete: () {
                         _keteranganFocus.unfocus();
                       },
@@ -848,10 +574,11 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                                 activeColor: Colors.green,
                                 inactiveColor: Colors.grey,
                                 value: _dLamaAngsuran,
-                                min: 1.0,
-                                max: 12.0,
-                                divisions: 12,
+                                min: 11.0,
+                                max: 35.0,
+                                divisions: 4,
                                 onChanged: (v) {
+                                  print(v);
                                   setState(() {
                                     _dLamaAngsuran = v;
                                     _lamaAngsuran = v.round();
@@ -1048,48 +775,47 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
               ),
             ),
 
-            Row(
-              children: <Widget>[
-                Checkbox(
-                    value: _isCheck,
-                    onChanged: (bool val) {
-                      setState(() {
-                        _isCheck = val;
-                      });
-                    }),
-                Expanded(
-                  child: RichText(
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Row(
+                children: <Widget>[
+                  Checkbox(value: _isCheck, onChanged: (bool val) {
+                    setState(() {
+                      _isCheck = val;
+                    });
+                  }),
+                  Expanded(child: RichText(
                     text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Saya setuju dengan",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        TextSpan(
-                            text: " Syarat dan Ketentuan ",
+                        children: [
+                          TextSpan(
+                            text: "Simulasi diatas hanya contoh perhitungan.",
                             style: TextStyle(
-                              color: Colors.lightGreen,
+                              color: Colors.black,
                               fontWeight: FontWeight.w700,
                             ),
-                            recognizer: TapGestureRecognizer()..onTap = () {
-                              Navigator.of(context).pushNamed('/ketentuan-kebijakan');
-                            }
-                        ),
-                        TextSpan(
-                          text: "yang berlaku",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                      ]
+                          TextSpan(
+                              text: " Pengajuan akan ditindahlanjuti oleh Bank ",
+                              style: TextStyle(
+                                color: Colors.lightGreen,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              recognizer: TapGestureRecognizer()..onTap = () {
+                                Navigator.of(context).pushNamed('/ketentuan-kebijakan');
+                              }
+                          ),
+                          TextSpan(
+                            text: "yang memfasilitasi kredit diatas.",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ]
                     ),
-                  ),
-                ),
-              ],
+                  ),),
+                ],
+              ),
             ),
 
             //Submit Button
@@ -1106,17 +832,17 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
                   padding: EdgeInsets.symmetric(vertical: 12.0),
                   child: isLoading
                       ? Container(
-                          height: 20.0,
-                          width: 20.0,
-                          child: CircularProgressIndicator(
-                              backgroundColor: Colors.white70),
-                        )
+                    height: 20.0,
+                    width: 20.0,
+                    child: CircularProgressIndicator(
+                        backgroundColor: Colors.white70),
+                  )
                       : Text("Buat Pengajuan",
-                          style: TextStyle(fontSize: 16.0)),
+                      style: TextStyle(fontSize: 16.0)),
                 ),
                 onPressed: _isCheck ? () {
                   if (!isLoading) {
-                    submit(context: context);
+//                    submit(context: context);
                   }
                 } : null,
               ),
@@ -1126,4 +852,9 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       ),
     );
   }
+}
+
+class Item {
+  const Item(this.name);
+  final String name;
 }

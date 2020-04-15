@@ -40,6 +40,7 @@ class Pengajuan {
   String _catatanHRD;
   String _namaUserPengawas;
   String _catatanPengawas;
+  String _kategoriPengajuan;
   DateTime _tanggalJatuhTempo;
   DateTime _tanggalPengajuan;
   DateTime _tanggalPerubahan;
@@ -49,6 +50,9 @@ class Pengajuan {
   int _lamaAngsuran;
   int _nominalAngsuran;
   int _nominalPengajuan;
+  int _simpananPokok;
+  int _simpananWajib;
+  int _simpananSukarela;
   int _persenBunga;
   int _nominalBunga;
   int _totalBunga;
@@ -84,6 +88,7 @@ class Pengajuan {
   String get tanggalPengajuanRaw => _tanggalPengajuanRaw;
   String get tanggalPerubahanRaw => _tanggalPerubahanRaw;
   String get tanggalUpdateRaw => _tanggalUpdateRaw;
+  String get kategoriPengajuan => _kategoriPengajuan;
   DateTime get tanggalJatuhTempo => _tanggalJatuhTempo;
   DateTime get tanggalPengajuan => _tanggalPengajuan;
   DateTime get tanggalPerubahan => _tanggalPerubahan;
@@ -92,6 +97,9 @@ class Pengajuan {
   DateTime get tanggalUpdate => _tanggalUpdate;
   int get lamaAngsuran => _lamaAngsuran;
   int get nominalAngsuran => _nominalAngsuran;
+  int get simpananPokok => _simpananPokok;
+  int get simpananWajib => _simpananWajib;
+  int get simpananSukarela => _simpananSukarela;
   int get nominalPengajuan => _nominalPengajuan;
   int get persenBunga => _persenBunga;
   int get nominalBunga => _nominalBunga;
@@ -143,6 +151,10 @@ class Pengajuan {
     _catatanHRD = m['catatanHRD'];
     _namaUserPengawas = m['namaUserPengawas'];
     _catatanPengawas = m['catatanPengawas'];
+    _kategoriPengajuan = m['kategoriPengajuan'];
+    _simpananPokok = tryParseInt(m['simpananPokok']);
+    _simpananWajib = tryParseInt(m['simpananWajib']);
+    _simpananSukarela = tryParseInt(m['simpananSukarela']);
     _tanggalTempo = m['tanggalTempo'] == null ? '' : m['tanggalTempo'];
     _tanggalJatuhTempoRaw = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
     _tanggalPengajuanRaw = m['tanggalPengajuan'] == null ? '' : m['tanggalPengajuan'];
@@ -200,6 +212,7 @@ class Pengajuan {
       'namaUserPengawas': _namaUserPengawas,
       'catatanPengawas': _catatanPengawas,
       'tanggalTempo': _tanggalTempo,
+      'kategoriPengajuan': _kategoriPengajuan,
       'tanggalJatuhTempo': _tanggalJatuhTempo.toString(),
       'tanggalPengajuan': _tanggalPengajuan.toString(),
       'tanggalPerubahan': _tanggalPerubahan.toString(),
@@ -212,6 +225,9 @@ class Pengajuan {
       'persenBunga': _persenBunga.toString(),
       'nominalBunga': _nominalBunga.toString(),
       'totalBunga': _totalBunga.toString(),
+      'simpananPokok': _simpananPokok.toString(),
+      'simpananWajib': _simpananWajib.toString(),
+      'simpananSukarela': _simpananSukarela.toString(),
       'biayaAdmin': _biayaAdmin.toString(),
     };
 
@@ -263,6 +279,7 @@ class Pengajuan {
     var nomorHP = _pref.getString(CONTACT_ANGGOTA);
     var kodePerusahaan = _pref.getString(KODE_PERUSAHAAN);
     var namaPerusahaan = _pref.getString(NAMA_PERUSAHAAN);
+    var lokasiPenempatan = _pref.getString(LOKASI_PENEMPATAN);
     var alamatPerusahaan = _pref.getString(ALAMAT_PERUSAHAAN);
     var emailPerusahaan = _pref.getString(EMAIL_PERUSAHAAN);
     var kodeUser = _pref.getString(KODE_USER);
@@ -283,6 +300,7 @@ class Pengajuan {
       "nomorHp": nomorHP,
       "kodePerusahaan": kodePerusahaan,
       "namaPerusahaan": namaPerusahaan,
+      "lokasiPenempatan": lokasiPenempatan,
       "alamatPerusahaan": alamatPerusahaan,
       "emailPerusahaan": emailPerusahaan,
       "kodeUser": kodeUser,

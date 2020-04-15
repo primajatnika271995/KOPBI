@@ -29,7 +29,7 @@ class UpdateService {
         data: formData);
   }
 
-  Future<Response> verifikasiFoto(File image) async {
+  Future<Response> verifikasiFoto(File image, String id) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     var nomorAnggota = pref.getString(NOMOR_ANGGOTA);
@@ -37,11 +37,11 @@ class UpdateService {
 
     FormData formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(image.path,
-          filename: "1.jpg"),
+          filename: "$id.jpg"),
     });
 
     return await dio.post(
-        "http://solusi.kopbi.or.id/api/kobi-images/upload/pengajuan/1",
+        "http://solusi.kopbi.or.id/api/kobi-images/upload/pengajuan/$id",
         options: Options(headers: {
           'Content-type': 'application/x-www-form-urlencoded',
           'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',

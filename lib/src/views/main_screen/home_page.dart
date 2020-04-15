@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/appVersionModel.dart';
+import 'package:kopbi/src/models/catatanModel.dart';
 import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/loginApi.dart';
@@ -13,7 +16,7 @@ import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,6 +44,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var buildVersionBE;
 
+  static List<String> imgList = [];
+
+  static List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -57,7 +71,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: <Widget>[
                   menuRow1(),
                   menuRow2(),
-//              iklanField(),
+                  CarouselSlider.builder(
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                    autoPlayCurve: Curves.bounceIn,
+                    reverse: false,
+                    height: 100,
+                    enableInfiniteScroll: true,
+                    aspectRatio: 2.0,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.all(5.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          child: Stack(children: <Widget>[
+                            Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png", fit: BoxFit.cover, width: 1000.0),
+                          ]),
+                        ),
+                      );
+                    },
+                    itemCount: imgList.length,
+                  ),
                 ],
               ),
             ),
@@ -76,6 +111,26 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  final List child = map<Widget>(
+    imgList,
+        (index, i) {
+      return GestureDetector(
+        onTap: () {
+        },
+        child: Container(
+          margin: EdgeInsets.all(5.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            child: Stack(children: <Widget>[
+              Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/$i.png", fit: BoxFit.cover, width: 1000.0),
+            ]),
+          ),
+        ),
+      );
+    },
+  ).toList();
+
 
   Widget balanceField() {
     return Stack(
@@ -262,6 +317,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(1000),
                   onTap: () {
+                    Navigator.of(context).pushNamed('/isi-ulang');
+                  },
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/icons/Isi-Ulang.png'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  'Penarikan',
+                  style: TextStyle(fontSize: 13),
+                ),
+              )
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Material(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(1000),
+                  onTap: () {
                     Navigator.of(context).pushNamed('/pinjaman');
                   },
                   child: Container(
@@ -312,6 +395,17 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget menuRow2() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
           Column(
             children: <Widget>[
               Material(
@@ -340,17 +434,6 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget menuRow2() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
           Column(
             children: <Widget>[
               Material(
@@ -407,34 +490,6 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          Column(
-            children: <Widget>[
-              Material(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(1000),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/isi-ulang');
-                  },
-                  child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/icons/Isi-Ulang.png'),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  'Isi ulang',
-                  style: TextStyle(fontSize: 13),
-                ),
-              )
-            ],
-          ),
 //          Column(
 //            children: <Widget>[
 //              Material(
@@ -485,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
-                  'Prosedur',
+                  'Laporan',
                   style: TextStyle(fontSize: 13),
                 ),
               )
@@ -701,6 +756,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getUserDetails();
+    getCatatan();
     getDataSimpanan();
     getVersionBackend();
     imageCache.clear();
@@ -749,5 +805,31 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     });
+  }
+
+  void getCatatan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+
+    String url = "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/catatan";
+
+    var uriResponse = await dio.post(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+    ));
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      List<dynamic> m = jsonDecode(value.data);
+      for(Map<String, dynamic> item in m) {
+        setState(() {
+          imgList.add(item["id"].toString());
+        });
+      }
+    }
   }
 }

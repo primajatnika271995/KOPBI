@@ -92,7 +92,7 @@ class User {
   String kodePerusahaan;
   String namaPerusahaan;
   String alamatPerusahaan;
-  dynamic emailPerusahaan;
+  String emailPerusahaan;
   dynamic lokasiPenempatan;
   String kodeJabatan;
   String namaJabatan;
@@ -101,9 +101,10 @@ class User {
   dynamic cabangBank;
   String nomorRekening;
   DateTime tanggalRegistrasi;
-  String password;
+  dynamic password;
   String statusAnggota;
   String role;
+  String kodeKonfederasi;
   String namaKonfederasi;
   dynamic emailPribadi;
   dynamic namaSaudaraDekat;
@@ -147,6 +148,7 @@ class User {
     this.password,
     this.statusAnggota,
     this.role,
+    this.kodeKonfederasi,
     this.namaKonfederasi,
     this.emailPribadi,
     this.namaSaudaraDekat,
@@ -179,7 +181,7 @@ class User {
     kodePerusahaan: json["kodePerusahaan"] == null ? null : json["kodePerusahaan"],
     namaPerusahaan: json["namaPerusahaan"] == null ? null : json["namaPerusahaan"],
     alamatPerusahaan: json["alamatPerusahaan"] == null ? null : json["alamatPerusahaan"],
-    emailPerusahaan: json["emailPerusahaan"],
+    emailPerusahaan: json["emailPerusahaan"] == null ? null : json["emailPerusahaan"],
     lokasiPenempatan: json["lokasiPenempatan"],
     kodeJabatan: json["kodeJabatan"] == null ? null : json["kodeJabatan"],
     namaJabatan: json["namaJabatan"] == null ? null : json["namaJabatan"],
@@ -188,9 +190,10 @@ class User {
     cabangBank: json["cabangBank"],
     nomorRekening: json["nomorRekening"] == null ? null : json["nomorRekening"],
     tanggalRegistrasi: json["tanggalRegistrasi"] == null ? null : DateTime.parse(json["tanggalRegistrasi"]),
-    password: json["password"] == null ? null : json["password"],
+    password: json["password"],
     statusAnggota: json["statusAnggota"] == null ? null : json["statusAnggota"],
     role: json["role"] == null ? null : json["role"],
+    kodeKonfederasi: json["kodeKonfederasi"] == null ? null : json["kodeKonfederasi"],
     namaKonfederasi: json["namaKonfederasi"] == null ? null : json["namaKonfederasi"],
     emailPribadi: json["emailPribadi"],
     namaSaudaraDekat: json["namaSaudaraDekat"],
@@ -223,7 +226,7 @@ class User {
     "kodePerusahaan": kodePerusahaan == null ? null : kodePerusahaan,
     "namaPerusahaan": namaPerusahaan == null ? null : namaPerusahaan,
     "alamatPerusahaan": alamatPerusahaan == null ? null : alamatPerusahaan,
-    "emailPerusahaan": emailPerusahaan,
+    "emailPerusahaan": emailPerusahaan == null ? null : emailPerusahaan,
     "lokasiPenempatan": lokasiPenempatan,
     "kodeJabatan": kodeJabatan == null ? null : kodeJabatan,
     "namaJabatan": namaJabatan == null ? null : namaJabatan,
@@ -232,9 +235,10 @@ class User {
     "cabangBank": cabangBank,
     "nomorRekening": nomorRekening == null ? null : nomorRekening,
     "tanggalRegistrasi": tanggalRegistrasi == null ? null : "${tanggalRegistrasi.year.toString().padLeft(4, '0')}-${tanggalRegistrasi.month.toString().padLeft(2, '0')}-${tanggalRegistrasi.day.toString().padLeft(2, '0')}",
-    "password": password == null ? null : password,
+    "password": password,
     "statusAnggota": statusAnggota == null ? null : statusAnggota,
     "role": role == null ? null : role,
+    "kodeKonfederasi": kodeKonfederasi == null ? null : kodeKonfederasi,
     "namaKonfederasi": namaKonfederasi == null ? null : namaKonfederasi,
     "emailPribadi": emailPribadi,
     "namaSaudaraDekat": namaSaudaraDekat,

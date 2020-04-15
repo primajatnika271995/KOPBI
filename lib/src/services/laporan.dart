@@ -11,39 +11,33 @@ import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class BannerItem {
+class LaporanItem {
   String _url;
   String get url => _url;
 
-  BannerItem({
+  LaporanItem({
     String url
   }) {
     _url = url;
   }
 }
 
-class MyBanner extends StatefulWidget {
-  MyBanner({Key key, @required this.title}) : super(key: key);
+class MyLaporan extends StatefulWidget {
+  MyLaporan({Key key, @required this.title}) : super(key: key);
 
   String title;
 
   @override
-  _MyBannerState createState() => _MyBannerState();
+  _MyLaporanState createState() => _MyLaporanState();
 }
 
-class _MyBannerState extends State<MyBanner> {
+class _MyLaporanState extends State<MyLaporan> {
   GlobalKey<AnimatedListState> _listKey;
 
   List<String> _listBannerUrl;
-
-  List<String> _listEvent = [
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg"
-  ];
+  List<String> _listBannerPdf;
 
   ScrollController _scrollController;
 
@@ -61,7 +55,7 @@ class _MyBannerState extends State<MyBanner> {
 
   @override
   // TODO: implement widget
-  MyBanner get widget => super.widget;
+  MyLaporan get widget => super.widget;
 
   void getToken() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -74,7 +68,6 @@ class _MyBannerState extends State<MyBanner> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     getToken();
 
     isPerformingRequest = false;
@@ -88,23 +81,20 @@ class _MyBannerState extends State<MyBanner> {
 
     _listKey = new GlobalKey<AnimatedListState>();
 
-    _listBannerUrl = [
-      null,
-      null,
-      null,
-    ];
+    _listBannerUrl = [];
 
     client = new http.Client();
 
     switch (widget.title.toLowerCase()) {
-      case 'informasi':
+      case 'laporan':
         task = Timer(Duration(seconds: 1), () async {
           try {
 
             _listBannerUrl = [];
+            _listBannerPdf = [];
 
             Response response = await _dio.post(
-              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/informasi",
+              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/laporan",
               options: Options(
                 headers: {
                   'jwtToken': jwtToken,
@@ -114,77 +104,18 @@ class _MyBannerState extends State<MyBanner> {
             );
 
             MessageModel value = messageModelFromJson(json.encode(response.data));
-            print(value.data);
-
             List<dynamic> m = json.decode(value.data);
 
-            m.reversed.forEach((url) {
+            m.forEach((url) {
               print(url["id"]);
               setState(() {
                 _listBannerUrl.add(
-                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url['id']}.jpg");
+                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.jpg");
+
+                _listBannerPdf.add("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.pdf");
                 showBanner();
               });
             });
-
-//            setState(() {
-//              clearBanner();
-//
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/1.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/2.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/3.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/4.jpg");
-//
-//              showBanner();
-//            });
-          } catch (ie) {
-            print('Error detail');
-            print(ie);
-            print('End error detail');
-          }
-        });
-        break;
-      case 'event':
-        task = Timer(Duration(seconds: 1), () async {
-          try {
-
-            _listBannerUrl = [];
-
-            Response response = await _dio.post(
-              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/kegiatan",
-              options: Options(
-                headers: {
-                  'jwtToken': jwtToken,
-                  'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
-                },
-              ),
-            );
-
-            MessageModel value = messageModelFromJson(json.encode(response.data));
-            print(value.data);
-
-            List<dynamic> m = json.decode(value.data);
-
-            m.reversed.forEach((url) {
-              print(url["id"]);
-              setState(() {
-                _listBannerUrl.add(
-                    "http://solusi.kopbi.or.id:8889/kobi-images/kegiatan/${url['id']}.jpg");
-                showBanner();
-              });
-            });
-
-//            setState(() {
-//              clearBanner();
-//
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg");
-//
-//              showBanner();
-//            });
           } catch (ie) {
             print('Error detail');
             print(ie);
@@ -193,7 +124,6 @@ class _MyBannerState extends State<MyBanner> {
         });
         break;
     }
-
     getTemporaryDirectory().then((dir) {
       setState(() {
         _dir = dir;
@@ -247,7 +177,7 @@ class _MyBannerState extends State<MyBanner> {
 
     return ScaleTransition(
       scale: animation,
-      child: bannerPlaceholder(height: 170.0, url: _listBannerUrl[index]),
+      child: bannerPlaceholder(height: 170.0, url: _listBannerUrl[index], urlpdf: _listBannerPdf[index]),
     );
   }
 
@@ -406,7 +336,6 @@ class _MyBannerState extends State<MyBanner> {
         children: <Widget>[
           SizedBox(height: 20.0),
           Container(
-            width: 180.0,
             child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
           SizedBox(height: 20.0),
@@ -429,20 +358,61 @@ class _MyBannerState extends State<MyBanner> {
     );
   }
 
-  Widget bannerPlaceholder({double height, double width, Function callback, String url}) {
+  Widget bannerPlaceholder({double height, double width, Function callback, String url, String urlpdf}) {
     return Padding(
-      padding: EdgeInsets.only(right: 10.0, bottom: 10),
-      child: Container(
-        height: height,
-        padding: url != null ? EdgeInsets.all(0.0) : EdgeInsets.all(5.0),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-            boxShadow: [BoxShadow(offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -3.0)]
+      padding: EdgeInsets.only(bottom: 10),
+      child: Center(
+        child: Stack(
+          children: <Widget>[
+            Container(
+              height: height,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [BoxShadow(offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -3.0)]
+              ),
+              child: _bannerContent(url),
+            ),
+            Positioned(
+              right: 5,
+              bottom: 5,
+              child: FloatingActionButton(
+                onPressed: () {
+                  launch(urlpdf);
+//                  download();
+                },
+                heroTag: url,
+                child: Icon(Icons.file_download),
+                mini: true,
+              ),
+            ),
+          ],
         ),
-        child: _bannerContent(url),
       ),
     );
+  }
+
+  Future<String> _findLocalPath() async {
+    final directory = await getExternalStorageDirectory();
+    return directory.path;
+  }
+
+  void download () async {
+//    var dir = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
+//
+//    final savedDir = Directory(dir);
+//    bool hasExisted = await savedDir.exists();
+//    if (!hasExisted) {
+//      savedDir.create();
+//    }
+//
+//    await FlutterDownloader.enqueue(
+//      url: 'http://solusi.kopbi.or.id:8889/kobi-images/informasi/31.pdf',
+//      savedDir: dir,
+//      fileName: '31.pdf',
+//      showNotification: true, // show download progress in status bar (for Android)
+//      openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+//    );
   }
 
   @override

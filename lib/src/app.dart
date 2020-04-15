@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kopbi/main.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:kopbi/src/views/isiulang_screen/isiulang.dart';
+import 'package:kopbi/src/views/kendaraan_screen/kendaraan.dart';
 import 'package:kopbi/src/views/konsumer_screen/konsumer.dart';
 import 'package:kopbi/src/views/kredit_screen/kredit.dart';
 import 'package:kopbi/src/views/login_screen/daftar.dart';
@@ -42,7 +43,7 @@ void app() {
         '/konsumer': (context) => KonsumerScreen(),
         '/perumahan': (context) => PerumahanScreen(),
         '/isi-ulang': (context) => IsiUlangScreen(),
-        '/tiket': (context) => TiketScreen(),
+        '/tiket': (context) => KendaraanScreen(),
         '/kredit': (context) => KreditScreen(),
         '/lainnya': (context) => MoreScreen(),
         '/settings': (context) => SettingScreen(),

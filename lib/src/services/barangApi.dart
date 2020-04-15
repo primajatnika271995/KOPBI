@@ -12,6 +12,7 @@ class Barang {
   String _kodeBarang;
   String _namaBarang;
   String _keterangan;
+  String _kategori;
   int _stokBarang;
   int _harga;
 
@@ -19,6 +20,7 @@ class Barang {
   String get kodeBarang => _kodeBarang;
   String get namaBarang => _namaBarang;
   String get keterangan => _keterangan;
+  String get kategori => _kategori;
   int get stokBarang => _stokBarang;
   int get harga => _harga;
 
@@ -33,6 +35,7 @@ class Barang {
     _kodeBarang = m['kodeBarang'];
     _namaBarang = m['namaBarang'];
     _keterangan = m['keterangan'];
+    _kategori = m['kategori'];
     try {
       _harga = int.parse(m['harga']);
     } catch(e) {

@@ -136,6 +136,7 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
             'catatanHRD': _.catatanHRD,
             'catatanPengawas': _.catatanPengawas,
             'tanggalUpdate': _.tanggalUpdate,
+            'tanggalPengajuan': _.tanggalPengajuan,
           });
         }
       });
@@ -383,12 +384,8 @@ class _PengajuanListPageState extends State<PengajuanListPage> {
                                 page: AngsuranListPage(
                                   user: widget.user,
                                   pinjaman: pinjaman,
-                                  tglApproveHrd: pinjaman.tanggalAppPengawas,
-                                  namaHrd: pinjaman.namaUserHRD,
-                                  catatanHrd: pinjaman.catatanHRD,
-                                  tglApprovePengawas: pinjaman.tanggalAppPengawas,
-                                  namaPengawas: pinjaman.namaUserPengawas,
-                                  catatanPengawas: pinjaman.catatanPengawas,
+                                  tglUpdate: dateFormat(data['tanggalUpdate']),
+                                  tglPengajuan: dateFormat(data['tanggalPengajuan']),
                                 ),
                               ),
                             );

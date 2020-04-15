@@ -6,15 +6,16 @@ import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/pengajuan.dart';
 import 'package:kopbi/src/services/update.dart';
+import 'package:kopbi/src/utils/screenSize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as Im;
 
-class UploadFotoVerifikasi extends StatefulWidget {
+class UploadFotoVerifikasiKredit extends StatefulWidget {
   @override
-  _UploadFotoVerifikasiState createState() => _UploadFotoVerifikasiState();
+  _UploadFotoVerifikasiKreditState createState() => _UploadFotoVerifikasiKreditState();
 }
 
-class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
+class _UploadFotoVerifikasiKreditState extends State<UploadFotoVerifikasiKredit> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   File photo;
@@ -118,55 +119,51 @@ class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Center(
-              child: Stack(
-                fit: StackFit.loose,
-                children: <Widget>[
-                  new Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Container(
-                        width: 140.0,
-                        height: 140.0,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            image: photo == null
-                                ? AssetImage('assets/icons/no_user.jpg')
-                                : FileImage(photo),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new CircleAvatar(
-                          backgroundColor: Colors.red,
-                          radius: 25.0,
-                          child: new InkWell(
-                            onTap: getImage,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
+          Center(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  width: screenWidth(context),
+                  height: 200.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    image: new DecorationImage(
+                      image: photo == null
+                          ? NetworkImage('https://sman2babelan.sch.id/assets/icon/ionicons-2.0.1/png/512/upload.png')
+                          : FileImage(photo),
+                      fit: photo == null ? BoxFit.contain : BoxFit.cover,
                     ),
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  right: 10,
+                  child: Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: 25.0,
+                      child: new InkWell(
+                        onTap: getImage,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
+            child: Text("*Silahkan upload foto yang mendukung pengajuan anda.", style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.justify,),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -49,6 +49,7 @@ class Pinjaman {
   dynamic _nominalAngsuran;
   dynamic _sisaAngsuran;
   dynamic _persenBunga;
+  dynamic _persenBungaOri;
   dynamic _biayaAdmin;
   dynamic _nominalPinjaman;
   dynamic _sisaPinjaman;
@@ -92,6 +93,7 @@ class Pinjaman {
   int get nominalAngsuran => _nominalAngsuran;
   int get sisaAngsuran => _sisaAngsuran;
   int get persenBunga => _persenBunga;
+  String get persenBungaOri => _persenBungaOri;
   int get biayaAdmin => _biayaAdmin;
   int get nominalPinjaman => _nominalPinjaman;
   int get sisaPinjaman => _sisaPinjaman;
@@ -106,6 +108,21 @@ class Pinjaman {
   String get formattedNominalPinjaman {
     var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(_nominalPinjaman);
+  }
+
+  String get formattedBagiHasil {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_nominalBunga);
+  }
+
+  String get formattedBiayaAdmin {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_biayaAdmin);
+  }
+
+  String get formattedPokokAngsuran {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_nominalAngsuran - _nominalBunga - _biayaAdmin);
   }
 
   Pinjaman();
@@ -155,6 +172,7 @@ class Pinjaman {
     _lamaAngsuran = tryParseInt(m['lamaAngsuran']);
     _nominalAngsuran = tryParseInt(m['nominalAngsuran']);
     _persenBunga = tryParseInt(m['persenBunga']);
+    _persenBungaOri = m['persenBunga'];
     _biayaAdmin = tryParseInt(m['biayaAdmin']);
     _nominalPinjaman = tryParseInt(m['nominalPinjaman']);
     _nominalBunga = tryParseDouble(m['nominalBunga']);
@@ -217,6 +235,7 @@ class Pinjaman {
       'nominalAngsuran': _nominalAngsuran.toString(),
       'sisaAngsuran': _sisaAngsuran.toString(),
       'persenBunga': _persenBunga.toString(),
+      'persenBungaOri': _persenBungaOri.toString(),
       'biayaAdmin': _biayaAdmin.toString(),
       'nominalPinjaman': _nominalPinjaman.toString(),
       'sisaPinjaman': _sisaPinjaman.toString(),
@@ -279,6 +298,7 @@ class Pinjaman {
       "nomorHp": user.nomorHp,
       "kodePerusahaan": user.kodePerusahaan,
       "namaPerusahaan": user.namaPerusahaan,
+      "lokasiPenempatan": user.lokasiPenempatan,
       "alamatPerusahaan": user.alamatPerusahaan,
       "emailPerusahaan": user.emailPerusahaan,
       "kodeUser": user.kodeAnggota,

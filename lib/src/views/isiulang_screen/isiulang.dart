@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kopbi/src/views/perumahan_screen/pengajuan_kpr.dart';
+import 'package:kopbi/src/views/isiulang_screen/list_pengajuan_penarikan.dart';
+import 'package:kopbi/src/views/kendaraan_screen/pengajuan_kendaraan.dart';
 
 class IsiUlangScreen extends StatefulWidget {
   @override
@@ -28,20 +29,11 @@ class _IsiUlangScreenState extends State<IsiUlangScreen> {
           elevation: 1,
           backgroundColor: Colors.green,
           title: Text(
-            'Isi Ulang',
+            'Penarikan',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
-          bottom: TabBar(
-            indicatorColor: Colors.white,
-            tabs: <Widget>[Tab(text: "Pulsa"), Tab(text: "Token Listrik")],
-          ),
         ),
-        body: TabBarView(
-          children: <Widget>[
-            isiPulsa(),
-            isiToken(),
-          ],
-        ),
+        body: PengajuanPenarikanListPage(),
       ),
     );
   }
@@ -212,5 +204,9 @@ class _IsiUlangScreenState extends State<IsiUlangScreen> {
         ),
       ],
     );
+  }
+
+  void returnBackData() {
+//    getListData();
   }
 }

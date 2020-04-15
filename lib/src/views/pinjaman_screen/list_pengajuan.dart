@@ -110,7 +110,7 @@ class _PinjamanListPageState extends State<PinjamanListPage> {
     setState(() {
       _listPengajuan.forEach((_) {
         if (_.statusPengajuan.toLowerCase() != 'can' &&
-            _.tipePengajuan.toLowerCase() != 'barang') {
+            _.tipePengajuan.toLowerCase() != 'barang' && _.kategoriPengajuan.toLowerCase() != 'penarikan') {
           _listData.add({
             'typeof': 'pengajuan',
             'kode': _.kodePengajuan,

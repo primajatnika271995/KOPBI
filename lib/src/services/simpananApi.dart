@@ -238,8 +238,8 @@ class ListSimpanan {
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
     var token = _pref.getString(JWT_TOKEN);
-    var dio = Dio();
 
+    var dio = Dio();
     try {
       String url = "${APIUrl.pinjaman}/list-simpanan/$nik";
 

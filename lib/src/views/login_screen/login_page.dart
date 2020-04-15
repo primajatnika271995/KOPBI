@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/bloc/loginBloc.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/encrypt_model.dart';
 import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -301,6 +303,9 @@ class _LoginScreenState extends State<LoginScreen> {
         print(value.response);
         await loginBloc.login(context, _userCtrl.text, value.response);
       });
+      var pref = await SharedPreferences.getInstance();
+      pref.setString(DECRYPT_PASSWORD, _passCtrl.text);
+
       print('Done');
       setState(() {
         _isLoading = false;

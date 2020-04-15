@@ -31,14 +31,16 @@ class LoginBloc {
 
   }
 
-  getImageProfile(BuildContext context, String nomorAnggota, UsersDetailsModel value) {
+  getImageProfile(BuildContext context, String nomorAnggota, UsersDetailsModel value) async {
+    var pref = await SharedPreferences.getInstance();
+
     _repository.getImageProfile(nomorAnggota).then((response) {
       if (response.statusCode == 200) {
         print("ADA IMAGE");
         String urlImage = '${APIUrl.img_profile}$nomorAnggota.jpg';
         setPreferences(value, urlImage);
 
-        if (value.data.user.password == "123456") {
+        if (pref.getString(DECRYPT_PASSWORD) == "123456") {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => UbahPasswordScreen(),
@@ -50,7 +52,7 @@ class LoginBloc {
       } else {
         print("GA ADA IMAGE");
         setPreferences(value, null);
-        if (value.data.user.password == "123456") {
+        if (pref.getString(DECRYPT_PASSWORD) == "123456") {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => UbahPasswordScreen(),
@@ -81,6 +83,7 @@ class LoginBloc {
     _pref.setString(ALAMAT_PERUSAHAAN, value.data.user.alamatPerusahaan);
     _pref.setString(LOKASI_PENEMPATAN, value.data.user.lokasiPenempatan);
     _pref.setString(NAMA_KONFEDERENSI, value.data.user.namaKonfederasi);
+    _pref.setString(KODE_FEDERASI, value.data.user.kodeKonfederasi);
     _pref.setString(KODE_PERUSAHAAN, value.data.user.kodePerusahaan);
     _pref.setString(EMAIL_PERUSAHAAN, value.data.user.emailPerusahaan);
     _pref.setString(KODE_USER, value.data.user.kodeAnggota);
@@ -105,6 +108,7 @@ class LoginBloc {
     _pref.setString(SIMPANAN_WAJIB, value.data.user.simpananWajib);
     _pref.setString(SIMPANAN_SUKARELA, value.data.user.simpananSukarela);
     _pref.setString(JABATAN_KEANGGOTAAN, value.data.user.jabatanKeanggotaan);
+    _pref.setString(STATUS_PERKAWINAN, value.data.user.status);
   }
 
   dispose() async {

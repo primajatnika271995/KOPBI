@@ -14,7 +14,7 @@ import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/barangApi.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
-import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
+import 'package:kopbi/src/views/kredit_screen/upload_verifikasi_kredit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengajuanKreditPage extends StatefulWidget {
@@ -57,6 +57,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
   String kodePerusahaan;
   String namaPerusahaan;
   String alamatPerusahaan;
+  String lokasiPenempatan;
   String emailPerusahaan;
   String kodeAnggota;
 
@@ -106,7 +107,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
     _dbBarang.getList().then((_) {
       switch (_) {
         case HttpStatus.success:
-          _listBarang = _dbBarang.listBarang.where((f) => f.stokBarang >= 1).toList();
+          _listBarang = _dbBarang.listBarang.where((f) => f.stokBarang >= 1 && f.kategori == 'barang').toList();
 
           print("STOCK : ${_listBarang[0].stokBarang}");
 
@@ -222,6 +223,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
     });
   }
 
+
   void getDetails() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     setState(() {
@@ -233,6 +235,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
       kodePerusahaan = _pref.getString(KODE_PERUSAHAAN);
       namaPerusahaan = _pref.getString(NAMA_PERUSAHAAN);
       alamatPerusahaan = _pref.getString(ALAMAT_PERUSAHAAN);
+      lokasiPenempatan = _pref.getString(LOKASI_PENEMPATAN);
       emailPerusahaan = _pref.getString(EMAIL_PERUSAHAAN);
       kodeAnggota = _pref.getString(KODE_USER);
     });
@@ -293,6 +296,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
       "kodePerusahaan": kodePerusahaan,
       "namaPerusahaan": namaPerusahaan,
       "alamatPerusahaan": alamatPerusahaan,
+      "lokasiPenempatan": lokasiPenempatan,
       "emailPerusahaan": emailPerusahaan,
       "tanggalPengajuan": new DateTime.now().toString(),
       "lamaAngsuran": _lamaAngsuran.toString(),
@@ -343,6 +347,38 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
         return;
       }
 
+      if (_pref.getString(NAMA_ANGGOTA) == null || _pref.getString(NAMA_ANGGOTA).isEmpty
+          || _pref.getString(NO_KTP) == null || _pref.getString(NO_KTP).isEmpty
+          || _pref.getString(JENIS_KELAMIN) == null || _pref.getString(JENIS_KELAMIN).isEmpty
+          || _pref.getString(TEMPAT_LAHIR) == null || _pref.getString(TEMPAT_LAHIR).isEmpty
+          || _pref.getString(TANGGAL_LAHIR) == null || _pref.getString(TANGGAL_LAHIR).isEmpty
+          || _pref.getString(STATUS_PERKAWINAN) == null || _pref.getString(STATUS_PERKAWINAN).isEmpty
+          || _pref.getString(ALAMAT) == null || _pref.getString(ALAMAT).isEmpty
+          || _pref.getString(PEKERJAAN) == null || _pref.getString(PEKERJAAN).isEmpty
+          || _pref.getString(EMAIL_PRIBADI) == null || _pref.getString(EMAIL_PRIBADI).isEmpty
+          || _pref.getString(CONTACT_ANGGOTA) == null || _pref.getString(CONTACT_ANGGOTA).isEmpty
+          || _pref.getString(NAMA_KONFEDERENSI) == null || _pref.getString(NAMA_KONFEDERENSI).isEmpty
+          || _pref.getString(NAMA_PERUSAHAAN) == null || _pref.getString(NAMA_PERUSAHAAN).isEmpty
+          || _pref.getString(LOKASI_PENEMPATAN) == null || _pref.getString(LOKASI_PENEMPATAN).isEmpty
+          || _pref.getString(NIK) == null || _pref.getString(NIK).isEmpty
+          || _pref.getString(JABATAN_KEANGGOTAAN) == null || _pref.getString(JABATAN_KEANGGOTAAN).isEmpty
+          || _pref.getString(PENDAPATAN) == null || _pref.getString(PENDAPATAN).isEmpty
+          || _pref.getString(NAMA_SAUDARA_DEKAT) == null || _pref.getString(NAMA_SAUDARA_DEKAT).isEmpty
+          || _pref.getString(HUBUNGAN_SAUDARA) == null || _pref.getString(HUBUNGAN_SAUDARA).isEmpty
+          || _pref.getString(ALAMAT_SAUDARA) == null || _pref.getString(ALAMAT_SAUDARA).isEmpty
+          || _pref.getString(NO_HP_SAUDARA) == null || _pref.getString(NO_HP_SAUDARA).isEmpty
+          || _pref.getString(NAMA_BANK) == null || _pref.getString(NAMA_BANK).isEmpty
+          || _pref.getString(NOMOR_REKENING) == null || _pref.getString(NOMOR_REKENING).isEmpty
+          || _pref.getString(SIMPANAN_WAJIB) == null || _pref.getString(SIMPANAN_WAJIB).isEmpty
+          || _pref.getString(CABANG_BANK) == null || _pref.getString(CABANG_BANK).isEmpty || _pref.getString(CABANG_BANK) == "-"
+          || _pref.getString(SIMPANAN_SUKARELA) == null || _pref.getString(SIMPANAN_SUKARELA).isEmpty) {
+
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Harap Lengkapi Data Anggota terlebih dahulu."),
+        ));
+        return;
+      }
+
       String url = "${APIUrl.pengajuan}/post-pengajuan";
 
       print('Submitting');
@@ -366,7 +402,15 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
           /* _scaffoldKey.currentState.showSnackBar(SnackBar(
             content: Text("Pengajuan pinjaman berhasil dibuat"),
           )); */
-          Navigator.pop(context, 'success');
+          if (_nominalPengajuan > 2000000) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => UploadFotoVerifikasiKredit(),
+              ),
+            );
+          } else {
+            Navigator.pop(context, 'success');
+          }
         }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -451,37 +495,6 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget jenisButton(
-        {String asset, bool active, String label, Function callback}) {
-      return Expanded(
-        child: Container(
-          height: 85.0,
-          alignment: Alignment.topCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                splashColor: Color.fromARGB(255, 141, 197, 198),
-                color: active
-                    ? Color.fromARGB(255, 141, 197, 198)
-                    : Colors.transparent,
-                textColor: Colors.white,
-                shape: CircleBorder(),
-                padding: EdgeInsets.all(0.0),
-                child:
-                    Image.asset("assets/icons/" + asset + ".png", width: 60.0),
-                onPressed: () {
-                  callback();
-                },
-              ),
-              SizedBox(height: 5.0),
-              Text(label, textAlign: TextAlign.center),
-            ],
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
@@ -493,71 +506,6 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
         child: ListView(
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
           children: <Widget>[
-//            Container(
-//              decoration: BoxDecoration(
-//                border: Border.all(color: Colors.lightGreen),
-//              ),
-//              child: Padding(
-//                padding: EdgeInsets.symmetric(vertical: 10.0),
-//                child: Row(
-//                  children: <Widget>[
-//                    jenisButton(
-//                        asset: "uang",
-//                        label: "Uang",
-//                        active: _tipePengajuan == 'Uang',
-//                        callback: () {
-//                          setState(() {
-//                            _kodeTipePengajuan = 'UANG';
-//                            _tipePengajuan = 'Uang';
-//                            _nominalQuickSelect(500000);
-//                          });
-//                        }),
-//                    jenisButton(
-//                        asset: "barang",
-//                        label: "Barang",
-//                        active: _tipePengajuan == 'Barang',
-//                        callback: () {
-//                          setState(() {
-//                            _kodeTipePengajuan = 'BRG';
-//                            _tipePengajuan = 'Barang';
-//                            _quickNominalSelected = null;
-//                            if (_listBarang.length > 0) {
-//                              _barang = _listBarang.first.namaBarang;
-//                              _keteranganBarang = _listBarang.first.keterangan;
-//                              _nominalPengajuanController.text =
-//                                  _listBarang.first.harga.toString();
-//                              _keteranganBarangController.text =
-//                                  _listBarang.first.keterangan;
-//                            } else {
-//                              _barang = "Tidak ada barang";
-//                              _nominalPengajuan = 0;
-//                            }
-//                          });
-//                        }),
-//                    /* jenisButton(
-//                      asset: "perumahan",
-//                      label: "Perumahan",
-//                      active: _tipePengajuan == 'Perumahan',
-//                      callback: () {
-//                        _scaffoldKey.currentState.showSnackBar(SnackBar(
-//                          content: Text("Sementara tidak tersedia"),
-//                        ));
-//                        /* setState(() {
-//                          _kodeTipePengajuan = 'PERUM';
-//                          _tipePengajuan = 'Perumahan';
-//                          _quickNominalSelected = null;
-//                          _perumahan = _listPerumahan.first['nama'];
-//                          _nominalPengajuanController.text = _listPerumahan.first['harga'].toString();
-//                        }); */
-//                      }
-//                    ), */
-//                  ],
-//                ),
-//              ),
-//            ),
-
-            //Keterangan
-            //Detail
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.lightGreen),

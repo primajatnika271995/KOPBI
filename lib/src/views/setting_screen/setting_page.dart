@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:kopbi/src/views/setting_screen/ubah_data_anggota.dart';
 import 'package:kopbi/src/views/setting_screen/ubah_foto_profile.dart';
 import 'package:kopbi/src/views/setting_screen/ubah_password.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,6 +88,29 @@ class _SettingScreenState extends State<SettingScreen> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => UbahPasswordScreen(),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hasFloatingPlaceholder: false,
+              hintText: 'Ubah Data Anggota',
+              hintStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UbahDataAnggotaScreen(),
                 ),
               );
             },
@@ -192,6 +216,43 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+  Widget dataAnggotaField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: Text(
+            'Keamanan',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.purple,
+                fontSize: 16),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hasFloatingPlaceholder: false,
+              hintText: 'Ubah Data Anggota',
+              hintStyle: TextStyle(color: Colors.black),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            onTap: () {
+              print('Security Code');
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget tentangField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +332,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Text(
-        'Version 2.0.9',
+        'Version 2.0.14',
         style: TextStyle(color: Colors.grey),
       ),
     );
