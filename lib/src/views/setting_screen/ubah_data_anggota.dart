@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/services/update.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image/image.dart' as Im;
 
 class UbahDataAnggotaScreen extends StatefulWidget {
   @override
@@ -11,6 +16,12 @@ class UbahDataAnggotaScreen extends StatefulWidget {
 }
 
 class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  File imageKtp;
+
+  var imgKtpPref;
+
   var namaLengkapCrtl = new TextEditingController();
   var nomorKtpCtrl = new TextEditingController();
   var tempatLahirCtrl = new TextEditingController();
@@ -77,6 +88,24 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
       });
   }
 
+  void getImageKTP() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+//
+//    var rename = await File(image.path).rename(
+//        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$nomorAnggota.jpg');
+
+    Im.Image compres = Im.decodeImage(image.readAsBytesSync());
+    Im.Image smallerImage = Im.copyResize(compres, width: 300, height: 400); // choose the size here, it will maintain aspect ratio
+
+
+    var newim2 = new File('/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/${nomorKtpCtrl.text}.jpg')
+      ..writeAsBytesSync(Im.encodeJpg(smallerImage, quality: 85));
+
+    setState(() {
+      imageKtp = newim2;
+    });
+  }
+
   void getPreferences() async {
     SharedPreferences value = await SharedPreferences.getInstance();
 
@@ -124,10 +153,23 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
       statusAnggota = value.getString(STATUS_ANGGOTA);
       role = value.getString(ROLE);
       kodeFederasi = value.getString(KODE_FEDERASI);
+
+      imgKtpPref = value.getString(IMG_KTP);
     });
   }
 
   void simpanPerubahan() async {
+    if (imageKtp == null) {
+      print("Foto KTP Tidak boleh kosong");
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('Foto KTP Tidak boleh kosong'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     SharedPreferences value = await SharedPreferences.getInstance();
     setState(() {
       isLoading = true;
@@ -219,13 +261,43 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
           value.setString(SIMPANAN_SUKARELA, simpananSukarelaBulananCtrl.text);
         });
 
-        Navigator.pop(context, 'success');
+        postUpdate();
       });
     } else {
       setState(() {
         isLoading = false;
       });
     }
+  }
+
+  void postUpdate() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    UpdateService service = new UpdateService();
+    await service.uploadKTP(imageKtp, nomorKtpCtrl.text).then((response) async {
+      SharedPreferences _pref = await SharedPreferences.getInstance();
+      print("Upload KTP : ${response.statusCode}");
+      if (response.statusCode == 200) {
+        setState(() {
+          isLoading = false;
+        });
+
+        Navigator.of(context).pop();
+      } else if (response.statusCode == 500) {
+        setState(() {
+          isLoading = false;
+        });
+
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text('Error 500'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -238,6 +310,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 1,
         backgroundColor: Colors.green,
@@ -330,6 +403,58 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
             ),
             formSimpananWajib(),
             formSimpananSukarela(),
+            SizedBox(
+              height: 20,
+            ),
+            imgKtpPref == null ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: InkWell(
+                onTap: getImageKTP,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(5),
+                    image: imageKtp == null
+                        ? null
+                        : DecorationImage(
+                      image: FileImage(imageKtp),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: imageKtp == null
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.file_upload, color: Colors.white),
+                        Text(
+                          "Upload KTP",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  )
+                      : null,
+                ),
+              ),
+            ) : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: InkWell(
+                onTap: getImageKTP,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(5),
+                    image: DecorationImage(
+                      image: NetworkImage(imgKtpPref),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Container(
@@ -783,6 +908,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
         decoration: InputDecoration(
           labelText: 'Simpanan Wajib Bulanan',
           hasFloatingPlaceholder: true,
+          errorText: simpananWajibBulananCtrl.text.isEmpty ? 'Wajib diisi' : null,
         ),
         controller: simpananWajibBulananCtrl,
       ),
@@ -798,6 +924,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
         decoration: InputDecoration(
           labelText: 'Simpanan Sukarela Bulanan',
           hasFloatingPlaceholder: true,
+          errorText: simpananSukarelaBulananCtrl.text.isEmpty ? 'Wajib diisi' : null,
         ),
         controller: simpananSukarelaBulananCtrl,
       ),

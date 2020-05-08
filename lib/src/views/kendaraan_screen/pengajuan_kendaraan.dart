@@ -225,146 +225,199 @@ class _PengajuanKendaraanState extends State<PengajuanKendaraan> {
   }
 
   void submit({BuildContext context}) async {
-    print('Prepare Submit');
-
-    print("Nama Barang : $_namaBarang");
-    Map<String, String> postdata = {
-      "kodeTipePengajuan": _kodeTipePengajuan,
-      "tipePengajuan": _tipePengajuan,
-      "nomorKtp": nomorKtp,
-      "nomorAnggota": nomorAnggota,
-      "nama": nama,
-      "nomorNik": nomorNik,
-      "nomorHp": nomorHp,
-      "kodePerusahaan": kodePerusahaan,
-      "namaPerusahaan": namaPerusahaan,
-      "alamatPerusahaan": alamatPerusahaan,
-      "lokasiPenempatan": lokasiPenempatan,
-      "emailPerusahaan": emailPerusahaan,
-      "tanggalPengajuan": new DateTime.now().toString(),
-      "lamaAngsuran": _lamaAngsuran.toString(),
-      "nominalAngsuran": _nominalAngsuran.toString(),
-      "nominalPengajuan": _nominalPengajuan.toString(),
-      "persenBunga": _persenBunga.toString(),
-      "nominalBunga": _nominalBunga.toString(),
-      "totalBunga": _totalBunga.toString(),
-      "biayaAdmin": _biayaAdmin.toString(),
-      "kodeBarang": _kodeBarang,
-      "namaBarang": _namaBarang,
-      "ambilDariKas": null,
-      "ketKas": null,
-      "keterangan": _keterangan.replaceAll("\n", "\\n"),
-      "statusPengajuan": "NEW",
-      "tanggalPerubahan": null,
-      "tanggalTempo": "15",
-      "tanggalJatuhTempo": "15",
-      "nomorPinjaman": null,
-      "kodeUser": kodeAnggota,
-      "namaUser": nama,
-      "tanggalUpdate": null
-    };
-
-    var client = new http.Client();
-    var dio = Dio();
-
     SharedPreferences _pref = await SharedPreferences.getInstance();
-
-    var token = _pref.getString(JWT_TOKEN);
-
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      if (_keterangan.isEmpty) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Harap isi tujuan pinjaman"),
-        ));
-        return;
-      }
-
-      if (await isRequirementPassed() == false) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Maaf iuran wajib anda kurang dari 6 bulan"),
-        ));
-        return;
-      }
-
-      if (_pref.getString(NAMA_ANGGOTA) == null || _pref.getString(NAMA_ANGGOTA).isEmpty
-          || _pref.getString(NO_KTP) == null || _pref.getString(NO_KTP).isEmpty
-          || _pref.getString(JENIS_KELAMIN) == null || _pref.getString(JENIS_KELAMIN).isEmpty
-          || _pref.getString(TEMPAT_LAHIR) == null || _pref.getString(TEMPAT_LAHIR).isEmpty
-          || _pref.getString(TANGGAL_LAHIR) == null || _pref.getString(TANGGAL_LAHIR).isEmpty
-          || _pref.getString(STATUS_PERKAWINAN) == null || _pref.getString(STATUS_PERKAWINAN).isEmpty
-          || _pref.getString(ALAMAT) == null || _pref.getString(ALAMAT).isEmpty
-          || _pref.getString(PEKERJAAN) == null || _pref.getString(PEKERJAAN).isEmpty
-          || _pref.getString(EMAIL_PRIBADI) == null || _pref.getString(EMAIL_PRIBADI).isEmpty
-          || _pref.getString(CONTACT_ANGGOTA) == null || _pref.getString(CONTACT_ANGGOTA).isEmpty
-          || _pref.getString(NAMA_KONFEDERENSI) == null || _pref.getString(NAMA_KONFEDERENSI).isEmpty
-          || _pref.getString(NAMA_PERUSAHAAN) == null || _pref.getString(NAMA_PERUSAHAAN).isEmpty
-          || _pref.getString(LOKASI_PENEMPATAN) == null || _pref.getString(LOKASI_PENEMPATAN).isEmpty
-          || _pref.getString(NIK) == null || _pref.getString(NIK).isEmpty
-          || _pref.getString(JABATAN_KEANGGOTAAN) == null || _pref.getString(JABATAN_KEANGGOTAAN).isEmpty
-          || _pref.getString(PENDAPATAN) == null || _pref.getString(PENDAPATAN).isEmpty
-          || _pref.getString(NAMA_SAUDARA_DEKAT) == null || _pref.getString(NAMA_SAUDARA_DEKAT).isEmpty
-          || _pref.getString(HUBUNGAN_SAUDARA) == null || _pref.getString(HUBUNGAN_SAUDARA).isEmpty
-          || _pref.getString(ALAMAT_SAUDARA) == null || _pref.getString(ALAMAT_SAUDARA).isEmpty
-          || _pref.getString(NO_HP_SAUDARA) == null || _pref.getString(NO_HP_SAUDARA).isEmpty
-          || _pref.getString(NAMA_BANK) == null || _pref.getString(NAMA_BANK).isEmpty
-          || _pref.getString(NOMOR_REKENING) == null || _pref.getString(NOMOR_REKENING).isEmpty
-          || _pref.getString(SIMPANAN_WAJIB) == null || _pref.getString(SIMPANAN_WAJIB).isEmpty
-          || _pref.getString(CABANG_BANK) == null || _pref.getString(CABANG_BANK).isEmpty || _pref.getString(CABANG_BANK) == "-"
-          || _pref.getString(SIMPANAN_SUKARELA) == null || _pref.getString(SIMPANAN_SUKARELA).isEmpty) {
-
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Harap Lengkapi Data Anggota terlebih dahulu."),
-        ));
-        return;
-      }
-
-      String url = "${APIUrl.pengajuan}/post-pengajuan";
-
-      print('Submitting');
-
-      var uriResponse = await dio.post(url,
-          options: Options(headers: {
-            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
-            'jwtToken': token,
-          }),
-          data: jsonEncode(postdata));
-
-      print(uriResponse.statusCode);
-      print(uriResponse.data);
-
-      if (uriResponse.statusCode == 200) {
-        Navigator.of(context).pop();
-        MessageModel value =
-        messageModelFromJson(json.encode(uriResponse.data));
-        Map<String, dynamic> response = jsonDecode(value.data);
-        if (response['success'] == true) {
-          /* _scaffoldKey.currentState.showSnackBar(SnackBar(
-            content: Text("Pengajuan pinjaman berhasil dibuat"),
-          )); */
-          Navigator.pop(context, 'success');
-        }
-      } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Terjadi kesalahan pada proses pengajuan"),
-        ));
-      }
-    } catch (e) {
-      print('Error detail');
-      print(e);
-      print('End error detail');
+    if (_keterangan.isEmpty) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Tidak dapat terhubung dengan server"),
+        content: Text("Harap isi tujuan pinjaman"),
       ));
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-      client.close();
+      return;
     }
+
+    if (await isRequirementPassed() == false) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Maaf iuran wajib anda kurang dari 6 bulan"),
+      ));
+      return;
+    }
+
+    if (_pref.getString(NAMA_ANGGOTA) == null || _pref.getString(NAMA_ANGGOTA).isEmpty
+        || _pref.getString(NO_KTP) == null || _pref.getString(NO_KTP).isEmpty
+        || _pref.getString(JENIS_KELAMIN) == null || _pref.getString(JENIS_KELAMIN).isEmpty
+        || _pref.getString(TEMPAT_LAHIR) == null || _pref.getString(TEMPAT_LAHIR).isEmpty
+        || _pref.getString(TANGGAL_LAHIR) == null || _pref.getString(TANGGAL_LAHIR).isEmpty
+        || _pref.getString(STATUS_PERKAWINAN) == null || _pref.getString(STATUS_PERKAWINAN).isEmpty
+        || _pref.getString(ALAMAT) == null || _pref.getString(ALAMAT).isEmpty
+        || _pref.getString(PEKERJAAN) == null || _pref.getString(PEKERJAAN).isEmpty
+        || _pref.getString(EMAIL_PRIBADI) == null || _pref.getString(EMAIL_PRIBADI).isEmpty
+        || _pref.getString(CONTACT_ANGGOTA) == null || _pref.getString(CONTACT_ANGGOTA).isEmpty
+        || _pref.getString(NAMA_KONFEDERENSI) == null || _pref.getString(NAMA_KONFEDERENSI).isEmpty
+        || _pref.getString(NAMA_PERUSAHAAN) == null || _pref.getString(NAMA_PERUSAHAAN).isEmpty
+        || _pref.getString(LOKASI_PENEMPATAN) == null || _pref.getString(LOKASI_PENEMPATAN).isEmpty
+        || _pref.getString(NIK) == null || _pref.getString(NIK).isEmpty
+        || _pref.getString(JABATAN_KEANGGOTAAN) == null || _pref.getString(JABATAN_KEANGGOTAAN).isEmpty
+        || _pref.getString(PENDAPATAN) == null || _pref.getString(PENDAPATAN).isEmpty
+        || _pref.getString(NAMA_SAUDARA_DEKAT) == null || _pref.getString(NAMA_SAUDARA_DEKAT).isEmpty
+        || _pref.getString(HUBUNGAN_SAUDARA) == null || _pref.getString(HUBUNGAN_SAUDARA).isEmpty
+        || _pref.getString(ALAMAT_SAUDARA) == null || _pref.getString(ALAMAT_SAUDARA).isEmpty
+        || _pref.getString(NO_HP_SAUDARA) == null || _pref.getString(NO_HP_SAUDARA).isEmpty
+        || _pref.getString(NAMA_BANK) == null || _pref.getString(NAMA_BANK).isEmpty
+        || _pref.getString(NOMOR_REKENING) == null || _pref.getString(NOMOR_REKENING).isEmpty
+        || _pref.getString(SIMPANAN_WAJIB) == null || _pref.getString(SIMPANAN_WAJIB).isEmpty
+        || _pref.getString(CABANG_BANK) == null || _pref.getString(CABANG_BANK).isEmpty || _pref.getString(CABANG_BANK) == "-"
+        || _pref.getString(SIMPANAN_SUKARELA) == null || _pref.getString(SIMPANAN_SUKARELA).isEmpty) {
+
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Harap Lengkapi Data Anggota terlebih dahulu."),
+      ));
+      return;
+    }
+
+    if (_pref.getString(IMG_KTP) == null || _pref.getString(IMG_KTP).isEmpty) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Silahkan Upload Foto KTP di Kelengkapan Data."),
+      ));
+      return;
+    }
+//    print('Prepare Submit');
+//
+//    print("Nama Barang : $_namaBarang");
+//    Map<String, String> postdata = {
+//      "kodeTipePengajuan": _kodeTipePengajuan,
+//      "tipePengajuan": _tipePengajuan,
+//      "nomorKtp": nomorKtp,
+//      "nomorAnggota": nomorAnggota,
+//      "nama": nama,
+//      "nomorNik": nomorNik,
+//      "nomorHp": nomorHp,
+//      "kodePerusahaan": kodePerusahaan,
+//      "namaPerusahaan": namaPerusahaan,
+//      "alamatPerusahaan": alamatPerusahaan,
+//      "lokasiPenempatan": lokasiPenempatan,
+//      "emailPerusahaan": emailPerusahaan,
+//      "tanggalPengajuan": new DateTime.now().toString(),
+//      "lamaAngsuran": _lamaAngsuran.toString(),
+//      "nominalAngsuran": _nominalAngsuran.toString(),
+//      "nominalPengajuan": _nominalPengajuan.toString(),
+//      "persenBunga": _persenBunga.toString(),
+//      "nominalBunga": _nominalBunga.toString(),
+//      "totalBunga": _totalBunga.toString(),
+//      "biayaAdmin": _biayaAdmin.toString(),
+//      "kodeBarang": _kodeBarang,
+//      "namaBarang": _namaBarang,
+//      "ambilDariKas": null,
+//      "ketKas": null,
+//      "keterangan": _keterangan.replaceAll("\n", "\\n"),
+//      "statusPengajuan": "NEW",
+//      "tanggalPerubahan": null,
+//      "tanggalTempo": "15",
+//      "tanggalJatuhTempo": "15",
+//      "nomorPinjaman": null,
+//      "kodeUser": kodeAnggota,
+//      "namaUser": nama,
+//      "tanggalUpdate": null
+//    };
+//
+//    var client = new http.Client();
+//    var dio = Dio();
+//
+//    SharedPreferences _pref = await SharedPreferences.getInstance();
+//
+//    var token = _pref.getString(JWT_TOKEN);
+//
+//    try {
+//      setState(() {
+//        isLoading = true;
+//      });
+//
+//      if (_keterangan.isEmpty) {
+//        _scaffoldKey.currentState.showSnackBar(SnackBar(
+//          content: Text("Harap isi tujuan pinjaman"),
+//        ));
+//        return;
+//      }
+//
+//      if (await isRequirementPassed() == false) {
+//        _scaffoldKey.currentState.showSnackBar(SnackBar(
+//          content: Text("Maaf iuran wajib anda kurang dari 6 bulan"),
+//        ));
+//        return;
+//      }
+//
+//      if (_pref.getString(NAMA_ANGGOTA) == null || _pref.getString(NAMA_ANGGOTA).isEmpty
+//          || _pref.getString(NO_KTP) == null || _pref.getString(NO_KTP).isEmpty
+//          || _pref.getString(JENIS_KELAMIN) == null || _pref.getString(JENIS_KELAMIN).isEmpty
+//          || _pref.getString(TEMPAT_LAHIR) == null || _pref.getString(TEMPAT_LAHIR).isEmpty
+//          || _pref.getString(TANGGAL_LAHIR) == null || _pref.getString(TANGGAL_LAHIR).isEmpty
+//          || _pref.getString(STATUS_PERKAWINAN) == null || _pref.getString(STATUS_PERKAWINAN).isEmpty
+//          || _pref.getString(ALAMAT) == null || _pref.getString(ALAMAT).isEmpty
+//          || _pref.getString(PEKERJAAN) == null || _pref.getString(PEKERJAAN).isEmpty
+//          || _pref.getString(EMAIL_PRIBADI) == null || _pref.getString(EMAIL_PRIBADI).isEmpty
+//          || _pref.getString(CONTACT_ANGGOTA) == null || _pref.getString(CONTACT_ANGGOTA).isEmpty
+//          || _pref.getString(NAMA_KONFEDERENSI) == null || _pref.getString(NAMA_KONFEDERENSI).isEmpty
+//          || _pref.getString(NAMA_PERUSAHAAN) == null || _pref.getString(NAMA_PERUSAHAAN).isEmpty
+//          || _pref.getString(LOKASI_PENEMPATAN) == null || _pref.getString(LOKASI_PENEMPATAN).isEmpty
+//          || _pref.getString(NIK) == null || _pref.getString(NIK).isEmpty
+//          || _pref.getString(JABATAN_KEANGGOTAAN) == null || _pref.getString(JABATAN_KEANGGOTAAN).isEmpty
+//          || _pref.getString(PENDAPATAN) == null || _pref.getString(PENDAPATAN).isEmpty
+//          || _pref.getString(NAMA_SAUDARA_DEKAT) == null || _pref.getString(NAMA_SAUDARA_DEKAT).isEmpty
+//          || _pref.getString(HUBUNGAN_SAUDARA) == null || _pref.getString(HUBUNGAN_SAUDARA).isEmpty
+//          || _pref.getString(ALAMAT_SAUDARA) == null || _pref.getString(ALAMAT_SAUDARA).isEmpty
+//          || _pref.getString(NO_HP_SAUDARA) == null || _pref.getString(NO_HP_SAUDARA).isEmpty
+//          || _pref.getString(NAMA_BANK) == null || _pref.getString(NAMA_BANK).isEmpty
+//          || _pref.getString(NOMOR_REKENING) == null || _pref.getString(NOMOR_REKENING).isEmpty
+//          || _pref.getString(SIMPANAN_WAJIB) == null || _pref.getString(SIMPANAN_WAJIB).isEmpty
+//          || _pref.getString(CABANG_BANK) == null || _pref.getString(CABANG_BANK).isEmpty || _pref.getString(CABANG_BANK) == "-"
+//          || _pref.getString(SIMPANAN_SUKARELA) == null || _pref.getString(SIMPANAN_SUKARELA).isEmpty) {
+//
+//        _scaffoldKey.currentState.showSnackBar(SnackBar(
+//          content: Text("Harap Lengkapi Data Anggota terlebih dahulu."),
+//        ));
+//        return;
+//      }
+//
+//      String url = "${APIUrl.pengajuan}/post-pengajuan";
+//
+//      print('Submitting');
+//
+//      var uriResponse = await dio.post(url,
+//          options: Options(headers: {
+//            'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+//            'jwtToken': token,
+//          }),
+//          data: jsonEncode(postdata));
+//
+//      print(uriResponse.statusCode);
+//      print(uriResponse.data);
+//
+//      if (uriResponse.statusCode == 200) {
+//        Navigator.of(context).pop();
+//        MessageModel value =
+//        messageModelFromJson(json.encode(uriResponse.data));
+//        Map<String, dynamic> response = jsonDecode(value.data);
+//        if (response['success'] == true) {
+//          /* _scaffoldKey.currentState.showSnackBar(SnackBar(
+//            content: Text("Pengajuan pinjaman berhasil dibuat"),
+//          )); */
+//          Navigator.pop(context, 'success');
+//        }
+//      } else {
+//        _scaffoldKey.currentState.showSnackBar(SnackBar(
+//          content: Text("Terjadi kesalahan pada proses pengajuan"),
+//        ));
+//      }
+//    } catch (e) {
+//      print('Error detail');
+//      print(e);
+//      print('End error detail');
+//      _scaffoldKey.currentState.showSnackBar(SnackBar(
+//        content: Text("Tidak dapat terhubung dengan server"),
+//      ));
+//    } finally {
+//      setState(() {
+//        isLoading = false;
+//      });
+//      client.close();
+//    }
   }
 
   String hitungPokok() {
@@ -842,7 +895,7 @@ class _PengajuanKendaraanState extends State<PengajuanKendaraan> {
                 ),
                 onPressed: _isCheck ? () {
                   if (!isLoading) {
-//                    submit(context: context);
+                    submit(context: context);
                   }
                 } : null,
               ),

@@ -8,6 +8,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UpdateService {
   Dio dio = new Dio();
 
+  Future<Response> uploadKTP(File image, String noKtp) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    var nomorAnggota = pref.getString(NOMOR_ANGGOTA);
+    var token = pref.getString(JWT_TOKEN);
+
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(image.path,
+          filename: "$noKtp.jpg"),
+    });
+
+    return await dio.post(
+        "http://solusi.kopbi.or.id/api/kobi-images/upload/ktp/$noKtp",
+        options: Options(headers: {
+          'Content-type': 'application/x-www-form-urlencoded',
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }),
+        data: formData);
+  }
+
   Future<Response> updateFoto(File image) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
 

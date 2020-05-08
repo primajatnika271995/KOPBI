@@ -9,6 +9,8 @@ class APIUrl {
   // API End Point Get Image Profile Anggota
   static const String img_profile = "$_baseURL/kobi-images/anggota/";
 
+  static const String img_ktp = "$_baseURL/kobi-images/ktp/";
+
   // API End Point Pinjaman
   static const String pinjaman = "$_baseURL/kopbi-pinjaman";
 

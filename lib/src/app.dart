@@ -16,6 +16,7 @@ import 'package:kopbi/src/views/pinjaman_screen/list_pinjaman.dart';
 import 'package:kopbi/src/views/pinjaman_screen/pinjaman.dart';
 import 'package:kopbi/src/views/register_screen/aktivasi_page.dart';
 import 'package:kopbi/src/views/register_screen/bantuan.dart';
+import 'package:kopbi/src/views/register_screen/new_register_page.dart';
 import 'package:kopbi/src/views/register_screen/register_page.dart';
 import 'package:kopbi/src/views/setting_screen/informasi.dart';
 import 'package:kopbi/src/views/setting_screen/ketentuan_dan_kebijakan.dart';
@@ -34,7 +35,8 @@ void app() {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
         '/re-login': (context) => ReLoginScreen(),
-        '/register': (context) => RegisterScreen(),
+//        '/register': (context) => RegisterScreen(),
+        '/register': (context) => NewRegisterPage(),
         '/daftar': (context) => DaftarScreen(),
         '/bantuan': (context) => BantuanPage(),
         '/aktivasi': (context) => AktivasiScreen(),

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/message_model.dart';
+import 'package:kopbi/src/views/main_screen/details_info.dart';
 import 'package:path/path.dart' show join;
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
@@ -16,9 +17,7 @@ class BannerItem {
   String _url;
   String get url => _url;
 
-  BannerItem({
-    String url
-  }) {
+  BannerItem({String url}) {
     _url = url;
   }
 }
@@ -35,15 +34,8 @@ class MyBanner extends StatefulWidget {
 class _MyBannerState extends State<MyBanner> {
   GlobalKey<AnimatedListState> _listKey;
 
-  List<String> _listBannerUrl;
-
-  List<String> _listEvent = [
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg",
-    "http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg"
-  ];
+  List<String> _listBannerUrl = [];
+  List<String> _listBannerKeterangan = [];
 
   ScrollController _scrollController;
 
@@ -81,8 +73,8 @@ class _MyBannerState extends State<MyBanner> {
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        _getMoreData();
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
       }
     });
 
@@ -94,14 +86,20 @@ class _MyBannerState extends State<MyBanner> {
       null,
     ];
 
+    _listBannerKeterangan = [
+      null,
+      null,
+      null,
+    ];
+
     client = new http.Client();
 
     switch (widget.title.toLowerCase()) {
       case 'informasi':
         task = Timer(Duration(seconds: 1), () async {
           try {
-
             _listBannerUrl = [];
+            _listBannerKeterangan = [];
 
             Response response = await _dio.post(
               "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/informasi",
@@ -123,20 +121,10 @@ class _MyBannerState extends State<MyBanner> {
               setState(() {
                 _listBannerUrl.add(
                     "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url['id']}.jpg");
+                _listBannerKeterangan.add("${url['keterangan']}");
                 showBanner();
               });
             });
-
-//            setState(() {
-//              clearBanner();
-//
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/1.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/2.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/3.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/informasi/4.jpg");
-//
-//              showBanner();
-//            });
           } catch (ie) {
             print('Error detail');
             print(ie);
@@ -147,8 +135,8 @@ class _MyBannerState extends State<MyBanner> {
       case 'event':
         task = Timer(Duration(seconds: 1), () async {
           try {
-
             _listBannerUrl = [];
+            _listBannerKeterangan = [];
 
             Response response = await _dio.post(
               "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/kegiatan",
@@ -160,7 +148,8 @@ class _MyBannerState extends State<MyBanner> {
               ),
             );
 
-            MessageModel value = messageModelFromJson(json.encode(response.data));
+            MessageModel value =
+                messageModelFromJson(json.encode(response.data));
             print(value.data);
 
             List<dynamic> m = json.decode(value.data);
@@ -170,21 +159,10 @@ class _MyBannerState extends State<MyBanner> {
               setState(() {
                 _listBannerUrl.add(
                     "http://solusi.kopbi.or.id:8889/kobi-images/kegiatan/${url['id']}.jpg");
+                _listBannerKeterangan.add("${url['keterangan']}");
                 showBanner();
               });
             });
-
-//            setState(() {
-//              clearBanner();
-//
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/5.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/6.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/7.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/8.jpg");
-//              _listBannerUrl.add("http://solusi.kopbi.or.id/api/kobi-images/kegiatan/9.jpg");
-//
-//              showBanner();
-//            });
           } catch (ie) {
             print('Error detail');
             print(ie);
@@ -203,15 +181,15 @@ class _MyBannerState extends State<MyBanner> {
 
   @override
   void dispose() {
-    if(task != null) {
+    if (task != null) {
       task.cancel();
     }
 
-    if(taskShowBanner != null) {
+    if (taskShowBanner != null) {
       taskShowBanner.cancel();
     }
 
-    if(_scrollController != null) {
+    if (_scrollController != null) {
       _scrollController.dispose();
     }
     super.dispose();
@@ -219,11 +197,10 @@ class _MyBannerState extends State<MyBanner> {
 
   void clearBanner() {
     for (var i = 0; i < _listBannerUrl.length; i++) {
-      _listKey.currentState.removeItem(0, (BuildContext context, Animation<double> animation) {
+      _listKey.currentState.removeItem(0,
+          (BuildContext context, Animation<double> animation) {
         return ScaleTransition(
-            scale: animation,
-            child: bannerPlaceholder(height: 170.0)
-        );
+            scale: animation, child: bannerPlaceholder(height: 170.0));
       });
     }
     _listBannerUrl.clear();
@@ -233,107 +210,30 @@ class _MyBannerState extends State<MyBanner> {
     taskShowBanner = Timer(Duration(milliseconds: 500), () {
       for (var i = 0; i < _listBannerUrl.length; i++) {
         int duration = (200 * ((i + 1) / 2)).round();
-        if(duration > 500) duration = 200;
+        if (duration > 500) duration = 200;
 
-        _listKey.currentState.insertItem(i, duration: Duration(milliseconds: duration));
+        _listKey.currentState
+            .insertItem(i, duration: Duration(milliseconds: duration));
       }
     });
   }
 
   Widget _makeElement(int index, Animation animation) {
-    if(index >= _listBannerUrl.length) {
+    if (index >= _listBannerUrl.length) {
       return null;
     }
 
     return ScaleTransition(
       scale: animation,
-      child: bannerPlaceholder(height: 170.0, url: _listBannerUrl[index]),
+      child: bannerPlaceholder(height: 170.0, url: _listBannerUrl[index], keterangan: _listBannerKeterangan[index]),
     );
-  }
-
-  _getMoreData() async {
-    if(!isPerformingRequest) {
-      setState(() {
-        isPerformingRequest = true;
-      });
-
-      switch (widget.title.toLowerCase()) {
-        case 'informasi':
-          try {
-            Map<String, dynamic> params = {
-              'q': 'informasi',
-              'p': json.encode(_listBannerUrl),
-            };
-
-            String url = "https://aksarabiner.id/kopbi_banner/";
-
-            http.Response uriResponse = await client.post(url,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: json.encode(params)
-            );
-
-            List<dynamic> m = jsonDecode(uriResponse.body);
-
-            m.forEach((url) {
-              if(_listBannerUrl.indexOf(url) < 0) {
-                setState(() {
-                  _listBannerUrl.add(url);
-                  _listKey.currentState.insertItem(_listBannerUrl.indexOf(_listBannerUrl.last), duration: Duration(milliseconds: 200));
-                });
-              }
-            });
-          } catch (ie) {
-            print('Error detail');
-            print(ie);
-            print('End error detail');
-          }
-          break;
-        case 'event':
-          try {
-            Map<String, dynamic> params = {
-              'q': 'kegiatan',
-              'p': json.encode(_listBannerUrl),
-            };
-
-            String url = "https://aksarabiner.id/kopbi_banner/";
-
-            http.Response uriResponse = await client.post(url,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: json.encode(params)
-            );
-
-            List<dynamic> m = jsonDecode(uriResponse.body);
-
-            m.forEach((url) {
-              if(_listBannerUrl.indexOf(url) < 0) {
-                setState(() {
-                  _listBannerUrl.add(url);
-                  _listKey.currentState.insertItem(_listBannerUrl.indexOf(_listBannerUrl.last), duration: Duration(milliseconds: 200));
-                });
-              }
-            });
-          } catch (ie) {
-            print('Error detail');
-            print(ie);
-            print('End error detail');
-          }
-          break;
-      }
-
-      setState(() {
-        isPerformingRequest = false;
-      });
-    }
   }
 
   Future<void> writeToFile(ByteData data, String filename) {
     final path = join(_dir.path, filename);
     final buffer = data.buffer;
-    return new File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    return new File(path).writeAsBytes(
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
 
   Widget cacheBanner(String url) {
@@ -344,9 +244,9 @@ class _MyBannerState extends State<MyBanner> {
 
     bool fileExists = file.existsSync();
 
-    if(fileExists) {
+    if (fileExists) {
       //print("(From file) $url");
-      return Image.file(file, fit: BoxFit.cover);
+      return Image.file(file, fit: BoxFit.fill);
     }
 
     //print("(From http) $url");
@@ -363,28 +263,33 @@ class _MyBannerState extends State<MyBanner> {
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
               ],
             );
           case ConnectionState.done:
             if (snapshot.hasError) {
               return Container(
-                  width: 170.0,
-                  child: Center(
-                      child: Text('Error')
-                  )
-              );
+                  width: 170.0, child: Center(child: Text('Error')));
             }
 
             var buffer = snapshot.data.bodyBytes.buffer;
@@ -392,32 +297,38 @@ class _MyBannerState extends State<MyBanner> {
 
             writeToFile(bytes, urlDigest.toString());
 
-            return Image.memory(snapshot.data.bodyBytes, fit: BoxFit.cover);
+            return Image.memory(snapshot.data.bodyBytes, fit: BoxFit.fill);
         }
         return null; // unreachable
       },
     );
   }
 
-  Widget _bannerContent(String url) {
-    if(url == null || _dir == null) {
+  Widget _bannerContent(String url, String keterangan) {
+    if (url == null || _dir == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 20.0),
           Container(
             width: 180.0,
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
           SizedBox(height: 20.0),
           Container(
             width: 180.0,
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
           SizedBox(height: 20.0),
           Container(
             width: 180.0,
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
         ],
       );
@@ -425,11 +336,26 @@ class _MyBannerState extends State<MyBanner> {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
-      child: cacheBanner(url),
+      child: GestureDetector(
+        onTap: () {
+          if (widget.title.toLowerCase() == 'informasi') {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DetailsInfoScreen(
+                  url: url,
+                  keterangan: keterangan,
+                ),
+              ),
+            );
+          }
+        },
+        child: cacheBanner(url),
+      ),
     );
   }
 
-  Widget bannerPlaceholder({double height, double width, Function callback, String url}) {
+  Widget bannerPlaceholder(
+      {double height, double width, Function callback, String url, String keterangan}) {
     return Padding(
       padding: EdgeInsets.only(right: 10.0, bottom: 10),
       child: Container(
@@ -438,9 +364,13 @@ class _MyBannerState extends State<MyBanner> {
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
-            boxShadow: [BoxShadow(offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -3.0)]
-        ),
-        child: _bannerContent(url),
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset.fromDirection(20.0),
+                  blurRadius: 5.0,
+                  spreadRadius: -3.0)
+            ]),
+        child: _bannerContent(url, keterangan),
       ),
     );
   }
@@ -454,7 +384,8 @@ class _MyBannerState extends State<MyBanner> {
       initialItemCount: _listBannerUrl.length,
       controller: _scrollController,
       physics: BouncingScrollPhysics(),
-      itemBuilder: (BuildContext context, int index, Animation animation) => _makeElement(index, animation),
+      itemBuilder: (BuildContext context, int index, Animation animation) =>
+          _makeElement(index, animation),
     );
   }
 }

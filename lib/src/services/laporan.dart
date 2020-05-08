@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/message_model.dart';
+import 'package:kopbi/src/views/more_screen/details_laporan.dart';
 import 'package:path/path.dart' show join;
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
@@ -17,9 +18,7 @@ class LaporanItem {
   String _url;
   String get url => _url;
 
-  LaporanItem({
-    String url
-  }) {
+  LaporanItem({String url}) {
     _url = url;
   }
 }
@@ -36,8 +35,10 @@ class MyLaporan extends StatefulWidget {
 class _MyLaporanState extends State<MyLaporan> {
   GlobalKey<AnimatedListState> _listKey;
 
-  List<String> _listBannerUrl;
-  List<String> _listBannerPdf;
+  List<String> _listBannerUrl = [];
+  List<String> _listBannerPdf = [];
+  List<String> _listBannerId = [];
+  List<String> _listNamaKontent = [];
 
   ScrollController _scrollController;
 
@@ -74,14 +75,46 @@ class _MyLaporanState extends State<MyLaporan> {
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         _getMoreData();
       }
     });
 
     _listKey = new GlobalKey<AnimatedListState>();
 
-    _listBannerUrl = [];
+    _listBannerUrl = [
+      null,
+      null,
+      null,
+    ];
+
+    _listBannerPdf = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
+
+    _listBannerId = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
+
+    _listNamaKontent = [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ];
 
     client = new http.Client();
 
@@ -89,9 +122,10 @@ class _MyLaporanState extends State<MyLaporan> {
       case 'laporan':
         task = Timer(Duration(seconds: 1), () async {
           try {
-
             _listBannerUrl = [];
             _listBannerPdf = [];
+            _listBannerId = [];
+            _listNamaKontent = [];
 
             Response response = await _dio.post(
               "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/laporan",
@@ -103,18 +137,24 @@ class _MyLaporanState extends State<MyLaporan> {
               ),
             );
 
-            MessageModel value = messageModelFromJson(json.encode(response.data));
+            MessageModel value =
+                messageModelFromJson(json.encode(response.data));
             List<dynamic> m = json.decode(value.data);
 
             m.forEach((url) {
               print(url["id"]);
-              setState(() {
-                _listBannerUrl.add(
-                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.jpg");
+              if (!url["aktif"]) {
+                setState(() {
+                  _listBannerUrl.add(
+                      "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.jpg");
 
-                _listBannerPdf.add("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.pdf");
-                showBanner();
-              });
+                  _listBannerPdf.add(
+                      "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url["id"]}.pdf");
+                  _listBannerId.add("${url["id"].toString()}");
+                  _listNamaKontent.add("${url["namaKonten"]}");
+                  showBanner();
+                });
+              }
             });
           } catch (ie) {
             print('Error detail');
@@ -133,15 +173,15 @@ class _MyLaporanState extends State<MyLaporan> {
 
   @override
   void dispose() {
-    if(task != null) {
+    if (task != null) {
       task.cancel();
     }
 
-    if(taskShowBanner != null) {
+    if (taskShowBanner != null) {
       taskShowBanner.cancel();
     }
 
-    if(_scrollController != null) {
+    if (_scrollController != null) {
       _scrollController.dispose();
     }
     super.dispose();
@@ -149,11 +189,10 @@ class _MyLaporanState extends State<MyLaporan> {
 
   void clearBanner() {
     for (var i = 0; i < _listBannerUrl.length; i++) {
-      _listKey.currentState.removeItem(0, (BuildContext context, Animation<double> animation) {
+      _listKey.currentState.removeItem(0,
+          (BuildContext context, Animation<double> animation) {
         return ScaleTransition(
-            scale: animation,
-            child: bannerPlaceholder(height: 170.0)
-        );
+            scale: animation, child: bannerPlaceholder(height: 170.0));
       });
     }
     _listBannerUrl.clear();
@@ -163,26 +202,32 @@ class _MyLaporanState extends State<MyLaporan> {
     taskShowBanner = Timer(Duration(milliseconds: 500), () {
       for (var i = 0; i < _listBannerUrl.length; i++) {
         int duration = (200 * ((i + 1) / 2)).round();
-        if(duration > 500) duration = 200;
+        if (duration > 500) duration = 200;
 
-        _listKey.currentState.insertItem(i, duration: Duration(milliseconds: duration));
+        _listKey.currentState
+            .insertItem(i, duration: Duration(milliseconds: duration));
       }
     });
   }
 
   Widget _makeElement(int index, Animation animation) {
-    if(index >= _listBannerUrl.length) {
+    if (index >= _listBannerUrl.length) {
       return null;
     }
 
     return ScaleTransition(
       scale: animation,
-      child: bannerPlaceholder(height: 170.0, url: _listBannerUrl[index], urlpdf: _listBannerPdf[index]),
+      child: bannerPlaceholder(
+          height: 170.0,
+          url: _listBannerUrl[index],
+          urlpdf: _listBannerPdf[index],
+          id: _listBannerId[index],
+          namaKontent: _listNamaKontent[index]),
     );
   }
 
   _getMoreData() async {
-    if(!isPerformingRequest) {
+    if (!isPerformingRequest) {
       setState(() {
         isPerformingRequest = true;
       });
@@ -198,19 +243,18 @@ class _MyLaporanState extends State<MyLaporan> {
             String url = "https://aksarabiner.id/kopbi_banner/";
 
             http.Response uriResponse = await client.post(url,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: json.encode(params)
-            );
+                headers: {'Content-Type': 'application/json'},
+                body: json.encode(params));
 
             List<dynamic> m = jsonDecode(uriResponse.body);
 
             m.forEach((url) {
-              if(_listBannerUrl.indexOf(url) < 0) {
+              if (_listBannerUrl.indexOf(url) < 0) {
                 setState(() {
                   _listBannerUrl.add(url);
-                  _listKey.currentState.insertItem(_listBannerUrl.indexOf(_listBannerUrl.last), duration: Duration(milliseconds: 200));
+                  _listKey.currentState.insertItem(
+                      _listBannerUrl.indexOf(_listBannerUrl.last),
+                      duration: Duration(milliseconds: 200));
                 });
               }
             });
@@ -230,19 +274,18 @@ class _MyLaporanState extends State<MyLaporan> {
             String url = "https://aksarabiner.id/kopbi_banner/";
 
             http.Response uriResponse = await client.post(url,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: json.encode(params)
-            );
+                headers: {'Content-Type': 'application/json'},
+                body: json.encode(params));
 
             List<dynamic> m = jsonDecode(uriResponse.body);
 
             m.forEach((url) {
-              if(_listBannerUrl.indexOf(url) < 0) {
+              if (_listBannerUrl.indexOf(url) < 0) {
                 setState(() {
                   _listBannerUrl.add(url);
-                  _listKey.currentState.insertItem(_listBannerUrl.indexOf(_listBannerUrl.last), duration: Duration(milliseconds: 200));
+                  _listKey.currentState.insertItem(
+                      _listBannerUrl.indexOf(_listBannerUrl.last),
+                      duration: Duration(milliseconds: 200));
                 });
               }
             });
@@ -263,7 +306,8 @@ class _MyLaporanState extends State<MyLaporan> {
   Future<void> writeToFile(ByteData data, String filename) {
     final path = join(_dir.path, filename);
     final buffer = data.buffer;
-    return new File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    return new File(path).writeAsBytes(
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
 
   Widget cacheBanner(String url) {
@@ -274,9 +318,9 @@ class _MyLaporanState extends State<MyLaporan> {
 
     bool fileExists = file.existsSync();
 
-    if(fileExists) {
+    if (fileExists) {
       //print("(From file) $url");
-      return Image.file(file, fit: BoxFit.cover);
+      return Image.file(file, fit: BoxFit.fill);
     }
 
     //print("(From http) $url");
@@ -293,28 +337,33 @@ class _MyLaporanState extends State<MyLaporan> {
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
                 SizedBox(height: 20.0),
                 Container(
                   width: 180.0,
-                  child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+                  child: LinearProgressIndicator(
+                      backgroundColor: Colors.black12,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.black12)),
                 ),
               ],
             );
           case ConnectionState.done:
             if (snapshot.hasError) {
               return Container(
-                  width: 170.0,
-                  child: Center(
-                      child: Text('Error')
-                  )
-              );
+                  width: 170.0, child: Center(child: Text('Error')));
             }
 
             var buffer = snapshot.data.bodyBytes.buffer;
@@ -322,7 +371,7 @@ class _MyLaporanState extends State<MyLaporan> {
 
             writeToFile(bytes, urlDigest.toString());
 
-            return Image.memory(snapshot.data.bodyBytes, fit: BoxFit.cover);
+            return Image.memory(snapshot.data.bodyBytes, fit: BoxFit.fill);
         }
         return null; // unreachable
       },
@@ -330,23 +379,30 @@ class _MyLaporanState extends State<MyLaporan> {
   }
 
   Widget _bannerContent(String url) {
-    if(url == null || _dir == null) {
+    print(_listBannerUrl.length);
+    if (url == null || _dir == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 20.0),
           Container(
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
           SizedBox(height: 20.0),
           Container(
             width: 180.0,
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
           SizedBox(height: 20.0),
           Container(
             width: 180.0,
-            child: LinearProgressIndicator(backgroundColor: Colors.black12, valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
+            child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.black12)),
           ),
         ],
       );
@@ -358,35 +414,43 @@ class _MyLaporanState extends State<MyLaporan> {
     );
   }
 
-  Widget bannerPlaceholder({double height, double width, Function callback, String url, String urlpdf}) {
+  Widget bannerPlaceholder(
+      {double height,
+      double width,
+      Function callback,
+      String url,
+      String urlpdf,
+      String id,
+      String namaKontent}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
       child: Center(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              height: height,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [BoxShadow(offset: Offset.fromDirection(20.0), blurRadius: 5.0, spreadRadius: -3.0)]
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DetailsLaporanView(
+                  id: id,
+                  urlImg: url,
+                  urlPdf: urlpdf,
+                  namaKonten: namaKontent,
+                ),
               ),
-              child: _bannerContent(url),
-            ),
-            Positioned(
-              right: 5,
-              bottom: 5,
-              child: FloatingActionButton(
-                onPressed: () {
-                  launch(urlpdf);
-//                  download();
-                },
-                heroTag: url,
-                child: Icon(Icons.file_download),
-                mini: true,
-              ),
-            ),
-          ],
+            );
+          },
+          child: Container(
+            height: height,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                      offset: Offset.fromDirection(20.0),
+                      blurRadius: 5.0,
+                      spreadRadius: -3.0)
+                ]),
+            child: _bannerContent(url),
+          ),
         ),
       ),
     );
@@ -397,7 +461,7 @@ class _MyLaporanState extends State<MyLaporan> {
     return directory.path;
   }
 
-  void download () async {
+  void download() async {
 //    var dir = (await _findLocalPath()) + Platform.pathSeparator + 'Download';
 //
 //    final savedDir = Directory(dir);
@@ -417,14 +481,25 @@ class _MyLaporanState extends State<MyLaporan> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedList(
-      key: _listKey,
-      scrollDirection: Axis.vertical,
-      padding: EdgeInsets.all(10.0),
-      initialItemCount: _listBannerUrl.length,
-      controller: _scrollController,
-      physics: BouncingScrollPhysics(),
-      itemBuilder: (BuildContext context, int index, Animation animation) => _makeElement(index, animation),
-    );
+    print(_listBannerUrl.length);
+    return _listBannerUrl.length < 1
+        ? Center(
+            child: Text('Tidak ada Laporan',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24.0,
+                    color: Colors.black45))
+          )
+        : AnimatedList(
+            key: _listKey,
+            scrollDirection: Axis.vertical,
+            padding: EdgeInsets.all(10.0),
+            initialItemCount: _listBannerUrl.length,
+            controller: _scrollController,
+            physics: BouncingScrollPhysics(),
+            itemBuilder:
+                (BuildContext context, int index, Animation animation) =>
+                    _makeElement(index, animation),
+          );
   }
 }

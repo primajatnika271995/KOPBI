@@ -35,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
           ],
           bottom: TabBar(
             labelStyle: TextStyle(fontSize: 12),
+            isScrollable: false,
             indicatorColor: Colors.transparent,
             tabs: <Widget>[
               Tab(

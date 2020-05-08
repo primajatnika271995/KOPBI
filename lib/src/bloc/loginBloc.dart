@@ -109,6 +109,8 @@ class LoginBloc {
     _pref.setString(SIMPANAN_SUKARELA, value.data.user.simpananSukarela);
     _pref.setString(JABATAN_KEANGGOTAAN, value.data.user.jabatanKeanggotaan);
     _pref.setString(STATUS_PERKAWINAN, value.data.user.status);
+
+    _pref.setBool(SHOW_IKLAN, true);
   }
 
   dispose() async {

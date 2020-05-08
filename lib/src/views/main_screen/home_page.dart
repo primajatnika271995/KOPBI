@@ -54,6 +54,69 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return result;
   }
+  
+  void showIklan() {
+    return WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showGeneralDialog(
+          barrierColor: Colors.grey.withOpacity(0.5),
+          context: context,
+          barrierLabel: '',
+          barrierDismissible: false,
+          transitionDuration: Duration(milliseconds: 1000),
+          transitionBuilder: (context, a1, a2, widget) {
+            final curvedValue =
+                Curves.easeInOutBack.transform(a1.value) - 1.0;
+            return Transform(
+              transform: Matrix4.translationValues(
+                  0.0, curvedValue * 200, 0.0),
+              child: Opacity(
+                opacity: a1.value,
+                child: Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Container(
+                    width: 50,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          height: 400,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7),
+                            image: DecorationImage(
+                              image: NetworkImage("http://solusi.kopbi.or.id:8889/kobi-images/informasi/36.jpg"),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: GestureDetector(
+                            onTap: () {
+                              onHide();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10000),
+                              ),
+                              child: Center(
+                                child: Icon(Icons.close, color: Colors.black, size: 20),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          pageBuilder: (context, animation1, animation2) {});
+    });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -61,42 +124,37 @@ class _HomeScreenState extends State<HomeScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         key: _scaffoldKey,
-        body: Column(
-          children: <Widget>[
-            balanceField(),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                children: <Widget>[
-                  menuRow1(),
-                  menuRow2(),
-                  CarouselSlider.builder(
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    viewportFraction: 0.9,
-                    autoPlayCurve: Curves.bounceIn,
-                    reverse: false,
-                    height: 100,
-                    enableInfiniteScroll: true,
-                    aspectRatio: 2.0,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.all(5.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                          child: Stack(children: <Widget>[
-                            Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png", fit: BoxFit.cover, width: 1000.0),
-                          ]),
-                        ),
-                      );
-                    },
-                    itemCount: imgList.length,
-                  ),
-                ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              balanceField(),
+              menuRow1(),
+              menuRow2(),
+              CarouselSlider.builder(
+                autoPlay: true,
+                enlargeCenterPage: true,
+                viewportFraction: 0.9,
+                autoPlayCurve: Curves.bounceIn,
+                reverse: false,
+                height: 100,
+                enableInfiniteScroll: true,
+                aspectRatio: 2.0,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.all(5.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      child: Stack(children: <Widget>[
+                        Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png", fit: BoxFit.cover, width: 1000.0),
+                      ]),
+                    ),
+                  );
+                },
+                itemCount: imgList.length,
               ),
-            ),
-          ],
+              SizedBox(height: 100),
+            ],
+          ),
         ),
         bottomSheet: Container(
           decoration: BoxDecoration(
@@ -752,13 +810,34 @@ class _HomeScreenState extends State<HomeScreen> {
     ) ?? false;
   }
 
+  void onHide() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      pref.setBool(SHOW_IKLAN, false);
+    });
+
+    Navigator.of(context).pop();
+  }
+
+  void show() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    bool isShow = pref.getBool(SHOW_IKLAN);
+
+    if (isShow) {
+      showIklan();
+    }
+  }
 
   @override
   void initState() {
+    show();
+    getImgKtp();
     getUserDetails();
     getCatatan();
     getDataSimpanan();
     getVersionBackend();
+
     imageCache.clear();
     super.initState();
   }
@@ -805,6 +884,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     });
+  }
+
+  void getImgKtp() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+    var noKtp = _pref.getString(NO_KTP);
+
+    String url = "http://solusi.kopbi.or.id:8889/kobi-images/ktp/$noKtp.jpg";
+
+    var response = await dio.get(url, options: Options(
+        headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }
+    ));
+    
+    if (response.statusCode == 200) {
+      setState(() {
+        _pref.setString(IMG_KTP, "http://solusi.kopbi.or.id:8889/kobi-images/ktp/$noKtp.jpg");
+      });
+    }
   }
 
   void getCatatan() async {

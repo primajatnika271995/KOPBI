@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
 
 class PusatBantuanScreen extends StatefulWidget {
@@ -56,7 +57,7 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
-                      'Riwayat transaksi tersedia di inbox.',
+                      'Senin s.d Jumat',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -71,22 +72,7 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
-                      'Response cepta, maksimum 30 menit.',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 20),
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.check, color: Colors.lightGreen),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: Text(
-                      '24 jam sehari, 7 hari seminggu.',
+                      '08.00 s.d 17.00',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -98,7 +84,9 @@ class _PusatBantuanScreenState extends State<PusatBantuanScreen> {
               child: Container(
                 width: screenWidth(context),
                 child: RaisedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    FlutterOpenWhatsapp.sendSingleMessage("+6285920034045", "");
+                  },
                   color: Colors.blueAccent,
                   child: Text(
                     'Tanya Tim Kami',

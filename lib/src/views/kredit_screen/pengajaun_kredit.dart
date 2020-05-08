@@ -379,6 +379,13 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
         return;
       }
 
+      if (_pref.getString(IMG_KTP) == null || _pref.getString(IMG_KTP).isEmpty) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Silahkan Upload Foto KTP di Kelengkapan Data."),
+        ));
+        return;
+      }
+
       String url = "${APIUrl.pengajuan}/post-pengajuan";
 
       print('Submitting');
