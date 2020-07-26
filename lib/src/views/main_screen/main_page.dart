@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kopbi/src/views/chat_screen/chat_page_view.dart';
+import 'package:kopbi/src/views/chat_screen/details_chat.dart';
 import 'package:kopbi/src/views/main_screen/event.dart';
 import 'package:kopbi/src/views/main_screen/home_page.dart';
 import 'package:kopbi/src/views/main_screen/info.dart';
@@ -26,6 +28,16 @@ class _MainScreenState extends State<MainScreen> {
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.chat),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DetailsChatView()
+                  ),
+                );
+              },
+            ),
             IconButton(
               icon: Icon(Icons.settings),
               onPressed: () {

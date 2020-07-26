@@ -82,9 +82,24 @@ class _UploadFotoVerifikasiKreditState extends State<UploadFotoVerifikasiKredit>
       await service.verifikasiFoto(photo, kodePengjuan).then((response) async {
         SharedPreferences _pref = await SharedPreferences.getInstance();
         if (response.statusCode == 200) {
-          toggleLoading();
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                title: Text('Terima Kasih'),
+                content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      toggleLoading();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Selesai'),
+                  ),
+                ],
+              )
+          );
         } else if (response.statusCode == 500) {
           _scaffoldKey.currentState.showSnackBar(
             SnackBar(

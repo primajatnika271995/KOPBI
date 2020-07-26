@@ -401,7 +401,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
       print(uriResponse.data);
 
       if (uriResponse.statusCode == 200) {
-        Navigator.of(context).pop();
+//        Navigator.of(context).pop();
         MessageModel value =
             messageModelFromJson(json.encode(uriResponse.data));
         Map<String, dynamic> response = jsonDecode(value.data);
@@ -416,7 +416,23 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
               ),
             );
           } else {
-            Navigator.pop(context, 'success');
+//            Navigator.pop(context, 'success');
+            showDialog(
+                context: context,
+                builder: (_) => new AlertDialog(
+                  title: Text('Terima Kasih'),
+                  content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Selesai'),
+                    ),
+                  ],
+                )
+            );
           }
         }
       } else {
@@ -425,12 +441,12 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
         ));
       }
     } catch (e) {
-      print('Error detail');
-      print(e);
-      print('End error detail');
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Tidak dapat terhubung dengan server"),
-      ));
+//      print('Error detail');
+//      print(e);
+//      print('End error detail');
+//      _scaffoldKey.currentState.showSnackBar(SnackBar(
+//        content: Text("Tidak dapat terhubung dengan server"),
+//      ));
     } finally {
       setState(() {
         isLoading = false;

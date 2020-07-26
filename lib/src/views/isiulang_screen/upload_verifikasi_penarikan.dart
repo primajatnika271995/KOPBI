@@ -69,10 +69,10 @@ class _UploadFotoVerifikasiPenarikanState extends State<UploadFotoVerifikasiPena
 
   void postUpdate() async {
     if (photo == null) {
-      print("Foto Tidak boleh kosong");
+      print("Foto Verifikasi Tidak boleh kosong");
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text('Foto Tidak boleh kosong'),
+          content: Text('Foto Verifikasi Tidak boleh kosong'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -82,9 +82,25 @@ class _UploadFotoVerifikasiPenarikanState extends State<UploadFotoVerifikasiPena
       await service.verifikasiFoto(photo, kodePengjuan).then((response) async {
         SharedPreferences _pref = await SharedPreferences.getInstance();
         if (response.statusCode == 200) {
-          toggleLoading();
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                title: Text('Terima Kasih'),
+                content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      toggleLoading();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Selesai'),
+                  ),
+                ],
+              )
+          );
         } else if (response.statusCode == 500) {
           _scaffoldKey.currentState.showSnackBar(
             SnackBar(
@@ -114,7 +130,7 @@ class _UploadFotoVerifikasiPenarikanState extends State<UploadFotoVerifikasiPena
         elevation: 1,
         backgroundColor: Colors.green,
         title: Text(
-          'Upload Foto',
+          'Upload Foto Dokumen Pendukung',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),

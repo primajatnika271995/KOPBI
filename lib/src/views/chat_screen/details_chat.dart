@@ -3,29 +3,21 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/time_ago_service.dart';
 import 'package:kopbi/src/utils/screenSize.dart';
-import 'package:kopbi/src/views/more_screen/reply_comment.dart';
+import 'package:kopbi/src/views/chat_screen/reply_chat.dart';
+import 'package:kopbi/src/views/more_screen/details_laporan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
-class DetailsLaporanView extends StatefulWidget {
-  final String urlImg;
-  final String urlPdf;
-  final String id;
-  final String namaKonten;
-
-  DetailsLaporanView({this.urlImg, this.urlPdf, this.id, this.namaKonten});
-
+class DetailsChatView extends StatefulWidget {
   @override
-  _DetailsLaporanViewState createState() => _DetailsLaporanViewState();
+  _DetailsChatViewState createState() => _DetailsChatViewState();
 }
 
-class _DetailsLaporanViewState extends State<DetailsLaporanView> {
+class _DetailsChatViewState extends State<DetailsChatView> {
   var scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var msgInputCtrl = new TextEditingController();
@@ -36,6 +28,8 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
   String noNik;
   String kodePerusahaan;
   String namaPerusahaan;
+
+  String role;
 
   bool isLoadKomentar = false;
   bool isLoadReply = false;
@@ -52,6 +46,9 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
     noNik = pref.getString(NIK);
     kodePerusahaan = pref.getString(KODE_PERUSAHAAN);
     namaPerusahaan = pref.getString(NAMA_PERUSAHAAN);
+    role = pref.getString(ROLE);
+
+    print(role);
   }
 
   void getKomentar() async {
@@ -65,7 +62,7 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
     var uriResponse = await dio.post(url,
         data: {
-          "contentId": int.parse(widget.id),
+          "contentId": 1,
           "balasId": 0,
         },
         options: Options(headers: {
@@ -78,17 +75,36 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
       List<dynamic> m = jsonDecode(value.data);
       for (Map<String, dynamic> item in m) {
-        setState(() {
-          listMsg.add(MessageLaporan(
-            id: item["id"],
-            nama: item["nama"],
-            komentar: item["komentar"],
-            nomorAnggota: item["nomorAnggota"],
-            createdDate: item["createdDate"],
-            namaPerusahaan: item["namaPerusahaan"],
-            balasan: item["balasan"],
-          ));
-        });
+
+        if (role == "AGT") {
+          setState(() {
+            if (item["nomorAnggota"] == noAnggota) {
+              listMsg.add(MessageLaporan(
+                id: item["id"],
+                nama: item["nama"],
+                komentar: item["komentar"],
+                nomorAnggota: item["nomorAnggota"],
+                createdDate: item["createdDate"],
+                namaPerusahaan: item["namaPerusahaan"],
+                balasan: item["balasan"],
+              ));
+            }
+          });
+        }
+
+        if (role == "ADM") {
+          setState(() {
+            listMsg.add(MessageLaporan(
+              id: item["id"],
+              nama: item["nama"],
+              komentar: item["komentar"],
+              nomorAnggota: item["nomorAnggota"],
+              createdDate: item["createdDate"],
+              namaPerusahaan: item["namaPerusahaan"],
+              balasan: item["balasan"],
+            ));
+          });
+        }
       }
 
       setState(() {
@@ -105,7 +121,7 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
     var uriResponse = await dio.post(url,
         data: {
-          "contentId": int.parse(widget.id),
+          "contentId": 1,
           "balasId": 0,
         },
         options: Options(headers: {
@@ -139,8 +155,8 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
     var uriResponse = await dio.post(url,
         data: {
-          "contentId": int.parse(widget.id),
-          "namaKonten": widget.namaKonten,
+          "contentId": 1,
+          "namaKonten": "Chat Admin",
           "nomorAnggota": noAnggota,
           "nama": username,
           "nomorNik": noNik,
@@ -173,49 +189,6 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
     }
   }
 
-  void onSendReply(String komentar, int idKomentar) async {
-    print("id yg di Reply : $idKomentar");
-
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    var token = _pref.getString(JWT_TOKEN);
-
-    String url = "http://solusi.kopbi.or.id:8889/kopbi-master/post-komentar";
-
-    var uriResponse = await dio.post(url,
-        data: {
-          "contentId": 3,
-          "namaKonten": komentar,
-          "nomorAnggota": noAnggota,
-          "nama": username,
-          "nomorNik": noNik,
-          "kodePerusahaan": kodePerusahaan,
-          "namaPerusahaan": namaPerusahaan,
-          "komentar": msgReplyCtrl.text,
-          "balasId": idKomentar,
-        },
-        options: Options(headers: {
-          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
-          'jwtToken': token,
-        }));
-
-    print(uriResponse.data);
-
-    if (uriResponse.statusCode == 200) {
-//      setState(() {
-//        listMsg.add(MessageLaporan(
-//          nama: username,
-//          komentar: msgInputCtrl.text,
-//        ));
-//      });
-      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
-
-      if (value.success) {
-        msgReplyCtrl.clear();
-        return;
-      }
-    }
-  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -227,9 +200,9 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
   void onNavReply(MessageLaporan value) {
     Navigator.of(context).push(
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => ReplyCommentView(
+        pageBuilder: (_, __, ___) => ReplyChatView(
           value: value,
-          idContent: int.parse(widget.id),
+          idContent: 1,
         ),
         transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
           return SlideTransition(
@@ -253,61 +226,38 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
         backgroundColor: Colors.green,
         titleSpacing: 0,
         title: Text(
-          '${widget.namaKonten}',
+          'Chat',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              launch(widget.urlPdf);
-            },
-            icon: Icon(Icons.picture_as_pdf),
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
+      body: isLoadKomentar
+          ? Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      )
+          : listMsg.isEmpty
+          ? Center(
+        child: Text(
+          "Belum ada Pertanyaan",
+          style: TextStyle(
+            letterSpacing: 0.7,
+            fontSize: 14,
+          ),
+        ),
+      )
+          : SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage('${widget.urlImg}'),
-                  fit: BoxFit.fill,
-                ),
-              ),
+             ListView.builder(
+              itemBuilder: (context, index) {
+                return commentContent(listMsg[index]);
+              },
+              itemCount: listMsg.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            isLoadKomentar
-                ? Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Center(
-                      child: CupertinoActivityIndicator(),
-                    ),
-                  )
-                : listMsg.isEmpty
-                    ? Center(
-                        child: Text(
-                          "Belum ada Komentar",
-                          style: TextStyle(
-                            letterSpacing: 0.7,
-                            fontSize: 14,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemBuilder: (context, index) {
-                          DateTime date = DateTime.parse(listMsg[index].createdDate);
-                          print(timeago.format(date));
-                          print(date);
-                          return commentContent(listMsg[index]);
-                        },
-                        itemCount: listMsg.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
             SizedBox(
               height: 70,
             ),
@@ -324,6 +274,9 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
           Row(
             children: <Widget>[
               Padding(
@@ -525,7 +478,7 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
       ),
       child: Padding(
         padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Row(
           children: <Widget>[
             Padding(
@@ -572,42 +525,4 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
       ),
     );
   }
-}
-
-class MessageLaporan {
-  int id;
-  String nama;
-  String komentar;
-  String nomorAnggota;
-  String createdDate;
-  String namaPerusahaan;
-  int balasan;
-
-  MessageLaporan(
-      {this.id,
-      this.nama,
-      this.komentar,
-      this.nomorAnggota,
-      this.createdDate,
-      this.namaPerusahaan,
-      this.balasan});
-}
-
-class MessageReplyLaporan {
-  int id;
-  String nama;
-  String komentar;
-  String nomorAnggota;
-  String createdDate;
-  String namaPerusahaan;
-  int balasan;
-
-  MessageReplyLaporan(
-      {this.id,
-      this.nama,
-      this.komentar,
-      this.nomorAnggota,
-      this.createdDate,
-      this.namaPerusahaan,
-      this.balasan});
 }

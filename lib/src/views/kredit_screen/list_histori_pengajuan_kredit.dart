@@ -419,7 +419,7 @@ class _HistoriPengajuanBarangListPageState extends State<HistoriPengajuanBarangL
                         height: 10,
                       ),
                       Text(
-                        'NAMA HRD',
+                        'Nama HRD',
                         style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
                       ),
                       Text(
@@ -452,7 +452,7 @@ class _HistoriPengajuanBarangListPageState extends State<HistoriPengajuanBarangL
                         height: 10,
                       ),
                       Text(
-                        'NAMA Pengawas',
+                        'Nama Pengawas',
                         style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
                       ),
                       Text(

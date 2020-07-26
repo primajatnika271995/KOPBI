@@ -159,7 +159,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
   }
 
   void simpanPerubahan() async {
-    if (imageKtp == null) {
+    if (imageKtp == null && imgKtpPref == null) {
       print("Foto KTP Tidak boleh kosong");
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
@@ -261,7 +261,15 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
           value.setString(SIMPANAN_SUKARELA, simpananSukarelaBulananCtrl.text);
         });
 
-        postUpdate();
+        if (imgKtpPref != null && imageKtp == null) {
+          setState(() {
+            isLoading = false;
+          });
+
+          Navigator.of(context).pop();
+        } else  {
+          postUpdate();
+        }
       });
     } else {
       setState(() {

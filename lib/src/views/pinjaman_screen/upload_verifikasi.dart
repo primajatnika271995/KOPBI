@@ -6,6 +6,7 @@ import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/pengajuan.dart';
 import 'package:kopbi/src/services/update.dart';
+import 'package:kopbi/src/utils/screenSize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image/image.dart' as Im;
 
@@ -49,29 +50,32 @@ class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
   }
 
   Future getImage() async {
+    var newim2;
+
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
 //
 //    var rename = await File(image.path).rename(
 //        '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$nomorAnggota.jpg');
-
-    Im.Image compres = Im.decodeImage(image.readAsBytesSync());
-    Im.Image smallerImage = Im.copyResize(compres, width: 300, height: 400); // choose the size here, it will maintain aspect ratio
-
-
-    var newim2 = new File('/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$kodePengjuan.jpg')
-      ..writeAsBytesSync(Im.encodeJpg(smallerImage, quality: 85));
-
     setState(() {
+      Im.Image compres = Im.decodeImage(image.readAsBytesSync());
+      Im.Image smallerImage = Im.copyResize(compres,
+          width: 300,
+          height: 400); // choose the size here, it will maintain aspect ratio
+
+      newim2 = new File(
+          '/storage/emulated/0/Android/data/id.or.kopbi.solusi.mobile/files/Pictures/$kodePengjuan.jpg')
+        ..writeAsBytesSync(Im.encodeJpg(smallerImage, quality: 85));
+
       photo = newim2;
     });
   }
 
   void postUpdate() async {
     if (photo == null) {
-      print("Foto Tidak boleh kosong");
+      print("Foto Verifikasi Tidak boleh kosong");
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text('Foto Tidak boleh kosong'),
+          content: Text('Foto Verifikasi Tidak boleh kosong'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -81,9 +85,24 @@ class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
       await service.verifikasiFoto(photo, kodePengjuan).then((response) async {
         SharedPreferences _pref = await SharedPreferences.getInstance();
         if (response.statusCode == 200) {
-          toggleLoading();
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                title: Text('Terima Kasih'),
+                content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      toggleLoading();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Selesai'),
+                  ),
+                ],
+              )
+          );
         } else if (response.statusCode == 500) {
           _scaffoldKey.currentState.showSnackBar(
             SnackBar(
@@ -113,59 +132,51 @@ class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
         elevation: 1,
         backgroundColor: Colors.green,
         title: Text(
-          'Upload Foto',
+          'Upload Foto Dokumen',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Center(
-              child: Stack(
-                fit: StackFit.loose,
-                children: <Widget>[
-                  new Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Container(
-                        width: 140.0,
-                        height: 140.0,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                            image: photo == null
-                                ? AssetImage('assets/icons/no_user.jpg')
-                                : FileImage(photo),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 90.0, right: 100.0),
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new CircleAvatar(
-                          backgroundColor: Colors.red,
-                          radius: 25.0,
-                          child: new InkWell(
-                            onTap: getImage,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  width: 240,
+                  height: 350.0,
+                  decoration: new BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    image: new DecorationImage(
+                      image: photo == null
+                          ? NetworkImage(
+                              'https://sman2babelan.sch.id/assets/icon/ionicons-2.0.1/png/512/upload.png')
+                          : FileImage(photo),
+                      fit: photo == null ? BoxFit.contain : BoxFit.fill,
                     ),
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  bottom: 10,
+                  right: 10,
+                  child: Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: 25.0,
+                      child: new InkWell(
+                        onTap: getImage,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -176,7 +187,9 @@ class _UploadFotoVerifikasiState extends State<UploadFotoVerifikasi> {
                 onPressed: isLoading ? null : postUpdate,
                 color: Colors.green,
                 child: Text(
-                  isLoading ? 'Waiting Upload' : 'Upload Foto',
+                  isLoading
+                      ? 'Waiting Upload'
+                      : 'Upload Foto Dokumen Pendukung',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

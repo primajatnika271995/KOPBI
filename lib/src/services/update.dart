@@ -14,6 +14,8 @@ class UpdateService {
     var nomorAnggota = pref.getString(NOMOR_ANGGOTA);
     var token = pref.getString(JWT_TOKEN);
 
+    var imgktppref = pref.getString(IMG_KTP);
+
     FormData formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(image.path,
           filename: "$noKtp.jpg"),

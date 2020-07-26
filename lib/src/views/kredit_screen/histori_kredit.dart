@@ -52,7 +52,7 @@ class _HistoriPengjuanKreditState extends State<HistoriPengjuanKredit> {
               height: 10,
             ),
             Text(
-              'NAMA HRD',
+              'Nama HRD',
               style:
                   TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
             ),
@@ -89,7 +89,7 @@ class _HistoriPengjuanKreditState extends State<HistoriPengjuanKredit> {
               height: 10,
             ),
             Text(
-              'NAMA Pengawas',
+              'Nama Pengawas',
               style:
                   TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
             ),

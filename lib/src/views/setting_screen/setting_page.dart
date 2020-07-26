@@ -332,7 +332,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5),
       child: Text(
-        'Version 2.0.17',
+        'Version 2.0.28',
         style: TextStyle(color: Colors.grey),
       ),
     );
@@ -346,7 +346,7 @@ class _SettingScreenState extends State<SettingScreen> {
         child: OutlineButton(
           onPressed: navLogout,
           child: Text(
-            'SIGN OUT',
+            'LOG OUT',
             style: TextStyle(color: Colors.cyan),
           ),
           borderSide: BorderSide(color: Colors.cyan),

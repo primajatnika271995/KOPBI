@@ -9,6 +9,7 @@ import 'package:kopbi/src/models/usersDetailsModel.dart';
 import 'package:kopbi/src/repository/loginRepository.dart';
 import 'package:kopbi/src/views/component/flushbar.dart';
 import 'package:kopbi/src/views/setting_screen/ubah_password.dart';
+import 'package:kopbi/src/views/setting_screen/ubah_password_awal.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,10 +42,10 @@ class LoginBloc {
         setPreferences(value, urlImage);
 
         if (pref.getString(DECRYPT_PASSWORD) == "123456") {
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => UbahPasswordScreen(),
-            ),
+              builder: (context) => UbahPasswordAwalScreen(),
+            ), (Route<dynamic> route) => false
           );
         } else {
           Navigator.of(context).pushReplacementNamed('/home');
@@ -53,10 +54,10 @@ class LoginBloc {
         print("GA ADA IMAGE");
         setPreferences(value, null);
         if (pref.getString(DECRYPT_PASSWORD) == "123456") {
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => UbahPasswordScreen(),
-            ),
+              builder: (context) => UbahPasswordAwalScreen(),
+            ), (Route<dynamic> route) => false
           );
         } else {
           Navigator.of(context).pushReplacementNamed('/home');
