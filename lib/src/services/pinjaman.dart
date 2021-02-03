@@ -8,8 +8,36 @@ import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/models/message_model.dart';
+import 'package:kopbi/src/models/new_message_model.dart';
 import 'package:kopbi/src/services/userApi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class PinjamanObj {
+  double _totalSimpanan;
+  double _totalSimpananPokok;
+  double _totalSimpananWajib;
+  double _totalSimpananSukarela;
+
+  double get totalSimpanan => _totalSimpanan;
+  double get totalSimpananPokok => _totalSimpananPokok;
+  double get totalSimpananWajib => _totalSimpananWajib;
+  double get totalSimpananSukarela => _totalSimpananSukarela;
+
+  String get formattedtotalSimpanan {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_totalSimpanan);
+  }
+
+  String get formattedtotalSimpananPokok {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_totalSimpananPokok);
+  }
+
+  String get formattedtotalSimpananWajib {
+    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(_totalSimpananWajib);
+  }
+}
 
 class Pinjaman {
   String _kodePinjaman;
@@ -353,22 +381,48 @@ class ListPinjaman {
 //    var client = new http.Client();
     SharedPreferences _pref = await SharedPreferences.getInstance();
 
+    var kodePerusahaan = _pref.getString(KODE_PERUSAHAAN);
+    var nama = _pref.getString(NAMA_ANGGOTA);
     var token = _pref.getString(JWT_TOKEN);
+    var nik1 = _pref.getString(NIK);
     var dio = Dio();
 
+    print("PINJAMAN");
+    print(nama);
+    print(nik);
+    print(kodePerusahaan);
+
+    var parameters = {
+      "mulai": 1,
+      "akhir": 100,
+      "tanggalMulai": "",
+      "tanggalAkhir": "",
+      "kodePerusahaan": kodePerusahaan,
+      // "statusPengajuan": "NEW",
+      "nama": nama,
+      "nomorNik": nik1,
+      // "kategoriPengajuan": "PINJAMAN"
+    };
+
     try {
-      String url = "${APIUrl.pinjaman}/list-pinjaman/$nik";
+      String url = "${APIUrl.pinjaman}/list-pinjaman";
 
       var uriResponse = await dio.post(url, options: Options(
         headers: {
           'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
           'jwtToken': token,
         },
-      ),);
+      ), data: parameters );
 
       if(uriResponse.statusCode == 200) {
-        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
-        _makeList(value.data);
+        // MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+        MessageModelNew value = messageModelNewFromJson(json.encode(uriResponse.data));
+        print(value.data.data);
+        _makeList(value.data.data);
+
+        print("SALDO PINJAMAN");
+        print(value.data.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;

@@ -50,6 +50,14 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 60),
+                  child: Text(
+                    'Masukan Security Code Anda',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+                Spacer(),
                 avatarContent(),
                 idField(),
                 passwordField(),
@@ -72,32 +80,20 @@ class _ReLoginScreenState extends State<ReLoginScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: 60),
-              child: Text(
-                'Masukan Security Code Anda',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Container(
-                child: OutlineButton(
-                  onPressed: navLogout,
-                  child: Text(
-                    'PINDAH KE AKUN LAIN',
-                    style: TextStyle(color: Colors.white),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Container(
+                    child: OutlineButton(
+                      onPressed: navLogout,
+                      child: Text(
+                        'PINDAH KE AKUN LAIN',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ],

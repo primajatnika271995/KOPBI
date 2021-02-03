@@ -35,6 +35,8 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   FocusNode _keteranganFocus;
   FocusNode _nominalFocus;
 
+  String _statusAnggota;
+
   //Post data
   String _kodeTipePengajuan;
   String _tipePengajuan;
@@ -210,12 +212,13 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       lokasiPenempatan = _pref.getString(LOKASI_PENEMPATAN);
       emailPerusahaan = _pref.getString(EMAIL_PERUSAHAAN);
       kodeAnggota = _pref.getString(KODE_USER);
+      _statusAnggota = _pref.getString(STATUS_ANGGOTA);
     });
   }
 
   void getDataSimpanan() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
-    var _nik = _pref.getString(NIK);
+    var _nik = _pref.getString(NOMOR_ANGGOTA);
     _listSimpanan = ListSimpanan();
 
     totalSimpanan = _listSimpanan.totalSum;
@@ -241,7 +244,7 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
   Future<bool> isRequirementPassed() async {
     ListSimpanan _dbSimpanan = ListSimpanan();
 
-    await _dbSimpanan.getList(nik: nomorNik);
+    await _dbSimpanan.getList(nik: nomorAnggota);
 
     if (_dbSimpanan.listSimpanan
             .where((simpanan) =>
@@ -304,6 +307,13 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
       setState(() {
         isLoading = true;
       });
+
+      if (_statusAnggota == "N" || _statusAnggota == "I") {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Anda belum dapat melakukan pinjaman"),
+        ));
+        return;
+      }
 
       if (_keterangan.isEmpty) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -428,12 +438,12 @@ class _PengajuanTambahPageState extends State<PengajuanTambahPage> {
         ));
       }
     } catch (e) {
-//      print('Error detail');
-//      print(e);
-//      print('End error detail');
-//      _scaffoldKey.currentState.showSnackBar(SnackBar(
-//        content: Text("Tidak dapat terhubung dengan server"),
-//      ));
+      print('Error detail');
+      print(e);
+      print('End error detail');
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Periksa kembali pengajuan anda"),
+      ));
     } finally {
       setState(() {
         isLoading = false;

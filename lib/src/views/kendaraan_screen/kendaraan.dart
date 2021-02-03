@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:kopbi/src/views/isiulang_screen/list_pengajuan_penarikan.dart';
+import 'package:kopbi/src/views/kendaraan_screen/add_pengjuan_kredit_kendaraan.dart';
+import 'package:kopbi/src/views/kendaraan_screen/list_kendaraan_berjalan.dart';
 import 'package:kopbi/src/views/kendaraan_screen/pengajuan_kendaraan.dart';
 import 'package:kopbi/src/views/perumahan_screen/pengajuan_kpr.dart';
 
@@ -8,6 +12,7 @@ class KendaraanScreen extends StatefulWidget {
 }
 
 class _KendaraanScreenState extends State<KendaraanScreen> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -28,27 +33,13 @@ class _KendaraanScreenState extends State<KendaraanScreen> {
             ],
           ),
         ),
-        body: TabBarView(
+        body: Stack(
           children: <Widget>[
-            Center(
-              child: Text(
-                'Tidak ada Kredit',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Belum ada pengajuan Kredit',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
+            TabBarView(
+              children: <Widget>[
+                ListKendaraanBerjalanView(),
+                AddPengajuanKreditKendaraan()
+              ],
             ),
           ],
         ),

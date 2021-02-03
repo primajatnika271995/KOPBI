@@ -42,6 +42,9 @@ class _NewRegisterPageState extends State<NewRegisterPage> {
             "nomorHp": nomorHpCtrl.text
           });
 
+      print(response.data);
+      print(response.statusCode);
+
       if (response.statusCode == 200) {
         if (response.data["success"] == false) {
           setState(() {

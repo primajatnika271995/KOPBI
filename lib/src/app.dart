@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kopbi/main.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
+import 'package:kopbi/src/views/bottom_bar.dart';
 import 'package:kopbi/src/views/isiulang_screen/isiulang.dart';
 import 'package:kopbi/src/views/kendaraan_screen/kendaraan.dart';
 import 'package:kopbi/src/views/konsumer_screen/konsumer.dart';
@@ -33,6 +34,7 @@ void app() {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
+        '/bottom-bar': (context) => BottomBar(),
         '/login': (context) => LoginScreen(),
         '/re-login': (context) => ReLoginScreen(),
 //        '/register': (context) => RegisterScreen(),

@@ -253,6 +253,9 @@ class ListSimpanan {
       if(uriResponse.statusCode == 200) {
         MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
         _makeList(value.data);
+
+        print("SALDO");
+        print(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;

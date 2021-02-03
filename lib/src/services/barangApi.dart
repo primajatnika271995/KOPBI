@@ -8,21 +8,21 @@ import 'package:kopbi/src/models/message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Barang {
-  String _id;
+  int _id;
   String _kodeBarang;
   String _namaBarang;
   String _keterangan;
   String _kategori;
   int _stokBarang;
-  int _harga;
+  dynamic _harga;
 
-  String get id => _id;
+  int get id => _id;
   String get kodeBarang => _kodeBarang;
   String get namaBarang => _namaBarang;
   String get keterangan => _keterangan;
   String get kategori => _kategori;
   int get stokBarang => _stokBarang;
-  int get harga => _harga;
+  dynamic get harga => _harga;
 
   Barang.fromJSON(String json) {
     Map<String, dynamic> m = jsonDecode(json);
@@ -37,12 +37,12 @@ class Barang {
     _keterangan = m['keterangan'];
     _kategori = m['kategori'];
     try {
-      _harga = int.parse(m['harga']);
+      _harga = m['harga'] / 10;
     } catch(e) {
       _harga = 0;
     }
     try {
-      _stokBarang = int.parse(m['stokBarang']);
+      _stokBarang = m['stokBarang'];
     } catch(e) {
       _stokBarang = 0;
     }
@@ -73,6 +73,8 @@ class ListBarang {
       if(uriResponse.statusCode == 200) {
         MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
         _makeList(value.data);
+
+        print(value.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.error;

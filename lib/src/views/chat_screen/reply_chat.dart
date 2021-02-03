@@ -325,7 +325,7 @@ class _ReplyChatViewState extends State<ReplyChatView> {
                   )
                       : ListView.builder(
                     itemBuilder: (context, index) {
-                      return commentReplyContent(listReply[index]);
+                      return commentReplyContent(listReply.reversed.toList()[index]);
                     },
                     itemCount: listReply.length,
                     shrinkWrap: true,

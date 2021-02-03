@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:division/division.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
 import 'package:kopbi/src/views/component/transition/fade_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +32,10 @@ class _SimpananListPageState extends State<SimpananListPage>
   Animation totalWajibAnim;
   Animation totalSukarelaAnim;
   AnimationController totalAnimController;
+
+  String totalPokok = "0";
+  String totalWajib = "0";
+  String totalSukarela = "0";
 
   double _tabActivePos;
   PageController _tabController;
@@ -51,7 +58,46 @@ class _SimpananListPageState extends State<SimpananListPage>
   // TODO: implement widget
   SimpananListPage get widget => super.widget;
 
-  @override
+  void getSaldoSimpanan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+    var noAnggota = _pref.getString(NOMOR_ANGGOTA);
+
+    String url =
+        "http://solusi.kopbi.or.id/api/kopbi-pinjaman/get-simpanan/$noAnggota";
+
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }));
+
+    print("RESPONSE GET SALDO");
+    print(uriResponse.statusCode);
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      print("VALUE");
+      print(value.data);
+
+      var parse = jsonDecode(value.data);
+
+      totalPokok = formattedNumber(parse["totalSimpananPokok"]);
+      totalWajib = formattedNumber(parse["totalSimpananWajib"]);
+      totalSukarela = formattedNumber(parse["totalSimpananSukarela"]);
+      setState(() {});
+    }
+  }
+
+  String formattedNumber(dynamic number) {
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(number);
+  }
+
+    @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -64,6 +110,7 @@ class _SimpananListPageState extends State<SimpananListPage>
     _listSimpanan = [];
     _listSimpananActive = {};
     getUserDetails();
+    getSaldoSimpanan();
 
     _dbSimpanan = ListSimpanan();
 
@@ -95,7 +142,7 @@ class _SimpananListPageState extends State<SimpananListPage>
 
     SharedPreferences _pref = await SharedPreferences.getInstance();
     setState(() {
-      nik = _pref.getString(NIK);
+      nik = _pref.getString(NOMOR_ANGGOTA);
     });
 
     _dbSimpanan.getList(nik: nik).then((_) {
@@ -204,7 +251,7 @@ class _SimpananListPageState extends State<SimpananListPage>
             parent: totalAnimController, curve: Curves.easeInOutSine));
     totalSukarelaAnim = IntTween(begin: 0, end: _dbSimpanan.totalSukarela)
         .animate(CurvedAnimation(
-            parent: totalAnimController, curve: Curves.easeInOutSine));
+        parent: totalAnimController, curve: Curves.easeInOutSine));
 
     totalAnimController.forward();
 
@@ -454,17 +501,17 @@ class _SimpananListPageState extends State<SimpananListPage>
         children: <Widget>[
           _buildUserStatsItem(
               totalPokokAnim != null
-                  ? formatCurrency(totalPokokAnim.value)
+                  ? totalPokok
                   : formatCurrency(0),
               'Simpanan Pokok'),
           _buildUserStatsItem(
               totalWajibAnim != null
-                  ? formatCurrency(totalWajibAnim.value)
+                  ? totalWajib
                   : formatCurrency(0),
               'Simpanan Wajib'),
           _buildUserStatsItem(
               totalSukarelaAnim != null
-                  ? formatCurrency(totalSukarelaAnim.value)
+                  ? totalSukarela
                   : formatCurrency(0),
               'Simpanan Sukarela'),
         ],

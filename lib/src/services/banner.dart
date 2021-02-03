@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/message_model.dart';
+import 'package:kopbi/src/views/main_screen/detail_info_catatan.dart';
 import 'package:kopbi/src/views/main_screen/details_info.dart';
+import 'package:kopbi/src/views/main_screen/details_info_iklan.dart';
 import 'package:path/path.dart' show join;
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
@@ -170,6 +172,82 @@ class _MyBannerState extends State<MyBanner> {
           }
         });
         break;
+      case 'catatan':
+        task = Timer(Duration(seconds: 1), () async {
+          try {
+            _listBannerUrl = [];
+            _listBannerKeterangan = [];
+
+            Response response = await _dio.post(
+              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/catatan",
+              options: Options(
+                headers: {
+                  'jwtToken': jwtToken,
+                  'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+                },
+              ),
+            );
+
+            MessageModel value =
+            messageModelFromJson(json.encode(response.data));
+            print(value.data);
+
+            List<dynamic> m = json.decode(value.data);
+
+            m.reversed.forEach((url) {
+              print(url["id"]);
+              setState(() {
+                _listBannerUrl.add(
+                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url['id']}.png");
+                _listBannerKeterangan.add("${url['keterangan']}");
+                showBanner();
+              });
+            });
+          } catch (ie) {
+            print('Error detail');
+            print(ie);
+            print('End error detail');
+          }
+        });
+        break;
+      case 'iklan2':
+        task = Timer(Duration(seconds: 1), () async {
+          try {
+            _listBannerUrl = [];
+            _listBannerKeterangan = [];
+
+            Response response = await _dio.post(
+              "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/iklan2",
+              options: Options(
+                headers: {
+                  'jwtToken': jwtToken,
+                  'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+                },
+              ),
+            );
+
+            MessageModel value =
+            messageModelFromJson(json.encode(response.data));
+            print(value.data);
+
+            List<dynamic> m = json.decode(value.data);
+
+            m.reversed.forEach((url) {
+              print(url["id"]);
+              setState(() {
+                _listBannerUrl.add(
+                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${url['id']}.jpg");
+                _listBannerKeterangan.add("${url['keterangan']}");
+                showBanner();
+              });
+            });
+          } catch (ie) {
+            print('Error detail');
+            print(ie);
+            print('End error detail');
+          }
+        });
+        break;
     }
 
     getTemporaryDirectory().then((dir) {
@@ -246,6 +324,9 @@ class _MyBannerState extends State<MyBanner> {
 
     if (fileExists) {
       //print("(From file) $url");
+      if (widget.title.toLowerCase() == "catatan") {
+        return Image.file(file, fit: BoxFit.contain);
+      }
       return Image.file(file, fit: BoxFit.fill);
     }
 
@@ -338,7 +419,16 @@ class _MyBannerState extends State<MyBanner> {
       borderRadius: BorderRadius.circular(10.0),
       child: GestureDetector(
         onTap: () {
-          if (widget.title.toLowerCase() == 'informasi') {
+          if (widget.title.toLowerCase() == 'catatan') {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DetailsInfoIklanScreen(
+                  url: url,
+                  keterangan: keterangan,
+                ),
+              ),
+            );
+          } else {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DetailsInfoScreen(

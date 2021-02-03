@@ -48,7 +48,8 @@ class LoginBloc {
             ), (Route<dynamic> route) => false
           );
         } else {
-          Navigator.of(context).pushReplacementNamed('/home');
+//          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/bottom-bar');
         }
       } else {
         print("GA ADA IMAGE");
@@ -60,7 +61,8 @@ class LoginBloc {
             ), (Route<dynamic> route) => false
           );
         } else {
-          Navigator.of(context).pushReplacementNamed('/home');
+//          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/bottom-bar');
         }
       }
     });
@@ -69,6 +71,8 @@ class LoginBloc {
   setPreferences(UsersDetailsModel value, String urlImg) async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _pref.setString(JWT_TOKEN, value.data.session.jwt);
+    
+    print("NO HP SAUDARA : ${value.data.user.nomorHpSaudara}");
 
     _pref.setString(NOMOR_ANGGOTA, value.data.user.nomorAnggota);
     _pref.setString(NAMA_ANGGOTA, value.data.user.nama);
@@ -110,6 +114,30 @@ class LoginBloc {
     _pref.setString(SIMPANAN_SUKARELA, value.data.user.simpananSukarela);
     _pref.setString(JABATAN_KEANGGOTAAN, value.data.user.jabatanKeanggotaan);
     _pref.setString(STATUS_PERKAWINAN, value.data.user.status);
+
+    print("NAMA SAUDRA + ${value.data.user.namaSaudaraDekat}");
+
+    if (value.data.user.nama.isEmpty || value.data.user.nama == "-" ||
+    value.data.user.nomorAnggota.isEmpty || value.data.user.nomorAnggota == "-" ||
+    value.data.user.jenisKelamin.isEmpty || value.data.user.jenisKelamin == "-" ||
+    value.data.user.tempatLahir == "-" || value.data.user.tanggalLahir.isEmpty || value.data.user.tanggalLahir == "-" ||
+    value.data.user.status == "-" || value.data.user.alamat.isEmpty || value.data.user.alamat == "-" ||
+    value.data.user.pekerjaan == "-" || value.data.user.emailPribadi == "-" || value.data.user.nomorHp.isEmpty || value.data.user.nomorHp == "-" ||
+    value.data.user.namaKonfederasi.isEmpty || value.data.user.namaKonfederasi == "-" ||
+    value.data.user.namaPerusahaan.isEmpty || value.data.user.namaPerusahaan == "-" ||
+    value.data.user.lokasiPenempatan == "-" || value.data.user.lokasiPenempatan == "" || value.data.user.nomorNik.isEmpty || value.data.user.nomorNik == "-" ||
+    value.data.user.jabatanKeanggotaan == "-" || value.data.user.jabatanKeanggotaan == "" || value.data.user.pendapatan == "=" || value.data.user.pendapatan == "" ||
+    value.data.user.namaSaudaraDekat == "-" || value.data.user.namaSaudaraDekat == "" || value.data.user.hubunganSaudara == "-" || value.data.user.hubunganSaudara == "" ||
+    value.data.user.alamatSaudara == "-" || value.data.user.alamatSaudara ==  "" || value.data.user.nomorHpSaudara == "-" || value.data.user.nomorHpSaudara == "" ||
+    value.data.user.namaBank == "-" || value.data.user.namaBank == "" || value.data.user.cabangBank == "-" || value.data.user.cabangBank == "" ||
+    value.data.user.nomorRekening == "-" || value.data.user.nomorRekening == "" || value.data.user.simpananWajib == 0.0) {
+
+      _pref.setBool(COMPLETIONDATA, false);
+
+    } else {
+
+      _pref.setBool(COMPLETIONDATA, true);
+    }
 
     _pref.setBool(SHOW_IKLAN, true);
   }

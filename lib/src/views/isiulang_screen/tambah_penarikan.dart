@@ -49,6 +49,14 @@ class _TambahPenarikanState extends State<TambahPenarikan>
   MoneyMaskedTextController _nominalWajibController;
   MoneyMaskedTextController _nominalSukarelaController;
 
+  String totalPokok = "0";
+  String totalWajib = "0";
+  String totalSukarela = "0";
+
+  double totalPokokD = 0.0;
+  double totalWajibD = 0.0;
+  double totalSukarelaD = 0.0;
+
   FocusNode _keteranganFocus;
   FocusNode _nominalFocus;
 
@@ -80,6 +88,7 @@ class _TambahPenarikanState extends State<TambahPenarikan>
   String lokasiPenempatan;
   String emailPerusahaan;
   String kodeAnggota;
+  String _statusAnggota;
 
   String kategoriPenarikan = 'Simpanan Pokok';
 
@@ -120,12 +129,54 @@ class _TambahPenarikanState extends State<TambahPenarikan>
     return f.format(number);
   }
 
+  void getSaldoSimpanan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+    var noAnggota = _pref.getString(NOMOR_ANGGOTA);
+
+    String url =
+        "http://solusi.kopbi.or.id/api/kopbi-pinjaman/get-simpanan/$noAnggota";
+
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }));
+
+    print("RESPONSE GET SALDO");
+    print(uriResponse.statusCode);
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      print("VALUE");
+      print(value.data);
+
+      var parse = jsonDecode(value.data);
+      totalPokokD = parse["totalSimpananPokok"];
+
+
+      totalPokok = formattedNumber(parse["totalSimpananPokok"]);
+      totalWajib = formattedNumber(parse["totalSimpananWajib"]);
+      totalSukarela = formattedNumber(parse["totalSimpananSukarela"]);
+      setState(() {});
+    }
+  }
+
+  String formattedNumber(dynamic number) {
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    return f.format(number);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getDetails();
     getDataSimpanan();
+    getSaldoSimpanan();
 
     _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -196,8 +247,16 @@ class _TambahPenarikanState extends State<TambahPenarikan>
           //_nominalPengajuan = 0;
           _nominalPokokController.text = '0';
         } else {
-          _nominalPengajuanPokok = int.parse(_nominalPokokController.text
+           _nominalPengajuanPokok= int.parse(_nominalPokokController.text
               .replaceAll(new RegExp(r"[^\d]"), ''));
+
+          // if (_nominalPengajuanPokok > totalPokokD.toInt()) {
+          //
+          //   _nominalPengajuanPokok= int.parse(_nominalPokokController.text
+          //       .replaceAll(new RegExp(r"[^\d]"), ''));
+          //
+          //   _nominalPokokController.text = totalPokokD.toString();
+          // }
         }
         _quickNominalSelected = null;
       });
@@ -259,12 +318,13 @@ class _TambahPenarikanState extends State<TambahPenarikan>
 
       namaAnggota = _pref.getString(NAMA_ANGGOTA);
       imgUrl = _pref.getString(IMG_PROFILE);
+      _statusAnggota = _pref.getString(STATUS_ANGGOTA);
     });
   }
 
   void getDataSimpanan() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
-    var _nik = _pref.getString(NIK);
+    var _nik = _pref.getString(NOMOR_ANGGOTA);
     _dbSimpanan = ListSimpanan();
 
     totalSimpanan = _dbSimpanan.totalSum;
@@ -286,7 +346,7 @@ class _TambahPenarikanState extends State<TambahPenarikan>
 
     SharedPreferences _pref = await SharedPreferences.getInstance();
     setState(() {
-      nik = _pref.getString(NIK);
+      nik = _pref.getString(NOMOR_ANGGOTA);
     });
 
     _dbSimpanan.getList(nik: nik).then((_) {
@@ -387,7 +447,7 @@ class _TambahPenarikanState extends State<TambahPenarikan>
   Future<bool> isRequirementPassed() async {
     ListSimpanan _dbSimpanan = ListSimpanan();
 
-    await _dbSimpanan.getList(nik: nomorNik);
+    await _dbSimpanan.getList(nik: nomorAnggota);
 
     if (_dbSimpanan.listSimpanan
             .where((simpanan) =>
@@ -453,6 +513,13 @@ class _TambahPenarikanState extends State<TambahPenarikan>
         isLoading = true;
       });
 
+      if (_statusAnggota == "N" || _statusAnggota == "I") {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Anda belum dapat melakukan penarikan"),
+        ));
+        return;
+      }
+
       if (await isRequirementPassed() == false) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Maaf iuran wajib anda kurang dari 6 bulan"),
@@ -475,29 +542,26 @@ class _TambahPenarikanState extends State<TambahPenarikan>
       print(uriResponse.data);
 
       if (uriResponse.statusCode == 200) {
-        showDialog(
-            context: context,
-            builder: (_) => new AlertDialog(
-              title: Text('Terima Kasih'),
-              content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  child: Text('Selesai'),
-                ),
-              ],
-            )
-        );
         MessageModel value =
             messageModelFromJson(json.encode(uriResponse.data));
         Map<String, dynamic> response = jsonDecode(value.data);
         if (response['success'] == true) {
-          /* _scaffoldKey.currentState.showSnackBar(SnackBar(
-            content: Text("Pengajuan pinjaman berhasil dibuat"),
-          )); */
+          showDialog(
+              context: context,
+              builder: (_) => new AlertDialog(
+                title: Text('Terima Kasih'),
+                content: Text('Pengajuan anda berhasil dibuat. Lakukan pengecekan secara berkala untuk mengetahui proses pengajuan anda.'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Selesai'),
+                  ),
+                ],
+              )
+          );
 
           if (_nominalPengajuanPokok > 0 || _nominalPengajuanWajib > 0) {
             Navigator.of(context).push(
@@ -529,12 +593,12 @@ class _TambahPenarikanState extends State<TambahPenarikan>
         ));
       }
     } catch (e) {
-//      print('Error detail');
-//      print(e);
-//      print('End error detail');
-//      _scaffoldKey.currentState.showSnackBar(SnackBar(
-//        content: Text("Tidak dapat terhubung dengan server"),
-//      ));
+      print('Error detail');
+      print(e);
+      print('End error detail');
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Periksa kembali pengajuan anda"),
+      ));
     } finally {
       setState(() {
         isLoading = false;
@@ -766,17 +830,17 @@ class _TambahPenarikanState extends State<TambahPenarikan>
         children: <Widget>[
           _buildUserStatsItem(
               _dbSimpanan.totalPokok != null
-                  ? formatCurrency(_dbSimpanan.totalPokok)
+                  ? totalPokok
                   : formatCurrency(0),
               'Simpanan Pokok'),
           _buildUserStatsItem(
               _dbSimpanan.totalWajib != null
-                  ? formatCurrency(_dbSimpanan.totalWajib)
+                  ? totalWajib
                   : formatCurrency(0),
               'Simpanan Wajib'),
           _buildUserStatsItem(
               _dbSimpanan.totalSukarela != null
-                  ? formatCurrency(_dbSimpanan.totalSukarela)
+                  ? totalSukarela
                   : formatCurrency(0),
               'Simpanan Sukarela'),
         ],

@@ -266,6 +266,8 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
             isLoading = false;
           });
 
+          _pref.setBool(COMPLETIONDATA, true);
+
           Navigator.of(context).pop();
         } else  {
           postUpdate();
@@ -291,6 +293,8 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
         setState(() {
           isLoading = false;
         });
+
+        _pref.setBool(COMPLETIONDATA, true);
 
         Navigator.of(context).pop();
       } else if (response.statusCode == 500) {
@@ -383,7 +387,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
             formNamaSaudara(),
             formHubunganSaudara(),
             formAlamatSaudara(),
-            formNomorHp(),
+            formNoHpSaudara(),
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 15, bottom: 10),
               child: Text(
@@ -449,7 +453,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
             ) : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: InkWell(
-                onTap: getImageKTP,
+                onTap: (){},
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
@@ -501,7 +505,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: namaLengkapCrtl.text.isEmpty || namaLengkapCrtl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nama Lengkap (*)',
           hasFloatingPlaceholder: true,
@@ -515,7 +519,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: nomorKtpCtrl.text.isEmpty || nomorKtpCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nomor KTP (*)',
           hasFloatingPlaceholder: true,
@@ -565,7 +569,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: tempatLahirCtrl.text.isEmpty || tempatLahirCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Tempat Lahir',
           hasFloatingPlaceholder: true,
@@ -579,13 +583,17 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
   Widget formTanggalLahir() {
     return GestureDetector(
       onTap: () {
-        _selectedDate(context);
+        if (tanggalLahirCtrl.text.isEmpty || tanggalLahirCtrl.text == "-") {
+          _selectedDate(context);
+        } else {
+
+        }
       },
       child: AbsorbPointer(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: TextFormField(
-            readOnly: true,
+            readOnly: tanggalLahirCtrl.text.isEmpty || tanggalLahirCtrl.text == "-" ? false : true,
             decoration: InputDecoration(
               labelText: 'Tanggal Lahir',
               hasFloatingPlaceholder: true,
@@ -638,7 +646,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: alamatCtrl.text.isEmpty || alamatCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Alamat',
           hasFloatingPlaceholder: true,
@@ -654,7 +662,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: pekerjaanCtrl.text.isEmpty || pekerjaanCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Pekerjaan',
           hasFloatingPlaceholder: true,
@@ -669,7 +677,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: alamatEmailCtrl.text.isEmpty || alamatEmailCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Alamat Email',
           hasFloatingPlaceholder: true,
@@ -684,7 +692,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: nomorHpCtrl.text.isEmpty || nomorHpCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nomor Hp (*)',
           hasFloatingPlaceholder: true,
@@ -698,7 +706,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: konfederasiCtrl.text.isEmpty || konfederasiCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Konfederasi / Serikat Kerja (*)',
           hasFloatingPlaceholder: true,
@@ -712,7 +720,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: namaPerusahaanCtrl.text.isEmpty || namaPerusahaanCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nama Perusahaan (*)',
           hasFloatingPlaceholder: true,
@@ -726,7 +734,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: namaPenempatanCtrl.text.isEmpty || namaPenempatanCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nama Penempatan',
           hasFloatingPlaceholder: true,
@@ -741,7 +749,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: true,
+        readOnly: nomorNIKCtrl.text.isEmpty || nomorNIKCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nomor NIK (*)',
           hasFloatingPlaceholder: true,
@@ -755,7 +763,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: jabatanCtrl.text.isEmpty || jabatanCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Jabatan',
           hasFloatingPlaceholder: true,
@@ -806,7 +814,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: namaSaudaraCtrl.text.isEmpty || namaSaudaraCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nama Saudara',
           hasFloatingPlaceholder: true,
@@ -821,7 +829,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: hubunganSaudaraCtrl.text.isEmpty || hubunganSaudaraCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Hubungan Saudara',
           hasFloatingPlaceholder: true,
@@ -836,7 +844,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: alamatSaudaraCtrl.text.isEmpty || alamatSaudaraCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Alamat Saudara',
           hasFloatingPlaceholder: true,
@@ -851,7 +859,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: nomorHpSaudaraCtrl.text.isEmpty || nomorHpSaudaraCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nomor Hp Saudara',
           hasFloatingPlaceholder: true,
@@ -866,7 +874,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: namaBankCtrl.text.isEmpty || namaBankCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nama Bank',
           hasFloatingPlaceholder: true,
@@ -881,7 +889,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: cabangBankCtrl.text.isEmpty || cabangBankCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Cabang Pembuka',
           hasFloatingPlaceholder: true,
@@ -896,7 +904,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: norekCtrl.text.isEmpty || norekCtrl.text == "-" ? false : true,
         decoration: InputDecoration(
           labelText: 'Nomor Rekening',
           hasFloatingPlaceholder: true,
@@ -911,7 +919,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: simpananWajibBulananCtrl.text.isEmpty || simpananWajibBulananCtrl.text == "-" || simpananWajibBulananCtrl.text == "0.0" ? false : true,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           labelText: 'Simpanan Wajib Bulanan',
@@ -927,7 +935,7 @@ class _UbahDataAnggotaScreenState extends State<UbahDataAnggotaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextFormField(
-        readOnly: false,
+        readOnly: simpananSukarelaBulananCtrl.text.isEmpty || simpananSukarelaBulananCtrl.text == "-" || simpananSukarelaBulananCtrl.text == "0.0" ? false : true,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           labelText: 'Simpanan Sukarela Bulanan',

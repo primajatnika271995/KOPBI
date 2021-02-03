@@ -30,6 +30,8 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
   var msgInputCtrl = new TextEditingController();
   var msgReplyCtrl = new TextEditingController();
+  
+  DateFormat dateFormat = new DateFormat("yyy-MM-dd hh:mm");
 
   String username;
   String noAnggota;
@@ -78,6 +80,7 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
 
       List<dynamic> m = jsonDecode(value.data);
       for (Map<String, dynamic> item in m) {
+        print(dateFormat.parse(item["updatedDate"]));
         setState(() {
           listMsg.add(MessageLaporan(
             id: item["id"],
@@ -86,6 +89,7 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
             nomorAnggota: item["nomorAnggota"],
             createdDate: item["createdDate"],
             namaPerusahaan: item["namaPerusahaan"],
+            updatedDate: item["updatedDate"] == null ? DateTime.parse("2018-01-15T00:00:00.000") : DateTime.parse(item["updatedDate"]),
             balasan: item["balasan"],
           ));
         });
@@ -299,7 +303,8 @@ class _DetailsLaporanViewState extends State<DetailsLaporanView> {
                       )
                     : ListView.builder(
                         itemBuilder: (context, index) {
-                          DateTime date = DateTime.parse(listMsg[index].createdDate);
+                          DateTime date =
+                              DateTime.parse(listMsg[index].createdDate);
                           print(timeago.format(date));
                           print(date);
                           return commentContent(listMsg[index]);
@@ -581,6 +586,7 @@ class MessageLaporan {
   String nomorAnggota;
   String createdDate;
   String namaPerusahaan;
+  DateTime updatedDate;
   int balasan;
 
   MessageLaporan(
@@ -590,6 +596,7 @@ class MessageLaporan {
       this.nomorAnggota,
       this.createdDate,
       this.namaPerusahaan,
+      this.updatedDate,
       this.balasan});
 }
 

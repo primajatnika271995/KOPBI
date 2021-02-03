@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
@@ -18,6 +19,10 @@ import 'package:kopbi/src/views/kredit_screen/upload_verifikasi_kredit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PengajuanKreditPage extends StatefulWidget {
+
+  final Barang data;
+  PengajuanKreditPage({this.data});
+
   @override
   _PengajuanKreditPageState createState() => _PengajuanKreditPageState();
 }
@@ -26,6 +31,9 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
   GlobalKey<ScaffoldState> _scaffoldKey;
   ListBarang _dbBarang;
   ListSimpanan _listSimpanan;
+
+  var hargaBarang = new NumberFormat.currency(
+      locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
 
   TextEditingController _keteranganController;
   var _keteranganBarangController = TextEditingController();
@@ -49,6 +57,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
 
   int totalSimpanan;
 
+  String _statusAnggota;
   String nomorNik;
   String nomorKtp;
   String nomorAnggota;
@@ -111,13 +120,18 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
 
           print("STOCK : ${_listBarang[0].stokBarang}");
 
-          setState(() {
-//            _barang = _listBarang.first.namaBarang;
-//            _keteranganBarang = _listBarang.first.keterangan;
-//            _nominalPengajuanController.text =
-//                _listBarang.first.harga.toString();
-//            _keteranganBarangController.text = _listBarang.first.keterangan;
-          });
+          if (widget.data.id != null) {
+            setState(() {
+            _barang = widget.data.namaBarang;
+            _keteranganBarang = widget.data.keterangan;
+            _nominalPengajuanController.text =
+                widget.data.harga.toString();
+            _keteranganBarangController.text = widget.data.keterangan;
+            });
+          } else {
+
+          }
+
           print("List Barang Sukses");
           break;
         case HttpStatus.error:
@@ -238,12 +252,13 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
       lokasiPenempatan = _pref.getString(LOKASI_PENEMPATAN);
       emailPerusahaan = _pref.getString(EMAIL_PERUSAHAAN);
       kodeAnggota = _pref.getString(KODE_USER);
+      _statusAnggota = _pref.getString(STATUS_ANGGOTA);
     });
   }
 
   void getDataSimpanan() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
-    var _nik = _pref.getString(NIK);
+    var _nik = _pref.getString(NOMOR_ANGGOTA);
     _listSimpanan = ListSimpanan();
 
     totalSimpanan = _listSimpanan.totalSum;
@@ -269,7 +284,7 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
   Future<bool> isRequirementPassed() async {
     ListSimpanan _dbSimpanan = ListSimpanan();
 
-    await _dbSimpanan.getList(nik: nomorNik);
+    await _dbSimpanan.getList(nik: nomorAnggota);
 
     if (_dbSimpanan.listSimpanan
             .where((simpanan) =>
@@ -332,6 +347,13 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
       setState(() {
         isLoading = true;
       });
+
+      if (_statusAnggota == "N" || _statusAnggota == "I") {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Anda belum dapat melakukan pinjaman"),
+        ));
+        return;
+      }
 
       if (_keterangan.isEmpty) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -415,6 +437,10 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
                 builder: (context) => UploadFotoVerifikasiKredit(),
               ),
             );
+          } else if (response['success'] == false) {
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+              content: Text("Terjadi kesalahan pada proses pengajuan"),
+            ));
           } else {
 //            Navigator.pop(context, 'success');
             showDialog(
@@ -441,12 +467,12 @@ class _PengajuanKreditPageState extends State<PengajuanKreditPage> {
         ));
       }
     } catch (e) {
-//      print('Error detail');
-//      print(e);
-//      print('End error detail');
-//      _scaffoldKey.currentState.showSnackBar(SnackBar(
-//        content: Text("Tidak dapat terhubung dengan server"),
-//      ));
+      print('Error detail');
+      print(e);
+      print('End error detail');
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Periksa Kembali pengajuan anda"),
+      ));
     } finally {
       setState(() {
         isLoading = false;

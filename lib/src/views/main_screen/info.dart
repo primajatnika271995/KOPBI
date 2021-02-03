@@ -18,9 +18,19 @@ class _InfoTabsState extends State<InfoTabs> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Container(child: _bannerInformasi),
-      onWillPop: _onWillPop,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        elevation: 0,
+        titleSpacing: 0,
+        title: Text(
+          'Informasi',
+          style: TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      ),
+      body: Container(child: _bannerInformasi),
     );
   }
 

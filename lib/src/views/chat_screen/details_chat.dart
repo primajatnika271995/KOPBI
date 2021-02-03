@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/message_model.dart';
 import 'package:kopbi/src/services/time_ago_service.dart';
@@ -22,6 +23,8 @@ class _DetailsChatViewState extends State<DetailsChatView> {
 
   var msgInputCtrl = new TextEditingController();
   var msgReplyCtrl = new TextEditingController();
+
+  DateFormat dateFormat = new DateFormat("yyy-MM-dd hh:mm");
 
   String username;
   String noAnggota;
@@ -75,7 +78,6 @@ class _DetailsChatViewState extends State<DetailsChatView> {
 
       List<dynamic> m = jsonDecode(value.data);
       for (Map<String, dynamic> item in m) {
-
         if (role == "AGT") {
           setState(() {
             if (item["nomorAnggota"] == noAnggota) {
@@ -86,6 +88,7 @@ class _DetailsChatViewState extends State<DetailsChatView> {
                 nomorAnggota: item["nomorAnggota"],
                 createdDate: item["createdDate"],
                 namaPerusahaan: item["namaPerusahaan"],
+                updatedDate: item["updatedDate"] == null ? DateTime.parse("2018-01-15T00:00:00.000") : DateTime.parse(item["updatedDate"]),
                 balasan: item["balasan"],
               ));
             }
@@ -133,6 +136,8 @@ class _DetailsChatViewState extends State<DetailsChatView> {
       MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
 
       List<dynamic> m = jsonDecode(value.data);
+
+      print(value.data);
       setState(() {
         listMsg.add(MessageLaporan(
           id: m.last["id"],
@@ -222,9 +227,7 @@ class _DetailsChatViewState extends State<DetailsChatView> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        elevation: 1,
         backgroundColor: Colors.green,
-        titleSpacing: 0,
         title: Text(
           'Chat',
           style: TextStyle(color: Colors.white, fontSize: 16),
@@ -252,6 +255,9 @@ class _DetailsChatViewState extends State<DetailsChatView> {
           children: <Widget>[
              ListView.builder(
               itemBuilder: (context, index) {
+//                print(listMsg[index].updatedDate);
+                listMsg.sort((a, b) => a.updatedDate.compareTo(DateTime.now()));
+                print(listMsg[index].updatedDate);
                 return commentContent(listMsg[index]);
               },
               itemCount: listMsg.length,
@@ -504,7 +510,7 @@ class _DetailsChatViewState extends State<DetailsChatView> {
                         borderSide: BorderSide(color: Colors.white)),
                     enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white)),
-                    hintText: "Tulis Komentar ...",
+                    hintText: "Tulis Pertanyaan ...",
                     hintStyle: TextStyle(color: Colors.grey[400]),
                   ),
                 ),

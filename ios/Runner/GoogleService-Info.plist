@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>510921235617-nkohijeo7rouhdg1amu4borkepsslp7o.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.510921235617-nkohijeo7rouhdg1amu4borkepsslp7o</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>510921235617-63ofog25ids4il0ejes4nlequhnko27b.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC3PE70T0VTAqPPhMc6uEgFgOCerB00_3g</string>
+	<key>GCM_SENDER_ID</key>
+	<string>510921235617</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>id.or.kopbi.solusi.mobile</string>
+	<key>PROJECT_ID</key>
+	<string>kopbi-notification</string>
+	<key>STORAGE_BUCKET</key>
+	<string>kopbi-notification.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:510921235617:ios:74b1a4c7eda4f79e7324e0</string>
+	<key>DATABASE_URL</key>
+	<string>https://kopbi-notification.firebaseio.com</string>
+</dict>
+</plist>

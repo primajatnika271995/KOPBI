@@ -119,17 +119,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    onMessageFCM();
+//    onMessageFCM();
 
-    var initializationSettingsAndroid =
-    new AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    var initializationSettingsIOS = new IOSInitializationSettings();
-
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+//    var initializationSettingsAndroid =
+//    new AndroidInitializationSettings('@mipmap/ic_launcher');
+//
+//    var initializationSettingsIOS = new IOSInitializationSettings();
+//
+//    var initializationSettings = new InitializationSettings(
+//        initializationSettingsAndroid, initializationSettingsIOS);
+//
+//    flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     checkAuthenticated().then((_) async {
       SharedPreferences _pref = await SharedPreferences.getInstance();

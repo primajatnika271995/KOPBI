@@ -23,6 +23,7 @@ class _DetailsInfoScreenState extends State<DetailsInfoScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
               child: Padding(

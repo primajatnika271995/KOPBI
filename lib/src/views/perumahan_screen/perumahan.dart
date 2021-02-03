@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/utils/screenSize.dart';
+import 'package:kopbi/src/views/isiulang_screen/list_pengajuan_penarikan.dart';
+import 'package:kopbi/src/views/perumahan_screen/add_pengajuan_perumahan.dart';
+import 'package:kopbi/src/views/perumahan_screen/list_perumahan_berjalan.dart';
 import 'package:kopbi/src/views/perumahan_screen/pengajuan_kpr.dart';
 
 class PerumahanScreen extends StatefulWidget {
@@ -7,6 +11,7 @@ class PerumahanScreen extends StatefulWidget {
 }
 
 class _PerumahanScreenState extends State<PerumahanScreen> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -27,27 +32,13 @@ class _PerumahanScreenState extends State<PerumahanScreen> {
             ],
           ),
         ),
-        body: TabBarView(
+        body: Stack(
           children: <Widget>[
-            Center(
-              child: Text(
-                'Tidak ada KPR',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Belum ada pengajuan KPR',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                  color: Colors.black45,
-                ),
-              ),
+            TabBarView(
+              children: <Widget>[
+                ListPerumahanBerjalanView(),
+                AddPengajuanPerumahanView()
+              ],
             ),
           ],
         ),
@@ -68,3 +59,4 @@ class _PerumahanScreenState extends State<PerumahanScreen> {
     );
   }
 }
+

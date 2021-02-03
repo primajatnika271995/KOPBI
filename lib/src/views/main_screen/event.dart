@@ -26,34 +26,41 @@ class _EventTabsState extends State<EventTabs> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Container(
-        child: _bannerEvent
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        elevation: 0,
+        titleSpacing: 0,
+        title: Text(
+          'Kegiatan',
+          style: TextStyle(
+            fontSize: 16,
+          ),
+        ),
       ),
+      body: Container(child: _bannerEvent),
     );
   }
 
   Future<bool> _onWillPop() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Apakah Anda yakin ingin keluar?'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('Tidak'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Apakah Anda yakin ingin keluar?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yakin'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yakin'),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 }

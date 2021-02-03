@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/models/encrypt_model.dart';
 import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/services/update.dart';
+import 'package:kopbi/src/views/component/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UbahPasswordScreen extends StatefulWidget {
@@ -17,6 +19,8 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
   bool passwordLamaObs = true;
   bool passwordBaruObs = true;
   bool passwordConfObs = true;
+
+  String old;
 
   bool isLoading = false;
 
@@ -47,11 +51,31 @@ class _UbahPasswordScreenState extends State<UbahPasswordScreen> {
     });
   }
 
+  void getOldPassword() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    print(_pref.getString(DECRYPT_PASSWORD));
+
+    setState(() {
+      old = _pref.getString(DECRYPT_PASSWORD);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getOldPassword();
+    super.initState();
+  }
+
   void updatePassword() async {
     if (passwordBaruCtrl.text != passwordBaruConfirmCtrl.text) {
       print("Password Tidak Sama");
+      flushBar(context, "Password tidak sama!", 3);
     } else if (passwordBaruCtrl.text.isEmpty) {
       print("Password Tidak boleh kosong");
+    } else if (old != passwordLamaCtrl.text) {
+      flushBar(context, "Password Lama anda tidak sama!", 3);
     } else {
       toggleLoading();
       UpdateService service = new UpdateService();

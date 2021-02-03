@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kopbi/src/config/preferences.dart';
+import 'package:kopbi/src/models/message_model.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,6 +17,9 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   String nama = 'admin';
   String idNumber = 'admin';
   String tglRegister = 'admin';
+  String jenisKepesertaan = '';
+
+  double totalWajib;
 
   GlobalKey globalKey = new GlobalKey();
 
@@ -20,7 +27,58 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   void initState() {
     // TODO: implement initState
     getDetails();
+    getSaldoSimpanan();
     super.initState();
+  }
+
+  void getSaldoSimpanan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+    var noAnggota = _pref.getString(NOMOR_ANGGOTA);
+
+    String url =
+        "http://solusi.kopbi.or.id/api/kopbi-pinjaman/get-simpanan/$noAnggota";
+
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }));
+
+    print("RESPONSE GET SALDO");
+    print(uriResponse.statusCode);
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      print("VALUE");
+      print(value.data);
+
+      var parse = jsonDecode(value.data);
+
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      totalWajib = double.parse(pref.getString(SIMPANAN_WAJIB));
+
+      print(totalWajib);
+
+      if (totalWajib >= 25000.0 && totalWajib <= 249999.0) {
+        print("SILVER");
+        jenisKepesertaan = "SILVER";
+      } else if (totalWajib >= 250000.0 && totalWajib <= 2499999.0) {
+        print("GOLD");
+        jenisKepesertaan = "GOLD";
+      } else if (totalWajib >= 2500000.0 && totalWajib <= 9999999.0) {
+        print("PLATINUM");
+        jenisKepesertaan = "PLATINUM";
+      } else if (totalWajib >= 10000000.0) {
+        print("TITANIUM");
+        jenisKepesertaan = "TITANIUM";
+      }
+
+      setState(() {});
+    }
   }
 
   void getDetails() async {
@@ -36,7 +94,7 @@ class _KartuAnggotaState extends State<KartuAnggota> {
   String formattedTanggalRegistrasi(tglRegsiter) {
     String formatted = tglRegsiter;
 
-    if(tglRegsiter.contains(RegExp(r"^\d{4}\-\d{2}\-\d{2}"))) {
+    if (tglRegsiter.contains(RegExp(r"^\d{4}\-\d{2}\-\d{2}"))) {
       List<String> split = tglRegsiter.split('-');
 
       List<String> months = [
@@ -57,19 +115,26 @@ class _KartuAnggotaState extends State<KartuAnggota> {
 
       var bulan = int.parse(split[1]);
 
-      formatted = "${split[2].substring(0, split[2].length - 13)}-${split[1]}-${split[0]}";
+      formatted =
+          "${split[2].substring(0, split[2].length - 13)}-${split[1]}-${split[0]}";
     }
 
     return formatted;
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Kartu Anggota',
+          style: TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        backgroundColor: Colors.green,
+      ),
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             SizedBox(height: 40),
@@ -82,7 +147,9 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                     width: 325.0,
                     height: 185.0,
                     decoration: BoxDecoration(
-                        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+                        boxShadow: [
+                          BoxShadow(color: Colors.grey, blurRadius: 5)
+                        ],
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(7.0)),
                     child: Stack(
@@ -94,7 +161,8 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                           child: RotatedBox(
                             quarterTurns: 3,
                             child: Image(
-                                image: AssetImage('assets/icons/Logo-KOPBI.png')),
+                                image:
+                                    AssetImage('assets/icons/Logo-KOPBI.png')),
                           ),
                         ),
                         Container(
@@ -111,24 +179,35 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                                 child: Row(
                                   children: <Widget>[
                                     Container(
-                                      child:
-                                          Image.asset('assets/icons/Logo-KOPBI.png'),
+                                      child: Image.asset(
+                                          'assets/icons/Logo-KOPBI.png'),
                                     ),
                                     Expanded(
                                       child: Container(
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: <Widget>[
                                             Text("KARTU ANGGOTA",
-                                                style: TextStyle(fontSize: 18.0)),
-                                            Text("Bersama, Maju, Sejahtera",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 14, 65, 38),
-                                                    fontSize: 15.0,
-                                                    fontStyle: FontStyle.italic)),
+                                                style:
+                                                    TextStyle(fontSize: 18.0)),
+                                            Container(
+                                              color: Colors.green[900],
+                                              width: 143,
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(vertical: 3),
+                                                child: Center(
+                                                  child: Text(jenisKepesertaan,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 15.0,
+                                                          fontStyle:
+                                                          FontStyle.normal),),
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -151,8 +230,9 @@ class _KartuAnggotaState extends State<KartuAnggota> {
                                 ),
                               ),
                               SizedBox(height: 25.0),
-                              Text("Terdaftar Sejak ${formattedTanggalRegistrasi(tglRegister)}",
-                                  style: TextStyle(fontSize: 14.0))
+                              Text(
+                                  "Terdaftar Sejak ${formattedTanggalRegistrasi(tglRegister)}",
+                                  style: TextStyle(fontSize: 11.0))
                             ],
                           ),
                         )
@@ -282,21 +362,21 @@ class _KartuAnggotaState extends State<KartuAnggota> {
 
   Future<bool> _onWillPop() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Apakah Anda yakin ingin keluar?'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('Tidak'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Apakah Anda yakin ingin keluar?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yakin'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yakin'),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
@@ -346,5 +426,4 @@ class _KartuAnggotaState extends State<KartuAnggota> {
       ),
     );
   }
-
 }

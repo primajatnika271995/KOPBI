@@ -7,6 +7,7 @@ import 'package:kopbi/src/config/preferences.dart';
 import 'package:kopbi/src/config/urls.dart';
 import 'package:kopbi/src/enum/HttpStatus.dart';
 import 'package:kopbi/src/models/message_model.dart';
+import 'package:kopbi/src/models/new_message_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Pengajuan {
@@ -36,6 +37,8 @@ class Pengajuan {
   String _tanggalPengajuanRaw;
   String _tanggalPerubahanRaw;
   String _tanggalUpdateRaw;
+  String _tanggalAppHRDRaw;
+  String _tanggalAppPengawasRaw;
   String _namaUserHRD;
   String _catatanHRD;
   String _namaUserPengawas;
@@ -86,6 +89,8 @@ class Pengajuan {
   String get tanggalTempo => _tanggalTempo;
   String get tanggalJatuhTempoRaw => _tanggalJatuhTempoRaw;
   String get tanggalPengajuanRaw => _tanggalPengajuanRaw;
+  String get tanggalAppHRDRaw => _tanggalAppHRDRaw;
+  String get tanggalAppPengawasRaw => _tanggalAppPengawasRaw;
   String get tanggalPerubahanRaw => _tanggalPerubahanRaw;
   String get tanggalUpdateRaw => _tanggalUpdateRaw;
   String get kategoriPengajuan => _kategoriPengajuan;
@@ -159,6 +164,8 @@ class Pengajuan {
     _tanggalJatuhTempoRaw = m['tanggalJatuhTempo'] == null ? '' : m['tanggalJatuhTempo'];
     _tanggalPengajuanRaw = m['tanggalPengajuan'] == null ? '' : m['tanggalPengajuan'];
     _tanggalPerubahanRaw = m['tanggalPerubahan'] == null ? '' : m['tanggalPerubahan'];
+    _tanggalAppHRDRaw = m['tanggalAppHRD'] == null ? '' : m['tanggalAppHRD'];
+    _tanggalAppPengawasRaw = m['tanggalAppPengawas'] == null ? '' : m['tanggalAppPengawas'];
     _tanggalUpdateRaw = m['tanggalUpdate'] == null ? '' : m['tanggalUpdate'];
     _tanggalJatuhTempo = m['tanggalJatuhTempo'] == null ? null : parseDate(explodeDate(m['tanggalJatuhTempo']));
     _tanggalPengajuan = m['tanggalPengajuan'] == null ? null : parseDate(explodeDate(m['tanggalPengajuan']));
@@ -351,31 +358,55 @@ class ListPengajuan {
     return f.format(_total);
   }
 
-  Future<HttpStatus> getList({@required String nik}) async {
+  Future<HttpStatus> getList({@required String nik, String kategori}) async {
 //    var client = new http.Client();
     SharedPreferences _pref = await SharedPreferences.getInstance();
+
+    var kodePerusahaan = _pref.getString(KODE_PERUSAHAAN);
+    var nama = _pref.getString(NAMA_ANGGOTA);
+
+    print(nama);
+    print(nik);
+    print(kodePerusahaan);
 
     var token = _pref.getString(JWT_TOKEN);
     var dio = Dio();
 
+    var parameters = {
+      "mulai": 1,
+      "akhir": 100,
+      "tanggalMulai": "",
+      "tanggalAkhir": "",
+      "kodePerusahaan": kodePerusahaan,
+      // "statusPengajuan": "NEW",
+      "nama": nama,
+      "nomorNik": nik,
+      "kategoriPengajuan": kategori
+    };
+
     try {
-      String url = "${APIUrl.pengajuan}/list-pengajuan/$nik";
+      String url = "${APIUrl.pengajuan}/list-pengajuan";
 
       var uriResponse = await dio.post(url, options: Options(
         headers: {
           'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
           'jwtToken': token,
         }
-      ),);
+      ), data: parameters);
 
       if(uriResponse.statusCode == 200) {
-        MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
-        _makeList(value.data);
+        // print(uriResponse.data);
+
+        MessageModelNew value = messageModelNewFromJson(json.encode(uriResponse.data));
+
+        // print(value.data.data);
+        _makeList(value.data.data);
         return HttpStatus.success;
       } else {
         return HttpStatus.serverError;
       }
     } catch (e) {
+      print("ERROR MAS");
       print('Error detail');
       print(e);
       print('End error detail');

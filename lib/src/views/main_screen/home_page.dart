@@ -13,6 +13,10 @@ import 'package:kopbi/src/services/angsuran.dart';
 import 'package:kopbi/src/services/loginApi.dart';
 import 'package:kopbi/src/services/pinjaman.dart';
 import 'package:kopbi/src/services/simpananApi.dart';
+import 'package:kopbi/src/views/info_covid_screen/info_covid.dart';
+import 'package:kopbi/src/views/main_screen/detail_info_catatan.dart';
+import 'package:kopbi/src/views/main_screen/details_info.dart';
+import 'package:kopbi/src/views/main_screen/details_info_iklan.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,6 +49,14 @@ class _HomeScreenState extends State<HomeScreen> {
   var buildVersionBE;
 
   static List<String> imgList = [];
+  static List<String> imgKeterangan = [];
+  static List<String> iklanKeteranganList = [];
+
+  static List<String> kegiatanList = [];
+  static List<String> kegiatanKeterangan = [];
+
+  static List<String> infoList = [];
+  static List<String> infoKeterangan = [];
 
   static List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -54,7 +66,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return result;
   }
-  
+
+  void onNavigationInfoCovid() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => CovidInfoScreen(),
+        transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   void showIklan() {
     return WidgetsBinding.instance.addPostFrameCallback((_) async {
       await showGeneralDialog(
@@ -64,11 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
           barrierDismissible: false,
           transitionDuration: Duration(milliseconds: 1000),
           transitionBuilder: (context, a1, a2, widget) {
-            final curvedValue =
-                Curves.easeInOutBack.transform(a1.value) - 1.0;
+            final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
             return Transform(
-              transform: Matrix4.translationValues(
-                  0.0, curvedValue * 200, 0.0),
+              transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
               child: Opacity(
                 opacity: a1.value,
                 child: Dialog(
@@ -79,13 +106,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 50,
                     child: Stack(
                       children: <Widget>[
-                        Container(
-                          height: 400,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(7),
-                            image: DecorationImage(
-                              image: NetworkImage("http://solusi.kopbi.or.id:8889/kobi-images/informasi/36.jpg"),
-                              fit: BoxFit.fill,
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => DetailsInfoCatatanScreen(
+                                  keterangan: iklanKeteranganList[0] == null || iklanKeteranganList[0].isEmpty ? "Tidak ada Keterangan." : iklanKeteranganList[0],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 400,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    "http://solusi.kopbi.or.id:8889/kobi-images/informasi/36.jpg"),
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           ),
                         ),
@@ -102,7 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(10000),
                               ),
                               child: Center(
-                                child: Icon(Icons.close, color: Colors.black, size: 20),
+                                child: Icon(Icons.close,
+                                    color: Colors.black, size: 20),
                               ),
                             ),
                           ),
@@ -116,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           pageBuilder: (context, animation1, animation2) {});
     });
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +168,63 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: <Widget>[
               balanceField(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15, left: 40, right: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Image.asset(
+                              "assets/icons/info-covid.png",
+                              height: 30,
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  "Covid-19 Info",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  "Info harian terbaru virus Corona!",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.lightGreen,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 25,
+                      child: RaisedButton(
+                        onPressed: () {
+                          onNavigationInfoCovid();
+                        },
+                        color: Colors.red,
+                        child: Text(
+                          "VIEW",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               menuRow1(),
               menuRow2(),
               CarouselSlider.builder(
@@ -140,13 +237,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 enableInfiniteScroll: true,
                 aspectRatio: 2.0,
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.all(5.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      child: Stack(children: <Widget>[
-                        Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png", fit: BoxFit.cover, width: 1000.0),
-                      ]),
+                  return InkWell(
+                    onTap: () {
+                      print(imgKeterangan[index]);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => DetailsInfoIklanScreen(
+                            url: "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png",
+                            keterangan: imgKeterangan[index] == null || imgKeterangan[index].isEmpty ? "Tidak ada Keterangan." : imgKeterangan[index],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(5.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        child: Stack(children: <Widget>[
+                          Image.network(
+                              "http://solusi.kopbi.or.id:8889/kobi-images/informasi/${imgList[index]}.png",
+                              fit: BoxFit.cover,
+                              width: 1000.0),
+                        ]),
+                      ),
                     ),
                   );
                 },
@@ -172,23 +285,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List child = map<Widget>(
     imgList,
-        (index, i) {
+    (index, i) {
       return GestureDetector(
-        onTap: () {
-        },
+        onTap: () {},
         child: Container(
           margin: EdgeInsets.all(5.0),
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             child: Stack(children: <Widget>[
-              Image.network("http://solusi.kopbi.or.id:8889/kobi-images/informasi/$i.png", fit: BoxFit.cover, width: 1000.0),
+              Image.network(
+                  "http://solusi.kopbi.or.id:8889/kobi-images/informasi/$i.png",
+                  fit: BoxFit.cover,
+                  width: 1000.0),
             ]),
           ),
         ),
       );
     },
   ).toList();
-
 
   Widget balanceField() {
     return Stack(
@@ -749,10 +863,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String formattedNumber(dynamic number) {
-    var f = new NumberFormat.currency(locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
+    var f = new NumberFormat.currency(
+        locale: 'id_ID', name: 'Rp. ', decimalDigits: 0);
     return f.format(number);
   }
-
 
   void getDataSimpanan() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -775,7 +889,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _listPinjaman.getList(nik: _nik).then((_) {
       setState(() {
-        formattedTotalPinjaman = formattedNumber(_listPinjaman.total - _totalAngsuran);
+        formattedTotalPinjaman =
+            formattedNumber(_listPinjaman.total - _totalAngsuran);
       });
 
       _listPinjaman.listPinjaman.forEach((pinjaman) {
@@ -783,31 +898,32 @@ class _HomeScreenState extends State<HomeScreen> {
         listAnguran.getList(nomorPinjaman: pinjaman.nomorPinjaman).then((_) {
           setState(() {
             _totalAngsuran += listAnguran.totalPaid;
-            formattedTotalPinjaman = formattedNumber(_listPinjaman.total - _totalAngsuran);
+            formattedTotalPinjaman =
+                formattedNumber(_listPinjaman.total - _totalAngsuran);
           });
         });
       });
     });
-
   }
 
   Future<bool> _onWillPop() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Apakah Anda yakin ingin keluar?'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('Tidak'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Apakah Anda yakin ingin keluar?'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('Tidak'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yakin'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yakin'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   void onHide() async {
@@ -835,6 +951,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getImgKtp();
     getUserDetails();
     getCatatan();
+    getIklan();
     getDataSimpanan();
     getVersionBackend();
 
@@ -871,13 +988,15 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.white,
           elevation: 20,
           title: new Text("Aplikasi KOPBI Terbaru Telah Tersedia"),
-          content: new Text("Pelanggan YTH, Kami telah melakukan pemutakhiran Aplikasi KOPBI."
+          content: new Text(
+              "Pelanggan YTH, Kami telah melakukan pemutakhiran Aplikasi KOPBI."
               "\n\nSilahkan Install Aplikasi KOPBI terbaru untuk mendapatkan fitur terbaru dan pelayanan terbaik. Terimakasih"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Update"),
               onPressed: () {
-                launch("https://play.google.com/store/apps/details?id=id.or.kopbi.solusi.mobile");
+                launch(
+                    "https://play.google.com/store/apps/details?id=id.or.kopbi.solusi.mobile");
               },
             ),
           ],
@@ -894,17 +1013,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
     String url = "http://solusi.kopbi.or.id:8889/kobi-images/ktp/$noKtp.jpg";
 
-    var response = await dio.get(url, options: Options(
-        headers: {
+    var response = await dio.get(url,
+        options: Options(headers: {
           'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
           'jwtToken': token,
-        }
-    ));
-    
+        }));
+
     if (response.statusCode == 200) {
       setState(() {
-        _pref.setString(IMG_KTP, "http://solusi.kopbi.or.id:8889/kobi-images/ktp/$noKtp.jpg");
+        _pref.setString(IMG_KTP,
+            "http://solusi.kopbi.or.id:8889/kobi-images/ktp/$noKtp.jpg");
       });
+    }
+  }
+
+  void getIklan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+
+    String url =
+        "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/iklan";
+
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }));
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      List<dynamic> m = jsonDecode(value.data);
+      for (Map<String, dynamic> item in m) {
+        print(item["namaKonten"]);
+        setState(() {
+          iklanKeteranganList.add(item["keterangan"].toString());
+        });
+      }
     }
   }
 
@@ -913,22 +1059,52 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     var token = _pref.getString(JWT_TOKEN);
 
-    String url = "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/catatan";
+    String url =
+        "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/catatan";
 
-    var uriResponse = await dio.post(url, options: Options(
-        headers: {
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
           'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
           'jwtToken': token,
-        }
-    ));
+        }));
 
     if (uriResponse.statusCode == 200) {
       MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
 
       List<dynamic> m = jsonDecode(value.data);
-      for(Map<String, dynamic> item in m) {
+      for (Map<String, dynamic> item in m) {
+        print(item["keterangan"]);
         setState(() {
           imgList.add(item["id"].toString());
+          imgKeterangan.add(item["keterangan"].toString());
+        });
+      }
+    }
+  }
+
+  void getKegiatan() async {
+    var dio = Dio();
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString(JWT_TOKEN);
+
+    String url =
+        "http://solusi.kopbi.or.id:8889/kopbi-master/list-konten/kegiatan";
+
+    var uriResponse = await dio.post(url,
+        options: Options(headers: {
+          'token': 'U2FsdGVkX19emypgqSLb6nLxUO5CO3eG7avTQXU045E=',
+          'jwtToken': token,
+        }));
+
+    if (uriResponse.statusCode == 200) {
+      MessageModel value = messageModelFromJson(json.encode(uriResponse.data));
+
+      List<dynamic> m = jsonDecode(value.data);
+      for (Map<String, dynamic> item in m) {
+        print(item["keterangan"]);
+        setState(() {
+          kegiatanList.add(item["id"].toString());
+          kegiatanKeterangan.add(item["keterangan"].toString());
         });
       }
     }

@@ -59,6 +59,8 @@ class _HistoriPengajuanUangListPageState extends State<HistoriPengajuanUangListP
     // TODO: implement initState
     super.initState();
 
+    print("HISTORY");
+
     isLoading = false;
 
     _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -116,8 +118,8 @@ class _HistoriPengajuanUangListPageState extends State<HistoriPengajuanUangListP
             'status': _.statusPengajuan,
             'formattedNominal': _.formattedNominalPengajuan,
             'tanggal': _.tanggalPengajuan,
-            'tanggalApproveHRD': _.tanggalAppHRD,
-            'tanggalApprovePengawas': _.tanggalAppPengawas,
+            'tanggalAppHRD': _.tanggalAppHRD,
+            'tanggalAppPengawas': _.tanggalAppPengawas,
             'namaHRD': _.namaUserHRD,
             'namaPengawas': _.namaUserPengawas,
             'catatanHRD': _.catatanHRD,
@@ -412,7 +414,7 @@ class _HistoriPengajuanUangListPageState extends State<HistoriPengajuanUangListP
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '${dateFormat(data['tanggalApproveHRD'])}',
+                        '${dateFormat(data['tanggalAppHRD'])}',
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(
@@ -445,7 +447,7 @@ class _HistoriPengajuanUangListPageState extends State<HistoriPengajuanUangListP
                         style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
                       ),
                       Text(
-                        '${dateFormat(data['tanggalApprovePengawas'])}',
+                        '${dateFormat(data['tanggalAppPengawas'])}',
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(
